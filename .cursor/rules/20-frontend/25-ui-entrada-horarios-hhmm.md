@@ -18,5 +18,5 @@ Campos que representan **hora del día** (inicio/fin de turno de tarea, improduc
 
 - HU-019 update 01 (Partes Producción — tareas planificadas).
 - Modal «Cargar tarea asignada» (HU-025 / TR-025): `TareaAsignadaCargaModal.tsx`.
-- Disposición de captions en formularios de carga: `.cursor/rules/20-frontend/27-ui-formularios-carga-caption-izquierda.md`.
+- Disposición de captions en formularios de carga: `.cursor/rules/base/20-frontend/27-ui-formularios-carga-caption-izquierda.md`.
 - `docs/frontend/devextreme-norms.md` (si el control es DevExtreme TextBox con máscara).

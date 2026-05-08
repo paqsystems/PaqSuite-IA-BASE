@@ -31,11 +31,11 @@ Incluir **antes** de "1) HU Refinada" una tabla con:
 | Dependencias       | HUs o TRs de los que depende               |
 | Clasificación      | HU SIMPLE / HU COMPLEJA                    |
 | Última actualización | YYYY-MM-DD                               |
-| Estado             | Ver **`.cursor/rules/00-arquitectura/07-estado-hu-tr.md`**. Al generar el TR: **Pendiente**. |
+| Estado             | Ver **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Al generar el TR: **Pendiente**. |
 
 Línea de **Origen:** enlace al archivo HU.
 
-**Estado (HU y TR):** Los valores y transiciones del campo **Estado** (Pendiente → Pendiente de Revisión → En Control Calidad → Finalizado) están definidos en **`.cursor/rules/00-arquitectura/07-estado-hu-tr.md`**. Si la HU incluye tabla de metadatos con **Estado**, aplicar la misma convención.
+**Estado (HU y TR):** Los valores y transiciones del campo **Estado** (Pendiente → Pendiente de Revisión → En Control Calidad → Finalizado) están definidos en **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Si la HU incluye tabla de metadatos con **Estado**, aplicar la misma convención.
 
 ---
 

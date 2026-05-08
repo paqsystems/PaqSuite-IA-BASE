@@ -42,7 +42,7 @@ Cuando el usuario escriba algo como:
 
 1. Localizar la carpeta **xxxxxxxxxx** en `docs/02-producto/`.
 2. Leer **toda la documentación** que se encuentre dentro de esa carpeta.
-3. Generar **todas las historias de usuario** que considere necesarias o que estén allí especificadas. Si se usa tabla de metadatos con **Estado**, inicializar en **`Pendiente`** (`.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+3. Generar **todas las historias de usuario** que considere necesarias o que estén allí especificadas. Si se usa tabla de metadatos con **Estado**, inicializar en **`Pendiente`** (`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`).
 4. Guardar las HU en la carpeta **zzzzzzzzzz** bajo `docs/03-historias-usuario/` (ruta final: `docs/03-historias-usuario/zzzzzzzzzz/`). Crear la subcarpeta si no existe.
 
 **b) Modelo de datos**
@@ -69,7 +69,7 @@ El asistente debe:
 
 1. Leer el archivo de la HU indicada.
 2. Evaluar la HU usando la regla:
-   `05-hu-simple-vs-hu-compleja.md`.
+   `.cursor/rules/base/00-arquitectura/05-hu-simple-vs-hu-compleja.md`.
 3. Determinar si la HU es **HU Simple** o **HU Compleja**.
 4. En función del resultado:
    - Si es HU Simple:
@@ -81,7 +81,7 @@ El asistente debe:
 5. Reemplazar el placeholder `[HU]` por el contenido completo
    del archivo de la HU.
 6. Ejecutar el prompt resultante como si hubiera sido provisto explícitamente por el usuario.
-7. Generar el archivo TR según las reglas del prompt; en la tabla de metadatos incluir **`Estado: Pendiente`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+7. Generar el archivo TR según las reglas del prompt; en la tabla de metadatos incluir **`Estado: Pendiente`** (ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`).
 8. Si existe ambigüedad en la clasificación, solicitar confirmación explícita antes de continuar.
 
 
@@ -107,7 +107,7 @@ El asistente debe:
    por la ruta o nombre completo del archivo TR indicado.
 6. Ejecutar el prompt resultante como si hubiera sido pegado explícitamente por el usuario.
 7. Tratar la TR como **FUENTE DE VERDAD del alcance**.
-8. Al **finalizar** la implementación y la trazabilidad en el archivo TR (secciones de cierre), actualizar el campo **Estado** de ese TR a **`Pendiente de Revisión`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+8. Al **finalizar** la implementación y la trazabilidad en el archivo TR (secciones de cierre), actualizar el campo **Estado** de ese TR a **`Pendiente de Revisión`** (ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`).
 
 ---
 
@@ -160,7 +160,7 @@ el asistente debe:
 2. **Procesar todos los controles:** Si hay varios controles con la misma fecha, procesar las tareas de todos ellos que NO estén marcados como *Procesado*
 3. **Normalizar nombres de HU:** Si en el Control de Calidad el nombre de una HU está mal escrito (ej. doble guion, mayúsculas incorrectas), corregirlo en el archivo para que coincida con el nombre real del archivo en `docs/03-historias-usuario/`.
 4. **Por cada solicitud:**
-  - Si la entrada referencia una HU explícita (por ejemplo, el bloque se titula `### HU-XXX-nombre` o ya existe una línea de `*Sugerencia: HU-XXX-...*` y esa HU existe en `docs/03-historias-usuario/`): proceder a generar la HU-update correspondiente en la subcarpeta `updates/` (aplicando el Caso C para el sufijo `-update`, `-update-01`, etc.) y dejar la entrada marcada como `*Procesado*`. El **HU-update** nuevo debe figurar con **`Estado: Pendiente`**; además, debe incluir explícitamente el tópico **`## Estado de alcance`** inmediatamente después del origen, con una tabla simple `| Campo | Valor |` y la fila `| Estado | Pendiente |`. Si el HU original tiene campo **Estado** en metadatos, actualizar el archivo base a **`En Control Calidad`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+  - Si la entrada referencia una HU explícita (por ejemplo, el bloque se titula `### HU-XXX-nombre` o ya existe una línea de `*Sugerencia: HU-XXX-...*` y esa HU existe en `docs/03-historias-usuario/`): proceder a generar la HU-update correspondiente en la subcarpeta `updates/` (aplicando el Caso C para el sufijo `-update`, `-update-01`, etc.) y dejar la entrada marcada como `*Procesado*`. El **HU-update** nuevo debe figurar con **`Estado: Pendiente`**; además, debe incluir explícitamente el tópico **`## Estado de alcance`** inmediatamente después del origen, con una tabla simple `| Campo | Valor |` y la fila `| Estado | Pendiente |`. Si el HU original tiene campo **Estado** en metadatos, actualizar el archivo base a **`En Control Calidad`** (ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`).
    - Si además corresponde generar un **TR-update** asociado: el archivo en `docs/04-tareas/updates/...` lleva **`Estado: Pendiente`**; el **TR original** en `docs/04-tareas/<subcarpeta>/` (sin `updates/`) pasa a **`Estado: En Control Calidad`**.
    - Si no se puede determinar una HU concreta (no hay HU aclarada ni sugerencia que apunte a una HU existente): buscar sobre cuál podría realizarse, escribir la sugerencia **en el propio `docs/00-ControlCalidad-xx.md` junto a la entrada** (ej. `*Sugerencia: HU-XXX-...*`), y no generar HU.
 5. **Ubicación y nominación de las HU-update:** Generar en `docs/03-historias-usuario/updates/<subcarpeta-original>/`. **Todos los archivos deben incluir el sufijo `-update` en el nombre.**
@@ -203,7 +203,7 @@ Cuando el usuario escriba algo como:
 
 1. **Objetivo:** Fusionar el contenido de los archivos en `docs/03-historias-usuario/updates/` y `docs/04-tareas/updates/` con sus **HU** y **TR** originales en ruta base (misma subcarpeta relativa, sin `updates/`), y eliminar cada archivo update ya incorporado.
 
-2. **Condición para fusionar cada update:** Solo incorporar un **`HU-...-update*.md`** o **`TR-...-update*.md`** si ese archivo figura con **`Estado: Finalizado`** en su tabla de metadatos (marcado manualmente; ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md` §5). Los updates con otro **Estado** no se fusionan.
+2. **Condición para fusionar cada update:** Solo incorporar un **`HU-...-update*.md`** o **`TR-...-update*.md`** si ese archivo figura con **`Estado: Finalizado`** en su tabla de metadatos (marcado manualmente; ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` §5). Los updates con otro **Estado** no se fusionan.
 
 3. **Contexto esperado:** Mientras existan updates abiertos, lo habitual es que los **originales** en base estén en **`En Control Calidad`**; al cerrar y fusionar, se actualiza el **Estado** del original según el punto 6.
 
@@ -225,7 +225,7 @@ Cuando el usuario escriba algo como:
 
 9. Ver ejemplos en `docs/16-prompt-dispatcher-ejemplos.md`.
 
-10. **Manuales de usuario (`docs/99-manual-usuario/`):** Tras aplicar las fusiones de HU/TR (puntos anteriores), **revisar** si en la carpeta `docs/99-manual-usuario/` ya existe un archivo **`.md`** de manual de usuario **relacionado** con el módulo, pantalla o flujo afectado por el contenido incorporado desde los updates (por título, tema o referencias en el propio HU/TR). **Si existe documentación equivalente**, **actualizarla** para que refleje el comportamiento funcional vigente según los originales ya unificados, alineado a `.cursor/rules/90-documentacion/90-manual-usuario.md` (sin contenido técnico de implementación). **Si no hay manual** que corresponda al cambio, **no** crear uno por iniciativa propia salvo que el usuario lo pida explícitamente.
+10. **Manuales de usuario (`docs/99-manual-usuario/`):** Tras aplicar las fusiones de HU/TR (puntos anteriores), **revisar** si en la carpeta `docs/99-manual-usuario/` ya existe un archivo **`.md`** de manual de usuario **relacionado** con el módulo, pantalla o flujo afectado por el contenido incorporado desde los updates (por título, tema o referencias en el propio HU/TR). **Si existe documentación equivalente**, **actualizarla** para que refleje el comportamiento funcional vigente según los originales ya unificados, alineado a `.cursor/rules/base/90-documentacion/90-manual-usuario.md` (sin contenido técnico de implementación). **Si no hay manual** que corresponda al cambio, **no** crear uno por iniciativa propia salvo que el usuario lo pida explícitamente.
 
 ### Comando acotado: "Unifica las historias de usuario de XX de dd/MM/yyyy"
 
@@ -329,10 +329,10 @@ Cuando el usuario escriba algo como:
 
 (donde **{idioma}** es el **código ISO 639-1** de dos letras (`de`, `ca`, …) o un **nombre** del idioma del que se pueda inferir ese código de forma inequívoca), el asistente debe:
 
-1. Leer **`.cursor/rules/40-i18n/40-i18n-alta-nuevo-idioma.md`** y tratarlo como **fuente de verdad** del alcance y el orden de trabajo.
+1. Leer **`.cursor/rules/base/40-i18n/40-i18n-alta-nuevo-idioma.md`** y tratarlo como **fuente de verdad** del alcance y el orden de trabajo.
 2. **Resolver el código de locale** a implementar: si el usuario ya indicó un código de dos letras válido para el proyecto, usarlo; si indicó solo el nombre y hay ambigüedad (varios códigos posibles), **pedir confirmación explícita** del código antes de modificar archivos.
-3. **Ejecutar el checklist** de esa regla para el código acordado: frontend (`i18n`, selector con bandera, `tokenStorage`), backend (validaciones y `AuthService`), cobertura de **menú, shell y todos los módulos** (JSON y cada pipeline por script que exista), tests, documentación y notas sobre DevExtreme u otras librerías, tal como figura en **`.cursor/rules/40-i18n/40-i18n-alta-nuevo-idioma.md`**.
-4. Complementar con **`.cursor/rules/40-i18n/41-i18n-and-testid.md`** donde aplique (p. ej. obligación de claves en todos los locales, sin mezclar fallback español como sustituto de traducción).
+3. **Ejecutar el checklist** de esa regla para el código acordado: frontend (`i18n`, selector con bandera, `tokenStorage`), backend (validaciones y `AuthService`), cobertura de **menú, shell y todos los módulos** (JSON y cada pipeline por script que exista), tests, documentación y notas sobre DevExtreme u otras librerías, tal como figura en **`.cursor/rules/base/40-i18n/40-i18n-alta-nuevo-idioma.md`**.
+4. Complementar con **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`** donde aplique (p. ej. obligación de claves en todos los locales, sin mezclar fallback español como sustituto de traducción).
 5. Dejar **evidencia** de lo implementado y de lo pendiente (si algo requiere decisión humana o traducciones externas); **no** hacer commit ni push salvo autorización explícita del usuario (política del repo).
 
 ---
@@ -353,9 +353,9 @@ Cuando el usuario escriba algo equivalente a cualquiera de estas formas (donde *
 
 El asistente debe:
 
-1. Leer y seguir como **fuente de verdad** el archivo **`.cursor/rules/90-documentacion/90-manual-usuario.md`** (regla de manual de usuario del proyecto).
-2. Tomar del mensaje del usuario el valor de **[TEMA]** (y, si el usuario lo indicó, **[NOMBRE_ARCHIVO]**; si no lo indicó, aplicar la convención de nomenclatura que defina **`.cursor/rules/90-documentacion/90-manual-usuario.md`** para el nombre del archivo).
-3. **Ejecutar** el flujo descrito en esa regla: investigar en código y UI lo necesario, redactar en el tono y estructura allí definidos, y crear o actualizar el documento resultante en la ruta que **`.cursor/rules/90-documentacion/90-manual-usuario.md`** indique (p. ej. carpeta bajo `docs/99-manual-usuario/`), usando **[TEMA]** como foco del contenido y **[NOMBRE_ARCHIVO]** cuando corresponda al nombre del archivo.
+1. Leer y seguir como **fuente de verdad** el archivo **`.cursor/rules/base/90-documentacion/90-manual-usuario.md`** (regla de manual de usuario del proyecto).
+2. Tomar del mensaje del usuario el valor de **[TEMA]** (y, si el usuario lo indicó, **[NOMBRE_ARCHIVO]**; si no lo indicó, aplicar la convención de nomenclatura que defina **`.cursor/rules/base/90-documentacion/90-manual-usuario.md`** para el nombre del archivo).
+3. **Ejecutar** el flujo descrito en esa regla: investigar en código y UI lo necesario, redactar en el tono y estructura allí definidos, y crear o actualizar el documento resultante en la ruta que **`.cursor/rules/base/90-documentacion/90-manual-usuario.md`** indique (p. ej. carpeta bajo `docs/99-manual-usuario/`), usando **[TEMA]** como foco del contenido y **[NOMBRE_ARCHIVO]** cuando corresponda al nombre del archivo.
 4. Si faltara **[TEMA]** o hubiera ambigüedad sobre el alcance, **pedir aclaración** antes de generar el manual.
 
 ---
@@ -378,10 +378,10 @@ Esta regla habilita un flujo completo y consistente:
 - Inicialización del entorno de desarrollo con informe de URLs de frontend, backend y documentación OpenAPI (Swagger UI) (PARTE I).
 - Mejoras a las pruebas manuales realizadas (Parte E).
 - Finalizar el bloque de control de calidad de una fecha en `00-ControlCalidad-*.md` (Parte F).
-- Unificación de HU-update y TR-update en los originales cuando el update a fusionar tiene **Estado: Finalizado** (Parte G; ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`), y revisión/actualización de manuales en `docs/99-manual-usuario/` cuando ya existan y apliquen a los cambios fusionados (Parte G §10).
+- Unificación de HU-update y TR-update en los originales cuando el update a fusionar tiene **Estado: Finalizado** (Parte G; ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`), y revisión/actualización de manuales en `docs/99-manual-usuario/` cuando ya existan y apliquen a los cambios fusionados (Parte G §10).
 - Generación de HU y modelo de datos desde una carpeta de producto (Parte A).
-- Alta de un idioma nuevo siguiendo checklist i18n + selector con bandera (Parte J; regla **`.cursor/rules/40-i18n/40-i18n-alta-nuevo-idioma.md`**).
-- Manual de usuario / documentación funcional para usuario final y soporte (Parte K; regla **`.cursor/rules/90-documentacion/90-manual-usuario.md`**).
+- Alta de un idioma nuevo siguiendo checklist i18n + selector con bandera (Parte J; regla **`.cursor/rules/base/40-i18n/40-i18n-alta-nuevo-idioma.md`**).
+- Manual de usuario / documentación funcional para usuario final y soporte (Parte K; regla **`.cursor/rules/base/90-documentacion/90-manual-usuario.md`**).
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.

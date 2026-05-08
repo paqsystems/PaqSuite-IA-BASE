@@ -249,7 +249,7 @@ return (
 ## Referencias
 
 - `docs/frontend/frontend-specifications.md` - Especificaciones generales
-- `.cursor/rules/20-frontend/20-frontend-norms.md` - Normas de frontend
+- `.cursor/rules/base/20-frontend/20-frontend-norms.md` - Normas de frontend
 - Vite env variables: https://vitejs.dev/guide/env-and-mode.html
 
 ---

@@ -5,7 +5,7 @@ alwaysApply: true
 
 ## Alcance
 
-Este documento complementa `.cursor/rules/20-frontend/20-frontend-norms.md` con reglas específicas para el frontend mobile empaquetado con Capacitor.
+Este documento complementa `.cursor/rules/base/20-frontend/20-frontend-norms.md` con reglas específicas para el frontend mobile empaquetado con Capacitor.
 
 **Modelo:** Un solo código base (`frontend/`) sirve web y mobile. Capacitor empaqueta el build (`dist/`) como app nativa iOS/Android.
 

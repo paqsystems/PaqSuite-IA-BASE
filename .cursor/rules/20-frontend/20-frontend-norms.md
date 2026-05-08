@@ -11,7 +11,7 @@ alwaysApply: true
    ```bash
    cd frontend && npm run build
    ```
-2. **Si falla:** consultar `.cursor/rules/20-frontend/22-frontend-build-typescript.md` y la tabla de errores comunes más abajo.
+2. **Si falla:** consultar `.cursor/rules/base/20-frontend/22-frontend-build-typescript.md` y la tabla de errores comunes más abajo.
 3. **Nunca hacer merge a main** sin que `npm run build` pase en local.
 
 ## Stack Tecnológico
@@ -19,9 +19,9 @@ alwaysApply: true
 **Framework:** React  
 **Build Tool:** Vite (recomendado) o Webpack  
 **State Management:** Context API o Redux/Zustand (según necesidad)  
-**UI Library:** DevExtreme React Components (DevExpress). Convención: **preferir capacidades nativas del componente** antes de duplicar la misma acción en UI propia; ver `docs/frontend/devextreme-norms.md` y `.cursor/rules/20-frontend/26-devextreme-prefer-native-behavior.md`.
+**UI Library:** DevExtreme React Components (DevExpress). Convención: **preferir capacidades nativas del componente** antes de duplicar la misma acción en UI propia; ver `docs/frontend/devextreme-norms.md` y `.cursor/rules/base/20-frontend/26-devextreme-prefer-native-behavior.md`.
 
-Ver `.cursor/rules/20-frontend/21-frontend-mobile-norms.md` para normas específicas de mobile (Capacitor).
+Ver `.cursor/rules/base/20-frontend/21-frontend-mobile-norms.md` para normas específicas de mobile (Capacitor).
 
 ## Estructura de Carpetas
 
@@ -125,7 +125,7 @@ components/
 
 - Try-catch en llamadas API
 - Mensajes de error claros para el usuario
-- Manejo de estados de carga (loading, error, success). Para **selectores de catálogo** (`SelectBox`, `Lookup`, `<select>` por API, etc.), el indicador «Cargando…» va **junto al caption** (y en DevExtreme también **`noDataText`** mientras carga); detalle en **`.cursor/rules/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`** §3.1.
+- Manejo de estados de carga (loading, error, success). Para **selectores de catálogo** (`SelectBox`, `Lookup`, `<select>` por API, etc.), el indicador «Cargando…» va **junto al caption** (y en DevExtreme también **`noDataText`** mientras carga); detalle en **`.cursor/rules/base/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`** §3.1.
 
 ### Evitar loops al cargar datos (React + i18n)
 - En páginas/listados que cargan datos con `useEffect` + `useCallback`, **no incluyas `t`/`useT()` en las dependencias** del callback que dispara la carga (por ejemplo `refreshData`).
@@ -136,22 +136,22 @@ components/
 
 ### Obtención de datos y rendimiento
 
-- Checklist completo (warmup por sesión/empresa, `apiFetch`, StrictMode en dev, grillas remotas, proxy Vite, logs `perf.*`): **`.cursor/rules/70-db/74-obtencion-datos-performance.md`**.
+- Checklist completo (warmup por sesión/empresa, `apiFetch`, StrictMode en dev, grillas remotas, proxy Vite, logs `perf.*`): **`.cursor/rules/multi/14-obtencion-datos-performance.md`** ó **`.cursor/rules/mono/14-obtencion-datos-performance.md`**.
 - Guía de medición y errores comunes: **`docs/06-operacion/instructivo-optimizar-velocidad.md`**.
 
 ### Catálogos y claves foráneas (código / descripción, no IDs en UI)
 
-- Regla completa: **`.cursor/rules/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`**
+- Regla completa: **`.cursor/rules/base/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`**
 - Resumen: en listados, mostrar **código** o, si no hay, **descripción**; en selectores de catálogo, etiqueta **`código – descripción`** (o solo descripción si no hay código). Los **IDs de FK no se muestran** al usuario salvo indicación explícita en HU/TR. El API debe devolver campos de presentación, no solo `id_*`.
 
 ### UI tipo popup (modal sobre listado o detalle)
 
-- Regla completa: **`.cursor/rules/20-frontend/24-ui-abm-grilla-alta-edicion-modal.md`**
+- Regla completa: **`.cursor/rules/base/20-frontend/24-ui-abm-grilla-alta-edicion-modal.md`**
 - Resumen: **cualquier** flujo que abra un **popup** (alta/edición desde grilla, **subformularios desde detalle**, diálogos transaccionales) debe ser un **modal real** (overlay a toda la ventana, p. ej. portal a `document.body`), misma ruta que la vista de fondo, **no** una pantalla nueva por defecto. Excepciones solo si **HU/TR** lo indican (wizard, full page, otra ruta, etc.).
 
 ### Parámetros generales por módulo (HU-007)
 
-- Regla: **`.cursor/rules/20-frontend/29-parametros-generales-ui-listado-y-edicion-por-tipo.md`** — listado homogéneo (valor como texto) y edición con control acorde a `tipo_valor` (no cajas de texto genéricas para todos los tipos en la grilla).
+- Regla: **`.cursor/rules/multi/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** ó **`.cursor/rules/mono/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** — listado homogéneo (valor como texto) y edición con control acorde a `tipo_valor` (no cajas de texto genéricas para todos los tipos en la grilla).
 
 ### Autenticación
 
@@ -281,12 +281,12 @@ class ApiService {
 
 Para requisitos de TypeScript, exclusión de tests, tipado de headers, comparaciones de tipos y componentes reutilizables, ver:
 
-- `.cursor/rules/20-frontend/22-frontend-build-typescript.md` - Reglas de build y TypeScript para deploy
+- `.cursor/rules/base/20-frontend/22-frontend-build-typescript.md` - Reglas de build y TypeScript para deploy
 
 ## Referencias
 
-- `.cursor/rules/70-db/74-obtencion-datos-performance.md` - Rendimiento y obtención de datos (React + API)
+- `.cursor/rules/multi/14-obtencion-datos-performance.md` ó `.cursor/rules/mono/14-obtencion-datos-performance.md` - Rendimiento y obtención de datos (React + API)
 - `docs/frontend/frontend-specifications.md` - Especificaciones detalladas
 - `docs/frontend/testing.md` - Estrategia de testing frontend
 - `docs/frontend/i18n.md` - Internacionalización
-- `.cursor/rules/20-frontend/22-frontend-build-typescript.md` - Build, TypeScript y compatibilidad con deploy
+- `.cursor/rules/base/20-frontend/22-frontend-build-typescript.md` - Build, TypeScript y compatibilidad con deploy

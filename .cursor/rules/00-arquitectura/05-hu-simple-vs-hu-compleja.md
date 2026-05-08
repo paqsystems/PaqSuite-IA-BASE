@@ -5,7 +5,7 @@ Historias de Usuario (HU) en Tareas de Implementación (TR).
 
 ⚠️ Este archivo **no se ejecuta directamente**.
 Es utilizado por el dispatcher definido en:
-`.cursor/rules/00-arquitectura/01-prompts-programados-dispatcher.md`
+`.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md`
 
 ---
 
@@ -16,7 +16,7 @@ Es utilizado por el dispatcher definido en:
 Actuá como ingeniero senior responsable del diseño del MVP.
 
 Usá **SOLO** la regla:
-`.cursor/rules/00-arquitectura/04-user-story-to-task-breakdown.md`
+`.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md`
 como fuente de verdad para la descomposición.
 
 Tarea:
@@ -68,7 +68,7 @@ Historia de Usuario:
 Actuá como ingeniero senior responsable del refinamiento funcional del MVP.
 
 Usá **SOLO** la regla:
-`.cursor/rules/00-arquitectura/04-user-story-to-task-breakdown.md`
+`.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md`
 como fuente de verdad.
 
 Objetivo:
@@ -105,7 +105,7 @@ de la Historia de Usuario anterior,
 generar el plan completo de tareas/tickets del MVP.
 
 Usar como regla obligatoria:
-`.cursor/rules/00-arquitectura/04-user-story-to-task-breakdown.md`
+`.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md`
 
 Archivo a generar:
 - Ruta: `docs/04-tareas/` manteniendo la estructura relativa de la HU (reemplazando `03-historias-usuario` por `04-tareas`).

@@ -28,25 +28,34 @@ Todo lo que:
 - no dependa del modo mono vs multiempresa,
 - no sea específico de un módulo de producto ni de un ERP concreto,
 
-debe vivir **solo** en **PaqSuite-IA-BASE**, bajo **`.cursor/rules/`**, en la subcarpeta temática (ver **`Estructura de reglas.md`**). **No** copiar ese contenido en repos hijos.
+debe vivir **solo** en **PaqSuite-IA-BASE**, bajo **`.cursor/rules/base/`**, en la subcarpeta temática correspondiente (ver **`Estructura de reglas.md`**). **No** copiar ese contenido en repos hijos.
 
 Estructura física en BASE (convención):
+`.cursor/rules/base/` agrupa carpetas por temática (`00-arquitectura`, `10-backend`, `20-frontend`, etc.).
+Las reglas del paquete **MONO** enlazado por el proyecto conviven como **`.cursor/rules/mono/`** (archivos en la raíz de esa carpeta, p. ej. `02-backend-policy.md`). Las del paquete **MULTI** conviven como **`.cursor/rules/multi/`** (misma convención de nombres de archivo en la raíz de esa carpeta).
 
 ```text
 .cursor/rules/
-  00-arquitectura/
-  10-backend/
-  20-frontend/
-  30-seguridad/        (reservada; sin reglas obligatorias aún en BASE)
-  40-i18n/
-  50-testing/
-  60-reportes/
-  70-db/
-  80-devops/           (reservada)
-  90-documentacion/
+  base/
+    00-arquitectura/
+    10-backend/
+    20-frontend/
+    30-seguridad/        (reservada)
+    40-i18n/
+    50-testing/
+    60-reportes/
+    70-db/
+    80-devops/           (reservada)
+    90-documentacion/
+  mono/
+    (reglas específicas monoempresa, p. ej. 01-project-context … 14-obtencion-datos-performance)
+  multi/
+    (reglas específicas multiempresa, misma familia de archivos que mono cuando aplique)
+  local/
+    (reglas opcionales del proyecto: TANGO, ERP, …)
 ```
 
-Las referencias cruzadas entre reglas deben usar la **ruta completa** bajo `.cursor/rules/`, por ejemplo: `.cursor/rules/20-frontend/20-frontend-norms.md`.
+Las referencias cruzadas entre reglas deben usar la **ruta completa** bajo `.cursor/rules/`, por ejemplo **BASE:** `.cursor/rules/base/20-frontend/20-frontend-norms.md`. Para reglas del paquete **MULTI** ó **MONO** (mismo nombre de archivo; usar la carpeta que enlace el proyecto): `.cursor/rules/multi/03-api-contract.md` ó `.cursor/rules/mono/03-api-contract.md`.
 
 ---
 

@@ -34,7 +34,7 @@ Aplica a:
 
 ### 2) Al ejecutar una TR («Ejecutá la TR …»)
 
-Tras completar la implementación según `docs/prompts/05-Ejecucion-de-una-TR.md` y la trazabilidad en `.cursor/rules/00-arquitectura/08-task-execution-traceability.md`, actualizar el **archivo TR que fue objeto de ejecución** (el que se leyó como fuente de verdad, en base o en `updates/`):
+Tras completar la implementación según `docs/prompts/05-Ejecucion-de-una-TR.md` y la trazabilidad en `.cursor/rules/multi/06-task-execution-traceability.md` ó `.cursor/rules/mono/06-task-execution-traceability.md`, actualizar el **archivo TR que fue objeto de ejecución** (el que se leyó como fuente de verdad, en base o en `updates/`):
 
 - **`Estado: Pendiente de Revisión`**
 
@@ -84,7 +84,7 @@ Con un único par HU-update/TR-update, ambos en **Finalizado** y fusionados sin 
 
 ## Referencias
 
-- `.cursor/rules/00-arquitectura/04-user-story-to-task-breakdown.md` — tabla de metadatos del TR
-- `.cursor/rules/00-arquitectura/01-prompts-programados-dispatcher.md` — PARTE B, C, E, F (finalizar CC), G (unificación)
+- `.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md` — tabla de metadatos del TR
+- `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` — PARTE B, C, E, F (finalizar CC), G (unificación)
 - `docs/prompts/05-Ejecucion-de-una-TR.md`
-- `.cursor/rules/00-arquitectura/08-task-execution-traceability.md`
+- `.cursor/rules/multi/06-task-execution-traceability.md` ó `.cursor/rules/mono/06-task-execution-traceability.md`

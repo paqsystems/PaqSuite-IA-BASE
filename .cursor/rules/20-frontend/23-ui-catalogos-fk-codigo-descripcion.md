@@ -73,6 +73,6 @@ Para alinear documentación, reglas y código:
 ## Referencias
 
 - Catálogo Tango / lectura sin alterar tablas: regla **`25-tablas-tango-politica.md`** del **paquete de reglas TANGO** (no incluida en este repositorio BASE; ver `Estructura de reglas.md`, sección TANGO).
-- Estándar de grillas: `.cursor/rules/20-frontend/28-devextreme-grid-standards.md`
-- Normas frontend: `.cursor/rules/20-frontend/20-frontend-norms.md` (sección Catálogos)
-- Contrato API: `.cursor/rules/10-backend/11-api-contract.md`
+- Estándar de grillas: `.cursor/rules/multi/08-devextreme-grid-standards.md` ó `.cursor/rules/mono/08-devextreme-grid-standards.md`
+- Normas frontend: `.cursor/rules/base/20-frontend/20-frontend-norms.md` (sección Catálogos)
+- Contrato API: `.cursor/rules/multi/03-api-contract.md` ó `.cursor/rules/mono/03-api-contract.md`

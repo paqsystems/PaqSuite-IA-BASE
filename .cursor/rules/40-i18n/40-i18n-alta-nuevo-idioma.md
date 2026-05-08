@@ -7,7 +7,7 @@ alwaysApply: false
 
 Definir **todos los puntos** que deben actualizarse al incorporar un **código de idioma nuevo** (ej. `de`) a la aplicación, incluido el **selector de idioma con bandera identificatoria** en el menú.
 
-**Principio:** el conjunto de locales soportados debe ser **coherente** en frontend, backend y scripts. Si falta un solo lugar, aparecen errores de validación API, `getLocale()` que vuelve a `es`, o textos mezclados (ver **`.cursor/rules/40-i18n/41-i18n-and-testid.md`**).
+**Principio:** el conjunto de locales soportados debe ser **coherente** en frontend, backend y scripts. Si falta un solo lugar, aparecen errores de validación API, `getLocale()` que vuelve a `es`, o textos mezclados (ver **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`**).
 
 **Código sugerido:** ISO 639-1 de dos letras (`de`, `ca`, …) salvo que producto defina otro contrato.
 
@@ -67,8 +67,8 @@ El nuevo idioma debe cubrir **todo lo que el usuario ve** al navegar la app: **l
 ### 5.a) Namespace en JSON (mayoría de módulos)
 
 - En `frontend/src/i18n/locales/{code}.json`, completar **todas** las ramas que ya existen en `es.json` (u en un locale de referencia): `auth`, `common`, textos de layout, y cada namespace usado por las features (`tasks`, `dashboard`, …).  
-- Criterio de cierre: con el idioma activo, recorrer **procesos del menú** y comprobar que no queden cadenas en español por clave faltante (ver **`.cursor/rules/40-i18n/41-i18n-and-testid.md`**).
-- **Parámetros generales (HU-007):** incluir la rama **`parametrosGral.items`** (por cada `Programa` y `clave` definidos en seeds / `PQ_PARAMETROS_GRAL`) con **`caption`** y **`tooltip`** en el nuevo `*.json`, alineada a la jerarquía de `es.json` u otro locale de referencia. Sin esas entradas, al cambiar al nuevo idioma los títulos de fila pueden quedar en español vía fallback de API. Ver **`.cursor/rules/40-i18n/41-i18n-and-testid.md`** (checklist y § parámetros generales) y **`.cursor/rules/20-frontend/29-parametros-generales-ui-listado-y-edicion-por-tipo.md`**.
+- Criterio de cierre: con el idioma activo, recorrer **procesos del menú** y comprobar que no queden cadenas en español por clave faltante (ver **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`**).
+- **Parámetros generales (HU-007):** incluir la rama **`parametrosGral.items`** (por cada `Programa` y `clave` definidos en seeds / `PQ_PARAMETROS_GRAL`) con **`caption`** y **`tooltip`** en el nuevo `*.json`, alineada a la jerarquía de `es.json` u otro locale de referencia. Sin esas entradas, al cambiar al nuevo idioma los títulos de fila pueden quedar en español vía fallback de API. Ver **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`** (checklist y § parámetros generales) y **`.cursor/rules/multi/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** ó **`.cursor/rules/mono/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`**.
 
 ### 5.b) Módulos con **pipeline propio** (extracción + script → JSON)
 
@@ -105,7 +105,7 @@ Algunos dominios mantienen miles de cadenas mediante **scripts** (archivos de l�
 
 ## 8) DevExtreme y otras librerías
 
-Hoy el repo **no** centraliza `loadMessages` por idioma en un único módulo; los textos propios van por `t()` y captions. Si se incorpora **localización DevExtreme** u otra librería por locale, registrar el nuevo código en ese inicializador y verificar grillas/datebox en el idioma añadido (ver checklist DevExtreme en **`.cursor/rules/40-i18n/41-i18n-and-testid.md`**).
+Hoy el repo **no** centraliza `loadMessages` por idioma en un único módulo; los textos propios van por `t()` y captions. Si se incorpora **localización DevExtreme** u otra librería por locale, registrar el nuevo código en ese inicializador y verificar grillas/datebox en el idioma añadido (ver checklist DevExtreme en **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`**).
 
 ---
 
@@ -122,4 +122,4 @@ Hoy el repo **no** centraliza `loadMessages` por idioma en un único módulo; lo
 - `frontend/scripts/*` — por módulo: configs y builds de i18n (ej. Partes: `partes-i18n.config.json`, `partes-{code}-lines.txt`, `build-partes-locale-files.mjs`)
 - `frontend/tests/e2e/multilingual.spec.ts`
 
-**Reglas relacionadas:** **`.cursor/rules/40-i18n/41-i18n-and-testid.md`** (cobertura UI, todos los locales, módulos con script).
+**Reglas relacionadas:** **`.cursor/rules/base/40-i18n/41-i18n-and-testid.md`** (cobertura UI, todos los locales, módulos con script).

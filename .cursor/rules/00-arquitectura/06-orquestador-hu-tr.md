@@ -29,7 +29,7 @@ Permitir la generación masiva de TRs desde HUs y la ejecución de TRs en forma
 Para cada HU:
 
 1. Lee el archivo de la HU.
-2. Clasifica simple vs compleja según `05-hu-simple-vs-hu-compleja.md`.
+2. Clasifica simple vs compleja según `.cursor/rules/base/00-arquitectura/05-hu-simple-vs-hu-compleja.md`.
 3. Ejecuta el prompt de `docs/prompts/04-Prompts-HU-a-Tareas.md`.
 4. Escribe el TR en `docs/04-tareas/{subcarpeta}/TR-xxx.md`, en la misma subcarpeta que la HU.
 
@@ -67,8 +67,8 @@ subagent_type: generalPurpose
 description: "Generar TR para HU-010"
 prompt: |
   Lee docs/03-historias-usuario/001-Seguridad/HU-010-administracion-usuarios.md.
-  Clasificala como HU simple o compleja según .cursor/rules/00-arquitectura/05-hu-simple-vs-hu-compleja.md.
-  Genera el TR siguiendo .cursor/rules/00-arquitectura/04-user-story-to-task-breakdown.md
+  Clasificala como HU simple o compleja según .cursor/rules/base/00-arquitectura/05-hu-simple-vs-hu-compleja.md.
+  Genera el TR siguiendo .cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md
   y el prompt de docs/prompts/04-Prompts-HU-a-Tareas.md.
   Guarda el resultado en docs/04-tareas/001-Seguridad/TR-010-administracion-usuarios.md
   (misma subcarpeta que la HU).
