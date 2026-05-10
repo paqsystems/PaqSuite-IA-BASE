@@ -25,6 +25,7 @@ Incluir **antes** de "1) HU Refinada" una tabla con:
 | Campo              | Valor                                      |
 |--------------------|--------------------------------------------|
 | HU relacionada     | HU-XXX – Título de la HU                   |
+| **SPEC relacionada** | Ruta o enlace `docs/05-open-spec/.../SPEC-XXX-....md` cuando el trabajo use Open-Spec; si no aplica: **N/A**. |
 | Épica              | 000 – Nombre de la épica                   |
 | Prioridad          | MUST-HAVE / SHOULD-HAVE                    |
 | Roles              | Rol(es) involucrados                        |
@@ -33,9 +34,11 @@ Incluir **antes** de "1) HU Refinada" una tabla con:
 | Última actualización | YYYY-MM-DD                               |
 | Estado             | Ver **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Al generar el TR: **Pendiente**. |
 
-Línea de **Origen:** enlace al archivo HU.
+Línea de **Origen:** enlace al archivo HU. Si hay SPEC, segunda línea **Referencia SPEC:** enlace al archivo SPEC.
 
-**Estado (HU y TR):** Los valores y transiciones del campo **Estado** (Pendiente → Pendiente de Revisión → En Control Calidad → Finalizado) están definidos en **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Si la HU incluye tabla de metadatos con **Estado**, aplicar la misma convención.
+**Estado (HU y TR):** Los valores y transiciones del campo **Estado** están en **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Con Open-Spec, tras alinear SPEC + HU + TR puede usarse **Especificado** antes de ejecutar la TR.
+
+**Trazabilidad Open-Spec:** el **SPEC** enlazado debe listar esta HU/TR en sus metadatos; la **HU** debe enlazar el SPEC cuando exista (metadatos o sección Referencias).
 
 ---
 
@@ -147,3 +150,8 @@ Generar una lista de tareas con:
 - Si falta info crítica, declarar supuestos y marcar preguntas abiertas.
 - Mantener coherencia con la arquitectura y convenciones del repo.
 - Si se modifica código existente, listar impacto en docs y tests asociados.
+
+## Referencias Open-Spec
+
+- `.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md` — SPEC, trazabilidad, updates.
+- `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` — campo **Estado** (incluye **Especificado**).

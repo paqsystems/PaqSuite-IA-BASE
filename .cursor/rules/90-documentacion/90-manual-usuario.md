@@ -4,6 +4,8 @@
 
 Generar un documento funcional orientado a **usuario final** y **soporte técnico funcional**, referido al tema indicado en [TEMA].
 
+Si existe un **SPEC** (`docs/05-open-spec/…`) o una **HU** enlazada a ese SPEC para el mismo alcance, **priorizar** su comportamiento funcional y criterios verificables al redactar; el manual debe quedar alineado al acuerdo documentado, sin incorporar detalles técnicos prohibidos en esta regla (APIs, tablas, código).
+
 ### Ubicación del archivo
 
 Debes crear o actualizar un archivo Markdown dentro de la carpeta:

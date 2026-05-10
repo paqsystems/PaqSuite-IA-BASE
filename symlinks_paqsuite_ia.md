@@ -4,14 +4,14 @@
 
 ## Objetivo
 
-Este documento describe la estrategia utilizada para compartir reglas de Cursor (`.cursor/rules`) entre los distintos proyectos de la plataforma PaqSuite IA mediante el uso de **symlinks** (vínculos simbólicos).
+Este documento describe la estrategia utilizada para compartir **reglas** de Cursor (`.cursor/rules`), **prompts** reutilizables y **documentación heredada** (`docs/_base`, `docs/_mono`, `docs/_multi`) entre los proyectos de la plataforma PaqSuite IA mediante **symlinks** (vínculos simbólicos).
 
 La finalidad es:
 
-* evitar duplicación de reglas,
+* evitar duplicación de reglas, prompts y docs transversales,
 * centralizar mantenimiento,
 * permitir herencia de comportamiento IA,
-* separar claramente reglas BASE, MONO y MULTI,
+* separar claramente contenido BASE, MONO y MULTI,
 * mantener coherencia entre todos los proyectos.
 
 ---
@@ -39,9 +39,11 @@ Sin embargo, físicamente NO se utilizan symlinks encadenados.
 
 Cada proyecto referencia directamente:
 
-* BASE (`base`)
-* MONO **o** MULTI (`mono` / `multi`)
-* reglas propias del proyecto
+* BASE (`base` en `.cursor/rules`)
+* MONO **o** MULTI (`mono` / `multi` en `.cursor/rules`)
+* **Opcional / recomendado:** `prompts` en la raíz → `PaqSuite-IA-BASE\.cursor\prompts`
+* **Opcional / recomendado:** `docs/_base` → `PaqSuite-IA-BASE\.cursor\docs`; `docs/_mono` **o** `docs/_multi` según tipo de producto
+* reglas propias del proyecto (archivos bajo `.cursor/rules` que no sean symlinks)
 
 Esto mejora:
 
@@ -73,6 +75,40 @@ Proyecto
       ├── multi
       └── reglas-propias.mdc
 ```
+
+---
+
+# Herencia de `prompts` y `docs` (raíz de cada proyecto)
+
+Además de **`.cursor/rules`**, cada producto puede enlazar **prompts** y **fragmentos de documentación** mantenidos en los repos paquete.
+
+## Resumen: origen → destino del symlink
+
+| Destino en el proyecto (enlace) | Origen (carpeta real en disco) | Proyectos |
+|---------------------------------|--------------------------------|-----------|
+| `<Proyecto>\prompts` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts` | **Todos** (mono y multi) |
+| `<Proyecto>\docs\_base` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\docs` | **Todos** |
+| `<Proyecto>\docs\_mono` | `C:\Programacion\PaqSuite-IA-MONO\.cursor\docs` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
+| `<Proyecto>\docs\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs` | Solo **multi** (ERP, TANGO) |
+
+## Convenciones
+
+* **`prompts`** vive en la **raíz** del repo del producto (no dentro de `.cursor`), coherente con la tabla de carpetas del `Readme.md` del ecosistema.
+* **`docs/_base`**, **`docs/_mono`**, **`docs/_multi`** cuelgan de **`docs/`**, al lado del resto de documentación del producto (p. ej. historias de usuario, manuales). El prefijo `_` reduce colisiones con carpetas numéricas habituales.
+* Los **destinos finales** de los symlinks son siempre directorios **reales** en PaqSuite-IA-BASE, PaqSuite-IA-MONO o PaqSuite-IA-MULTI. **No** encadenar un symlink dentro de otro.
+* **Multiempresa:** ERP y TANGO enlazan **`docs/_multi`** al árbol `.cursor\docs` del repo **PaqSuite-IA-MULTI**.
+* **Monoempresa:** PedidosWeb, Partes Atención y NovedadesWeb enlazan **`docs/_mono`** al árbol `.cursor\docs` del repo **PaqSuite-IA-MONO**. La consolidación del contenido en `PaqSuite-IA-MONO\.cursor\docs` puede priorizarse en **Partes Atención** al inicio; el mismo patrón de comandos aplica al resto de repos mono.
+
+## Requisitos previos en los repos fuente
+
+En **PaqSuite-IA-BASE** deben existir (y versionarse) al menos:
+
+```text
+PaqSuite-IA-BASE\.cursor\prompts\
+PaqSuite-IA-BASE\.cursor\docs\
+```
+
+En **PaqSuite-IA-MONO** y **PaqSuite-IA-MULTI** debe existir la carpeta **`.cursor\docs`** (aunque al principio esté vacía o solo con un `README.md`), porque es el **target** de los symlinks `docs/_mono` y `docs/_multi`.
 
 ---
 
@@ -128,26 +164,44 @@ C:\Programacion
 
 ---
 
-# Paso 1 - Crear Carpetas Base
+# Paso 1 - Crear carpetas necesarias
 
-Ejecutar:
+Ejecutar (crear solo lo que aún no exista; `mkdir` en CMD puede mostrar error si la carpeta ya está — es normal):
 
 ```cmd
 mkdir "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+mkdir "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
 mkdir "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
+
 mkdir "C:\Programacion\PaqSuite-IA-MULTI\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 
 mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\docs"
+
 mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs"
+
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs"
 
 mkdir "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-ERP\docs"
+
 mkdir "C:\Programacion\PaqSuite-IA-TANGO\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-TANGO\docs"
 ```
+
+Corregir el nombre del proyecto si tu carpeta difiere (p. ej. `PaqSuite-IA-NovedadesWeb` sin typo).
+
+**Nota:** antes de **`mklink`** sobre `docs\_base`, `docs\_mono` o `docs\_multi`, no debe existir una carpeta **real** con ese mismo nombre; si existe, renombrar o eliminar sólo después de backup.
 
 ---
 
-# Paso 2 - Crear Symlinks
+# Paso 2 - Crear symlinks (rules + prompts + docs)
 
 ## PROYECTOS MONO
 
@@ -157,6 +211,12 @@ mkdir "C:\Programacion\PaqSuite-IA-TANGO\.cursor\rules"
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules\mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 ```
 
 ---
@@ -167,6 +227,12 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules\mono" "C:
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\.cursor\rules\mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 ```
 
 ---
@@ -177,6 +243,12 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\.cursor\rules\mono
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules\mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 ```
 
 ---
@@ -189,6 +261,12 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules\mono" "
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules\multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 ```
 
 ---
@@ -199,13 +277,21 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules\multi" "C:\Progr
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\.cursor\rules\multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 ```
 
 ---
 
 # Verificación
 
-Ejemplo:
+## Reglas (`.cursor\rules`)
+
+Ejemplo en un proyecto **mono**:
 
 ```cmd
 dir "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules"
@@ -218,6 +304,17 @@ base
 mono
 ```
 
+Ejemplo en un proyecto **multi** (`multi` en lugar de `mono`).
+
+## Prompts y documentación heredada
+
+```cmd
+dir "C:\Programacion\PaqSuite-IA-Partes-Atencion"
+dir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs"
+```
+
+En la **raíz** del proyecto debe aparecer **`prompts`** como `<SYMLINKD>`. Dentro de **`docs`** deben aparecer **`_base`** y **`_mono`** (proyectos mono) o **`_multi`** (proyectos multi), también como vínculos al directorio correcto.
+
 ---
 
 # Eliminación de Symlinks
@@ -228,10 +325,18 @@ Para eliminar symlinks de carpetas utilizar:
 rmdir "RUTA_DEL_SYMLINK"
 ```
 
-Ejemplo:
+Ejemplo (reglas):
 
 ```cmd
 cmd /c rmdir "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules\base"
+```
+
+Ejemplo (`prompts` o `docs\_base`, mismo criterio: **`rmdir`** del enlace, no `del`):
+
+```cmd
+cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\prompts"
+cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_base"
+cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_mono"
 ```
 
 NO utilizar:
