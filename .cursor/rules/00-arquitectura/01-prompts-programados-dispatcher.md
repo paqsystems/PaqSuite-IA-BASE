@@ -15,7 +15,7 @@ Ejecutar **en este orden** (prompts `openspec-01` … `openspec-04` en `prompts/
 
 | Paso | Parte | Acción |
 |------|-------|--------|
-| 1 | **A** | **SPEC** desde contexto: `prompts/openspec-01-SPEC-desde-contexto.md` (carpeta `docs/02-producto/`, ticket o notas). |
+| 1 | **A** | **SPEC** desde contexto: `openspec-01` — `docs/02-producto/…`, ticket o notas. **Forma corta** (*Creá el SPEC … según …*): ver **PARTE A**. |
 | 2 | **B** | **HU** **solo** desde SPEC: `prompts/openspec-02-HU-desde-SPEC.md`. |
 | 3 | **C** | **TR** **solo** desde SPEC + HU: `prompts/openspec-03-TR-desde-SPEC-y-HU.md`. |
 | 4 | **D** | Ejecutar la TR (implementación). |
@@ -75,14 +75,28 @@ El orden de las filas **es el alfabético A–Q** y coincide con el **orden de l
 
 ## PARTE A — SPEC desde contexto (**openspec-01**)
 
+### Rutas base por defecto (este repo)
+
+Cuando el usuario **no** escriba las rutas completas, el asistente debe completarlas así:
+
+| Fragmento que da el usuario | Ruta efectiva |
+|-----------------------------|----------------|
+| **Subcarpeta destino SPEC** (primer argumento en la forma corta) | `docs/05-open-spec/<subcarpeta>/` |
+| **Carpeta de contexto producto** (segundo argumento: “según …”) | `docs/02-producto/<carpeta>/` |
+
+Ejemplo: *«Creá el SPEC `001-Seguridad` según `acceso-oauth`»* ⇒ leer **`docs/02-producto/acceso-oauth/`** (toda la documentación allí) y crear/actualizar SPEC bajo **`docs/05-open-spec/001-Seguridad/`**.
+
+Siguen siendo válidas las **rutas completas** u otros orígenes (ticket, HU, archivo suelto) cuando el usuario las indique explícitamente.
+
 ### Comandos (ejemplos)
 
-- `Creá el SPEC en docs/05-open-spec/[subcarpeta] según docs/02-producto/[carpeta]`
+- **Forma corta (recomendada en este repo):** `Creá el SPEC [subcarpeta] según [carpeta]` — usando las rutas base de la tabla anterior.
+- **Forma explícita:** `Creá el SPEC en docs/05-open-spec/[subcarpeta] según docs/02-producto/[carpeta]`
 - `Ejecutá el paso A del Open-Spec con …`
 
 ### Comportamiento
 
-1. Ejecutar el prompt **`prompts/openspec-01-SPEC-desde-contexto.md`** (o ruta equivalente bajo `docs/prompts/`).
+1. Ejecutar el prompt **`prompts/openspec-01-SPEC-desde-contexto.md`** (o ruta equivalente bajo `docs/prompts/`). Si el mensaje usa la **forma corta**, expandir **`docs/05-open-spec/`** y **`docs/02-producto/`** según la tabla de rutas base.
 2. Cumplir **`.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md`** y **`docs/05-open-spec/_template-spec.md`** si existe.
 3. **A** es siempre el **primer** artefacto de alcance de un trabajo nuevo; no crear HU/TR con alcance nuevo antes de **A**.
 

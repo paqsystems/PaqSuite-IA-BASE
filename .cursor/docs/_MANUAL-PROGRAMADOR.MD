@@ -297,6 +297,8 @@ cd frontend && npm run test:e2e   # Solo Playwright
 
 Antes de modelar datos o implementar módulos en un **proyecto nuevo** (o al definir si un producto sigue el mismo stack que PaqSuite), conviene partir de **`docs/_base/00-inicio-arquitectura.md`** y dejar **explícito** si la instalación es **MONO** (mono-empresa, una sola BD, sin `X-Company-Id` ni tenancy) o **MULTI** (multi-empresa, modelo Dictionary/Company y reglas de tenant cuando apliquen). Ese documento resume stack, orden sugerido y reglas esenciales enlazadas desde `.cursor/rules/` y `docs/`.
 
+En **Windows**, el primer paso operativo del producto nuevo es configurar los **symlinks** de herencia (reglas, prompts, docs) según **`docs/_base/symlinks_paqsuite_ia.md`**; ver **§4.0** de la guía de inicio y el prompt **`scaffold-fullstack-inicio-proyecto.md`**.
+
 ### 1. Configuración del entorno
 
 ```bash
@@ -340,7 +342,8 @@ Si la BD está en servidor remoto: ver `docs/migracion-mssql-a-mysql.md` y `.cur
 
 | Documento | Propósito |
 |-----------|-----------|
-| `docs/_base/00-inicio-arquitectura.md` | Guía de inicio de proyecto (stack, MONO/MULTI, reglas esenciales) |
+| `docs/_base/00-inicio-arquitectura.md` | Guía de inicio de proyecto (stack, MONO/MULTI, symlinks §4.0, reglas esenciales) |
+| `docs/_base/symlinks_paqsuite_ia.md` | Symlinks `base`/`mono`/`multi`, `prompts`, `docs/_base`, `docs/00_contexto`, checklist proyecto nuevo |
 | `docs/README.md` | Navegación de documentación |
 | `docs/00-ControlCalidad/` | Control de calidad manual: un archivo por programador (errores, historial, estado) |
 | `docs/00-contexto/01-guia-estructura-documental-corporativa.md` | Estructura 00–07 |

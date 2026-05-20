@@ -7,7 +7,7 @@ PROYECTO = reglas funcionales específicas del módulo (cuelga de BASE + MONO *o
 TANGO   = reglas de integración con Tango Gestión (paquete opcional por producto).
 ERP     = reglas del ERP reducido propio.
 
-**Herencia:** las reglas comunes a todos los productos viven **solo** en BASE; MONO y MULTI añaden capas **sin duplicar** BASE. Detalle: `Estructura de reglas.md` y enlaces simbólicos: `symlinks_paqsuite_ia.md`.
+**Herencia:** las reglas comunes a todos los productos viven **solo** en BASE; MONO y MULTI añaden capas **sin duplicar** BASE. Detalle: `Estructura de reglas.md` y enlaces simbólicos: `.cursor/docs/symlinks_paqsuite_ia.md`.
 
 # Contenido de cada carpeta
 

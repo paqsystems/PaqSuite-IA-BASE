@@ -1,0 +1,24 @@
+# Parametrización contable en Compras
+
+## Metadata
+
+- Producto: Tango
+- Version: 25AR
+- Modulo: Ventas
+- Categoria: Guía
+- URL: https://ayudas.axoft.com/25ar/documentos/guias/guias_carp_gv/guia_integrcont_gv/?p=14658/
+
+## Contenido
+
+# Parametrización contable en Compras
+
+##### Contenido dependiente
+
+  * [Parametrización contable en Compras - Proveedores](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontproveed_cp2/)
+  * [Parametrización contable en Compras - Actualización global de proveedores](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontactglobprov_cp2/)
+  * [Parametrización contable en Compras - Conceptos](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontconcepcp_cp2/)
+  * [Parametrización contable en Compras - Actualización global de conceptos](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontactglobalconc_cp2/)
+  * [Parametrización contable en Compras - Tipos de gasto](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontipogasto_cp2/)
+  * [Parametrización contable en Compras - Tipos de comprobantes](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontipocomprob_cp2/)
+  * [Parametrización contable en Compras - Modelos de asientos](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontmodasiento_cp2/)
+  * [Parámetros contables en Compras](https://ayudas.axoft.com/25ar/ayudas/cp2/archivos_carp_cp2/paramcontable_carp_cp2/paramcontparam_cp2/)

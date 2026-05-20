@@ -4,7 +4,7 @@
 
 Este prompt **no sustituye** la guía base. **Toda decisión técnica, orden de trabajo y checklist** deben alinearse con:
 
-**[`docs/_base/00-inicio-arquitectura.md`](../docs/_base/00-inicio-arquitectura.md)**
+**[`docs/_base/00-inicio-arquitectura.md`](../docs/00-inicio-arquitectura.md)** (en **PaqSuite-IA-BASE**: `.cursor/docs/00-inicio-arquitectura.md`)
 
 Antes de generar código, el asistente debe **leer ese archivo** y aplicar **literalmente** sus secciones **1–7** (y §8 como índice de referencias). Lo que sigue **ordena la ejecución** para un repositorio vacío o parcial y fija la **invocación** que la guía base exige.
 
@@ -54,6 +54,23 @@ La guía exige que **siempre** quede explícito si el objetivo es **MONO** o **M
 
 ### Aplicar **§4 — Qué implementar (orden sugerido)**
 
+**4.0 Herencia IA — symlinks (obligatorio en proyecto nuevo en `C:\Programacion\`):**
+
+Antes de generar backend/frontend (§4.2–4.3), el asistente debe **incluir en el plan de trabajo** (y, si el usuario lo pide, listar tareas verificables) la configuración de symlinks según el modo **MONO** o **MULTI**, siguiendo:
+
+- **`docs/_base/symlinks_paqsuite_ia.md`** en el producto (en **PaqSuite-IA-BASE**: `.cursor/docs/symlinks_paqsuite_ia.md`)
+- Sección **「Proyecto nuevo: checklist (mono o multi)」** del mismo documento
+- Resumen en **`docs/_base/00-inicio-arquitectura.md`**, **§4.0**
+
+| Modo | Placeholder del doc de symlinks | Enlaces clave |
+|------|----------------------------------|---------------|
+| **MONO** | `{proyectomono}` (nombre del repo del producto) | `rules\base`, `rules\mono`, `prompts`, `docs\_base`, `docs\_mono`, `docs\00_contexto\_mono` |
+| **MULTI** | `{proyectomulti}` | `rules\base`, `rules\multi`, `prompts`, `docs\_base`, `docs\_multi`, `docs\00_contexto\_multi` |
+
+- Los **`mklink`** requieren **Windows + privilegios de administrador**; si el asistente no puede ejecutarlos, debe entregar la **lista de comandos** sustituyendo el placeholder por el nombre real del repo (p. ej. `PaqSuite-IA-Partes-Atencion`) y recordar crear carpetas reales (`docs`, `docs\00_contexto`) antes de enlazar.
+- **No** encadenar symlinks MONO→BASE ni MULTI→BASE.
+- Tras los enlaces, las reglas heredadas viven bajo `.cursor\rules\base` y `mono`/`multi`; la guía base del scaffold se lee como **`docs/_base/00-inicio-arquitectura.md`** en el producto.
+
 **4.1 Documentación y diseño (mínimo coherente con el scaffold):** flujo E2E y criterios; modelo de datos según **MULTI** o **MONO**; **`docs/01-arquitectura/01-arquitectura-proyecto.md`** y README de `docs/01-arquitectura/`; **solo MULTI:** `07-mapa-visual-tenancy-resolucion-db.md`.
 
 **4.2 Backend:** API versionada (p. ej. prefijo **`api/v1`**); Sanctum; respuestas **envelope** estables (`error`, `respuesta`, `resultado`) si se adopta el mismo contrato del lineamiento; capas como en **`01-arquitectura-proyecto.md`**; autorización por operación; migraciones/seeders mínimos (**MULTI:** empresa(s) y permisos por empresa; **MONO:** sin capa empresa/tenant); **OpenAPI:** base `OpenApi.php` + generación de paths (p. ej. `backend/scripts/build-openapi-paths-from-routes.mjs` si aplica la plantilla) y **`php artisan l5-swagger:generate`** en el flujo de trabajo; tests feature en endpoints críticos.
@@ -75,7 +92,7 @@ El scaffold y el código deben ser **compatibles** con las reglas citadas en **�
 
 ### Cierre con **§7 — Checklist** del documento base
 
-Al terminar, debe poder marcarse el checklist del **§7** (modo declarado, E2E, capas, OpenAPI, frontend DevExtreme, tests Vitest + E2E flujo principal, `VERSION`, `.env.example`, reglas referenciadas).
+Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`docs/_base/symlinks_paqsuite_ia.md`** y §4.0; modo declarado; E2E; capas; OpenAPI; frontend DevExtreme; tests Vitest + E2E flujo principal; `VERSION`; `.env.example`; reglas referenciadas).
 
 **Referencias centralizadas:** usar la tabla del **§8** del documento base (`docs/arquitectura.md`, `docs/01-arquitectura/README.md`, `ui/`, `devextreme-norms.md`, deploy, `AGENTS.md`).
 
@@ -91,4 +108,4 @@ Al terminar, debe poder marcarse el checklist del **§7** (modo declarado, E2E, 
 
 ---
 
-*Uso: invocar con **plataforma + MONO|MULTI + rutas**; el asistente implementa el stack y el orden del documento **`docs/_base/00-inicio-arquitectura.md`**.*
+*Uso: invocar con **plataforma + MONO|MULTI + rutas**; el asistente implementa primero la herencia por symlinks (**§4.0** / **`docs/_base/symlinks_paqsuite_ia.md`**) y luego el stack y el orden del documento **`docs/_base/00-inicio-arquitectura.md`**.*

@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 
-# 00 — Organización y ubicación de reglas
+# 00 — Organización y ubicación de reglas.
 
 ## Objetivo
 
@@ -14,7 +14,7 @@ Definir la política oficial de organización de reglas Cursor dentro de la arqu
 - mezcla de responsabilidades,
 - acoplamiento innecesario entre proyectos.
 
-La arquitectura se basa en **herencia por capas** sin duplicar archivos: el repositorio **PaqSuite-IA-BASE** concentra las reglas **comunes al 100 %** de los proyectos; los paquetes **MONO** y **MULTI** añaden solo lo propio de monoempresa o multiempresa; cada **proyecto** enlaza BASE + (MONO *o* MULTI) + opcionales (p. ej. TANGO) + reglas propias. Detalle del modelo y del inventario: **`Estructura de reglas.md`**. Técnica de enlaces: **`symlinks_paqsuite_ia.md`**.
+La arquitectura se basa en **herencia por capas** sin duplicar archivos: el repositorio **PaqSuite-IA-BASE** concentra las reglas **comunes al 100 %** de los proyectos; los paquetes **MONO** y **MULTI** añaden solo lo propio de monoempresa o multiempresa; cada **proyecto** enlaza BASE + (MONO *o* MULTI) + opcionales (p. ej. TANGO) + reglas propias. Detalle del modelo y del inventario: **`Estructura de reglas.md`**. Técnica de enlaces: **`.cursor/docs/symlinks_paqsuite_ia.md`** (en productos: `docs/_base/symlinks_paqsuite_ia.md`).
 
 ---
 
@@ -65,7 +65,7 @@ Las referencias cruzadas entre reglas deben usar la **ruta completa** bajo `.cur
 - **MULTI:** reglas para productos **multiempresa**: **diccionario u organización de bases**, **contexto de empresa**, **permisos de acceso por empresa**, dashboards/layouts con segmentación por tenant cuando aplique. Paquete enlazado como **`multi`**.
 - Cada **proyecto concreto** enlaza **`base`** y **exactamente uno** de **`mono`** o **`multi`** (no ambos), más symlinks opcionales (TANGO, ERP, …) y **archivos propios** del módulo.
 
-La política de symlinks (sin encadenar MONO→BASE ni MULTI→BASE) está en **`symlinks_paqsuite_ia.md`**.
+La política de symlinks (sin encadenar MONO→BASE ni MULTI→BASE) está en **`.cursor/docs/symlinks_paqsuite_ia.md`**.
 
 ---
 

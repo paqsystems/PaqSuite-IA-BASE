@@ -1,6 +1,6 @@
 # Referencias pendientes (respecto de este repositorio)
 
-**Alcance:** en **PaqSuite-IA-BASE** solo están, hoy, las reglas bajo `.cursor/`, la documentación de herencia en la raíz (`Estructura de reglas.md`, `symlinks_paqsuite_ia.md`, `Readme.md`) y recursos auxiliares.  
+**Alcance:** en **PaqSuite-IA-BASE** solo están, hoy, las reglas bajo `.cursor/`, la documentación de herencia (`.cursor/docs/`, incl. `symlinks_paqsuite_ia.md`; `Estructura de reglas.md` en la raíz; `Readme.md`) y recursos auxiliares.  
 Cualquier ruta que apunte a **otro árbol** (por ejemplo `docs/`, `frontend/`, `specs/`, `database/`, `backend/`) **no existe en este repo**: es normal si este repositorio es solo el **paquete BASE de reglas**. Las reglas asumen además un **proyecto de aplicación** donde sí conviven código y documentación humana.
 
 Este archivo lista referencias **explícitas en la documentación de rules** (y en `Readme.md`) que **no tienen archivo o carpeta correspondiente** dentro de `PaqSuite-IA-BASE`, para facilitar auditoría o enlazar repos hijos.
