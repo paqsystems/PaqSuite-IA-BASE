@@ -50,7 +50,7 @@ Usuario → https://{cliente}.{proyecto}.paqsystems.com
 
 | Mecanismo | Uso recomendado |
 |-----------|-----------------|
-| **Header HTTP** (ej. `X-Paq-Cliente: acme`) | Preferido en proxy → backend; el proxy inyecta el header al reenviar a `demo.{proyecto}`. |
+| **Header HTTP** (ej. `X-Paq-Cliente: acme`) | Preferido en proxy → backend; equivalente a `X-Tenant` del patrón ERP multitenant. El proxy inyecta el header al reenviar a `demo.{proyecto}`. |
 | **Cookie firmada** | Alternativa si el redirect es solo en navegador; backend lee cookie en requests subsiguientes. |
 | **Query en redirect** (ej. `?cliente=acme`) | Solo como puente en el 302; normalizar en el primer request al backend y pasar a header/cookie; evitar dejarlo solo en query en operación normal. |
 
@@ -66,19 +66,31 @@ Prioridad sugerida al resolver:
 
 ## Registro de asociación cliente → SQL
 
-Existe un **modo de asociación** (tabla de configuración, archivo seguro o servicio de secretos) keyed por `{cliente}` + `{proyecto}`:
+Existe un **modo de asociación** en base **central del deploy** (tabla recomendada **`EMPRESAS_CONEXION`**, mismo concepto que `docs/_base/regla-cursor-multitenant-paqsuite.md`) keyed por `{cliente}` + `{proyecto}`.
 
 | Dato | Descripción |
 |------|-------------|
-| `cliente` | Slug del host de entrada (ej. `acme`) |
+| `cliente` / `CODIGO_TENANT` | Slug del host de entrada (ej. `acme`) |
 | `proyecto` | Slug del producto (ej. `pedidosweb`) |
-| `sqlHost` | IP o DNS del servidor SQL |
-| `sqlInstance` | Instancia nombrada (opcional, según motor) |
-| `databaseName` | Nombre de la base operativa (ej. `paqsystems_pedidosweb_acme` o convención del producto) |
-| Credenciales | Usuario/contraseña o identidad gestionada (vault, Secrets Manager; **nunca** en repo) |
-| `habilitado` | Si el cliente puede conectarse |
+| `DOMINIO` | Host de entrada (ej. `acme.pedidosweb.paqsystems.com`) |
+| `HOST_TAILSCALE` | **Hostname Tailscale** del SQL del cliente (ej. `acme.tailnet.ts.net`). **No** usar IP pública ni abrir puertos SQL a Internet. |
+| `SQL_DATABASE` | Nombre de la base (ej. `paqsystems_pedidosweb_acme`) |
+| `SQL_INSTANCE` | Instancia nombrada (opcional) |
+| `SQL_USER` | Usuario dedicado (ej. `paqsuite_api`); **no** `sa` |
+| `SQL_PASSWORD_ENCRYPTED` | Secreto cifrado (vault / Secrets Manager; **nunca** en repo) |
+| `ACTIVO` | Si el cliente puede conectarse |
 
-El backend, tras conocer `{cliente}`, **abre la conexión** correspondiente antes de ejecutar lógica de negocio.
+### Conectividad Tailscale
+
+```text
+Frontend (AWS) → Backend API (AWS) → HOST_TAILSCALE → SQL Server del cliente
+```
+
+- Cada cliente: SQL Server + nodo Tailscale + ACLs en su red.
+- Guía de implementación: `docs/_base/_Tailscape.md`.
+- Reglas de seguridad y cache: `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` §6.
+
+El backend, tras conocer `{cliente}`, consulta el registro, arma el connection string y **abre la conexión** antes de lógica de negocio. **Prohibido** que el frontend acceda al SQL del cliente directamente.
 
 ### Cliente especial `demo`
 
@@ -112,18 +124,20 @@ El mismo slug **`{cliente}`** del host de entrada se usa para el **logo** en log
 
 ## Implementación backend (resumen)
 
-1. Middleware temprano: resolver `proyecto` (config) y `cliente` (header/cookie/dev=`demo`).
-2. Cargar asociación SQL para `(proyecto, cliente)`.
-3. Establecer conexión por request (o pool por cliente con cuidado de aislamiento).
-4. Exponer `cliente` al frontend si hace falta (bootstrap API, ej. `/api/v1/context`).
-5. Registrar en logs `cliente`, `proyecto`, host original (auditoría).
+1. Middleware temprano: resolver `proyecto` (config) y `cliente` (header `X-Paq-Cliente` / cookie / dev=`demo`).
+2. Validar `cliente` en `EMPRESAS_CONEXION` (`ACTIVO = 1`); cachear registro (TTL ~5 min).
+3. Construir connection string hacia `HOST_TAILSCALE` + `SQL_DATABASE` + credenciales descifradas.
+4. Establecer conexión por request (pool por cliente con aislamiento).
+5. Exponer `cliente` al frontend si hace falta (bootstrap API, ej. `/api/v1/context`).
+6. Logging: `cliente`, `proyecto`, hostname, endpoint, errores SQL/Tailscale (sin secretos).
 
 ---
 
 ## Implementación frontend (resumen)
 
 - Tras redirect, la SPA se sirve desde `demo.{proyecto}`.
-- Cliente HTTP API envía el header acordado si el proxy no lo inyecta solo en server-side render.
+- Helper centralizado `resolveClienteFromHostname` (no repetir lógica en componentes); interceptor HTTP con `X-Paq-Cliente`.
+- Desarrollo: `localhost` / IP privada → `cliente = demo`; opcional `VITE_TENANT_OVERRIDE` con prioridad documentada.
 - Logo: resolver ruta de imagen según `cliente` del contexto bootstrap.
 
 ---
@@ -167,8 +181,9 @@ Ejemplo PedidosWeb: `paqsystems_pedidosweb_acme`. El nombre efectivo debe coinci
 | Documento | Relación |
 |-----------|----------|
 | `00-inicio-arquitectura.md` §1.2 MONO | Modo instalación; enlaza aquí |
-| `15-host-subdominio-base-datos-y-branding.md` | Logo; producción MULTI/clásica por host distinto |
-| `regla-cursor-multitenant-paqsuite.md` | ERP `X-Tenant` + Tailscale (otro producto/linea) |
+| `15-host-subdominio-base-datos-y-branding.md` | Logo, Tailscale, `EMPRESAS_CONEXION`, seguridad SQL |
+| `regla-cursor-multitenant-paqsuite.md` | Mismo patrón tenant + `X-Tenant` (referencia ERP) |
+| `_Tailscape.md` | Guía operativa Tailscale |
 | `shell-layout-principal.md` | UI post-login |
 | Producto (ej. PedidosWeb OpenSpec) | Convención `{proyecto}` y datos de negocio |
 
