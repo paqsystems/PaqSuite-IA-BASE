@@ -40,7 +40,7 @@ Aplicá siempre el criterio de negocio: **no ejecutar TR como fuente de verdad**
 
 ## 4. Tópico: comandos del circuito Open-Spec
 
-No son comandos de terminal ni paquetes npm: son **frases en lenguaje natural** que el asistente debe interpretar según las reglas. El dispatcher referencia los prompts **`prompts/openspec-01-SPEC-desde-contexto.md`**, **`openspec-02-HU-desde-SPEC.md`**, **`openspec-03-TR-desde-SPEC-y-HU.md`** y **`openspec-04-verificar-implementacion.md`** (en **PaqSuite-IA-BASE**: `.cursor/prompts/`; en repos de producto suelen enlazarse como `prompts/`). Si tu copia aún no los tiene, usá las frases de las partes **A–C** y **F** del §4.1 y la plantilla `_template-spec.md`.
+No son comandos de terminal ni paquetes npm: son **frases en lenguaje natural** que el asistente debe interpretar según las reglas. El dispatcher referencia los prompts **`prompts/openspec-01-SPEC-desde-contexto.md`**, **`openspec-02-HU-desde-SPEC.md`**, **`openspec-03-TR-desde-SPEC-y-HU.md`**, **`openspec-04-Ejecucion-de-una-TR.md`** y **`openspec-05-verificar-implementacion.md`** (en **PaqSuite-IA-BASE**: `.cursor/prompts/`; en repos de producto suelen enlazarse como `prompts/`). Si tu copia aún no los tiene, usá las frases de las partes **A–F** del §4.1 y la plantilla `_template-spec.md`.
 
 ### 4.1 Comandos propios de Open-Spec (alcance SPEC → HU → TR → ejecutar → tests → verificación)
 
@@ -51,9 +51,9 @@ En el dispatcher, el **núcleo** usa **A–F** en orden alfabético igual al de 
 | **A** | Redactar o actualizar SPEC desde contexto (producto, ticket, carpeta `docs/02-producto/`) | `Creá o actualizá el SPEC en docs/05-open-spec/… según [fuente o ruta]` · `Completá el SPEC con alcance, fuera de alcance y criterios verificables` | Prompt **`prompts/openspec-01-SPEC-desde-contexto.md`** + plantilla `_template-spec.md` · **Parte A** del dispatcher |
 | **B** | Generar **HU** a partir de un **SPEC** | `Generá la HU a partir del SPEC docs/05-open-spec/…` · `Derivá la historia de usuario alineada al SPEC-…` | Prompt **`prompts/openspec-02-HU-desde-SPEC.md`** · **Parte B** del dispatcher |
 | **C** | Generar **TR** a partir de **SPEC + HU** | `Generá el TR coherente con el SPEC … y la HU …` · `Aplicá el flujo Open-Spec→TR para la HU-…` | Prompt **`prompts/openspec-03-TR-desde-SPEC-y-HU.md`** · **Parte C** del dispatcher |
-| **D** | **Ejecutar** la TR (implementación) | `Ejecutá la TR …` (ruta bajo `docs/04-tareas/`) | Prompt **`05-Ejecucion-de-una-TR.md`** (o ruta equivalente) · **Parte D** del dispatcher |
+| **D** | **Ejecutar** la TR (implementación) | `Ejecutá la TR …` (ruta bajo `docs/04-tareas/`) | Prompt **`openspec-04-Ejecucion-de-una-TR.md`** (o ruta equivalente) · **Parte D** del dispatcher |
 | **E** | **Tests** automatizados | `Ejecutá los tests` / `Corré los tests` | **Parte E** del dispatcher |
-| **F** | **Verificar** implementación vs documentos (sin CLI) | `Verificá la implementación contra el TR docs/04-tareas/…` · `Ejecutá la verificación tipo OpenSpec para el TR-…` | Prompt **`prompts/openspec-04-verificar-implementacion.md`** · **Parte F** del dispatcher |
+| **F** | **Verificar** implementación vs documentos (sin CLI) | `Verificá la implementación contra el TR docs/04-tareas/…` · `Ejecutá la verificación tipo OpenSpec para el TR-…` | Prompt **`prompts/openspec-05-verificar-implementacion.md`** · **Parte F** del dispatcher |
 
 Convención de nombres alineada al resto del método: `SPEC-xxx-…`, sufijos `-update`, `-update-01`, etc. (detalle en la regla de gobernanza cuando exista).
 
@@ -95,7 +95,7 @@ Orden recomendado (después de tener contexto en producto o ticket):
 4. **TR (Parte C):** **`openspec-03-TR-desde-SPEC-y-HU.md`**. Referenciar SPEC y HU en el TR.
 5. **Ejecutar la TR** (**Parte D** del dispatcher).
 6. **Tests (Parte E)** según el proyecto.
-7. **Verificación documental (Parte F):** **`openspec-04-verificar-implementacion.md`** y contrastar código vs TR (y SPEC/HU si aplican).
+7. **Verificación documental (Parte F):** **`openspec-05-verificar-implementacion.md`** y contrastar código vs TR (y SPEC/HU si aplican).
 8. **Revisión / CC:** registrar hallazgos en el archivo de control correspondiente; **Estados** según `07-estado-hu-tr.md` (y **Especificado** cuando la regla lo formalice).
 
 ---
@@ -114,7 +114,7 @@ Principio: **primero el alcance (SPEC), después la ejecución documentada (HU/T
 
 1. **Parte G** (`Corrige…`): **§0** — SPEC-update y derivación **HU-update** / **TR-update** cuando cambia el alcance; puntos 1–7 — volcado desde `docs/00-ControlCalidad/`. **L** si solo redactás SPEC-update sin comando masivo de corrección.
 2. **Implementar** (**D**) según TR-update o TR vigente.
-3. **Tests** (**E**) y verificación documental (**F**, `openspec-04`).
+3. **Tests** (**E**) y verificación documental (**F**, `openspec-05`).
 4. **Parte H** (comando *Finaliza el control…*) cuando corresponda.
 5. **Parte I** / **M:** unificar solo artefactos **`Estado: Finalizado`**; **SPEC-update** (punto **11** de **I**) **antes** que HU/TR en la misma familia.
 
@@ -126,7 +126,7 @@ Esto evita implementar cambios o “parches” en TR que no reflejen un SPEC rev
 
 - [ ] ¿Existe SPEC de referencia y está actualizado para el cambio?
 - [ ] ¿HU y TR enlazan al SPEC (y el SPEC enlaza de vuelta)?
-- [ ] ¿Tras implementar, corriste verificación **F** (`openspec-04`) además de tests (**E**) cuando el cambio fue sustancial?
+- [ ] ¿Tras implementar, corriste verificación **F** (`openspec-05`) además de tests (**E**) cuando el cambio fue sustancial?
 - [ ] ¿SPEC-update abiertos viven en `docs/05-open-spec/updates/…` y el unificar incorpora al SPEC base solo lo **Finalizado**?
 - [ ] Ante CC: ¿**G → D → E → F → H → I** en orden, con todos los updates (SPEC cuando aplique) **Finalizado** antes de unificar?
 
@@ -145,3 +145,4 @@ Esto evita implementar cambios o “parches” en TR que no reflejen un SPEC rev
 ---
 
 *Última revisión alineada a Open-Spec **interno** PaqSuite (sin dependencia de `npm install -g @fission-ai/openspec`).*
+

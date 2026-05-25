@@ -215,7 +215,7 @@ docs/
 1. Leer la HU en `docs/03-historias-usuario/`
 2. Generar la TR con el dispatcher o manualmente
 3. Guardar la TR en `docs/04-tareas/` replicando la estructura de carpetas de la HU (sustituyendo la raíz `03-historias-usuario` por `04-tareas`)
-4. **Ejecutar la TR** siguiendo el prompt en `docs/prompts/05-Ejecucion-de-una-TR.md` (código, tests automatizados, documentación acordada)
+4. **Ejecutar la TR** siguiendo el prompt en `docs/prompts/openspec-04-Ejecucion-de-una-TR.md` (código, tests automatizados, documentación acordada)
 5. **Testeo posterior a la implementación**
    - **Con IA / automatizado:** PHPUnit, Vitest, Playwright según `.cursor/rules/12-testing.md` y el checklist de la propia TR
    - **Manual:** pruebas de usuario, recorridos y revisiones que pueden dar lugar a un control de calidad formal (paso 6)
@@ -412,3 +412,4 @@ Este es un **MVP web** para para empresas que trabajan con el sistema Tango Gest
 **v1.5:** Archivos con credenciales (BD, DevExtreme, API URL, túnel SSH)
 
 **v1.4:** README docs/ y backend/, Ruta de Lectura, estructura del proyecto
+

@@ -1,11 +1,12 @@
-# Open-Spec **1/4** — SPEC desde contexto
+# Open-Spec **1/5** — SPEC desde contexto
 
 En el método **Open-Spec completo** los prompts se ejecutan en este orden:
 
 1. **`openspec-01-SPEC-desde-contexto.md`** (este archivo) — definir alcance en SPEC  
 2. **`openspec-02-HU-desde-SPEC.md`** — HU solo desde SPEC  
 3. **`openspec-03-TR-desde-SPEC-y-HU.md`** — TR solo desde SPEC + HU  
-4. **`openspec-04-verificar-implementacion.md`** — comprobar código vs documentos (tras implementar; ver **Parte F** del dispatcher)
+4. **`openspec-04-Ejecucion-de-una-TR.md`** — implementar la TR
+5. **`openspec-05-verificar-implementacion.md`** — comprobar código vs documentos (tras implementar; ver **Parte F** del dispatcher)
 
 No generés HU ni TR con alcance nuevo **antes** de tener el SPEC que las respalde.
 

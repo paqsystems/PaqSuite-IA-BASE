@@ -375,7 +375,7 @@ La carpeta `docs/_projects/` contiene material histórico para re-aplicar a futu
 | Mapeo API ↔ datos | `architecture/api-to-data-mapping.md` | `.cursor/Docs/api-to-data-mapping.md` |
 | Prefijo tablas / ORM | — | `.cursor/rules/09-data-access-orm-sql.md` |
 | Dispatcher HU→TR, QA, unificación | — | `.cursor/rules/00-prompts-programados-dispatcher.md` |
-| Prompts HU→TR y ejecución TR | — | `docs/prompts/04-Prompts-HU-a-Tareas.md`, `docs/prompts/05-Ejecucion-de-una-TR.md` |
+| Prompts HU→TR y ejecución TR | — | `docs/prompts/04-Prompts-HU-a-Tareas.md`, `docs/prompts/openspec-04-Ejecucion-de-una-TR.md` |
 
 ---
 
@@ -488,5 +488,6 @@ Este checklist está basado en el proceso seguido en este proyecto. Para más de
 **Cambios 2026-04-02:** Alineación con el repo actual: tabla de rutas efectivas (`.cursor/Docs/`, ausencia de `specs/`), modelo en `docs/modelo-datos/`, contrato API en `docs/api/`, fase 6.3 (Control de Calidad → updates), referencias al dispatcher y a `00-ControlCalidad/`; ajustes en sección «Definiciones» (rutas `.cursor`) y en programación/testing.
 
 **Cambios 2026-02-28:** Actualizadas rutas a `docs/03-historias-usuario/` y `docs/04-tareas/`; añadida nota sobre `docs/_projects/`.
+
 
 

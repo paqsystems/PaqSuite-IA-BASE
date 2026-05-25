@@ -375,7 +375,7 @@ Ejecutá la TR [rutaTr]
 ### Prompt asociado
 
 ```text
-prompts/05-Ejecucion-de-una-TR.md
+prompts/openspec-04-Ejecucion-de-una-TR.md
 ```
 
 ### Reglas
@@ -468,13 +468,13 @@ Verificar evidencia antes de afirmar que algo está terminado.
 ### Comando
 
 ```text
-Ejecutá openspec-04 para la TR [rutaTr]
+Ejecutá openspec-05 para la TR [rutaTr]
 ```
 
 ### Prompt asociado
 
 ```text
-prompts/openspec-04-verificar-implementacion.md
+prompts/openspec-05-verificar-implementacion.md
 ```
 
 ### Objetivo
@@ -1068,3 +1068,4 @@ Esta versión del dispatcher permite:
 - planificar antes de programar;
 - verificar antes de cerrar;
 - documentar aprendizajes sin auto-modificar reglas.
+

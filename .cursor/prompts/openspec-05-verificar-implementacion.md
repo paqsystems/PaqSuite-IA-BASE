@@ -1,6 +1,6 @@
-# Open-Spec **4/4** — Verificar implementación vs documentos
+# Open-Spec **5/5** — Verificar implementación vs documentos
 
-Orden del método: **1 → 2 → 3** antes de implementar; este paso **4** va **después** de **Parte D** (ejecutar TR) y conviene usarlo **antes** del cierre de revisión, junto con **Parte E** (tests automáticos).
+Orden del método: **1 → 2 → 3 → 4** antes de verificar; este paso **5** va **después** de **Parte D** (ejecutar TR) y conviene usarlo **después** de **Parte E** (tests automáticos).
 
 Equivalente interno a `/opsx:verify` (sin CLI externo).
 

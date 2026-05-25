@@ -40,7 +40,7 @@ Para cada HU:
 Para cada TR:
 
 1. Lee el archivo TR.
-2. Ejecuta el prompt de `docs/prompts/05-Ejecucion-de-una-TR.md`.
+2. Ejecuta el prompt de `docs/prompts/openspec-04-Ejecucion-de-una-TR.md`.
 3. Implementa DB, backend, frontend, tests según el plan.
 
 **Dependencias:**
@@ -93,5 +93,6 @@ prompt: |
 
 1. Remover o ajustar el aviso de "NO ACTIVA" al inicio.
 2. Crear una regla `.mdc` que referencie este documento y defina cuándo aplica.
-3. Verificar que existan `docs/prompts/04-Prompts-HU-a-Tareas.md` y `05-Ejecucion-de-una-TR.md`.
+3. Verificar que existan `docs/prompts/04-Prompts-HU-a-Tareas.md` y `openspec-04-Ejecucion-de-una-TR.md`.
 4. Las rutas siguen `docs/04-tareas/{subcarpeta}/` según la subcarpeta de la HU (ver regla 05).
+

@@ -30,7 +30,7 @@ En este repo **no hay carpeta `docs/`**. Las referencias siguientes aparecen en 
 | Ruta | Uso típico |
 |------|------------|
 | `docs/prompts/04-Prompts-HU-a-Tareas.md` | Orquestador, dispatcher, ejemplos |
-| `docs/prompts/05-Ejecucion-de-una-TR.md` | Orquestador, `07-estado-hu-tr.md`, dispatcher |
+| `docs/prompts/openspec-04-Ejecucion-de-una-TR.md` | Orquestador, `07-estado-hu-tr.md`, dispatcher |
 | `docs/16-prompt-dispatcher-ejemplos.md` | Dispatcher (partes E/G) |
 | `docs/02-producto/` | Dispatcher (generación HU desde producto) |
 | `docs/03-historias-usuario/` (y `…/updates/`) | Dispatcher, estado HU/TR, orquestador |
@@ -112,3 +112,4 @@ Si usás solo **PaqSuite-IA-BASE** como reglas, interpretá estas rutas como **c
 ## Actualización
 
 Tras añadir archivos reales en BASE o enlazar un repo de aplicación, conviene **volver a generar o revisar** esta lista (por búsqueda de `` `docs/...` ``, `.cursor/rules/...` ausentes, etc.).
+
