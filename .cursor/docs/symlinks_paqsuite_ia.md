@@ -7,7 +7,7 @@
 
 ## Objetivo
 
-Este documento describe la estrategia utilizada para compartir **reglas** de Cursor (`.cursor/rules`), **prompts** reutilizables y **documentación heredada** (`docs/_base`, `docs/_mono`, `docs/_multi`, `docs/00_contexto/_mono`, `docs/00_contexto/_multi`) entre los proyectos de la plataforma PaqSuite IA mediante **symlinks** (vínculos simbólicos).
+Este documento describe la estrategia utilizada para compartir **reglas** de Cursor (`.cursor/rules`), **prompts** reutilizables y **documentación heredada** (`docs/_base`, `docs/_mono`, `docs/_multi`, `docs/00-contexto/_mono`, `docs/00-contexto/_multi`) entre los proyectos de la plataforma PaqSuite IA mediante **symlinks** (vínculos simbólicos).
 
 La finalidad es:
 
@@ -46,7 +46,7 @@ Cada proyecto referencia directamente:
 * MONO **o** MULTI (`mono` / `multi` en `.cursor/rules`)
 * **Opcional / recomendado:** `prompts` en la raíz → `PaqSuite-IA-BASE\.cursor\prompts`
 * **Opcional / recomendado:** `docs/_base` → `PaqSuite-IA-BASE\.cursor\docs`; `docs/_mono` **o** `docs/_multi` según tipo de producto
-* **Opcional / recomendado:** `docs/00_contexto/_mono` **o** `docs/00_contexto/_multi` → contexto de producto en `PaqSuite-IA-MONO\docs\00-contexto` o `PaqSuite-IA-MULTI\docs\00-contexto`
+* **Opcional / recomendado:** `docs/00-contexto/_mono` **o** `docs/00-contexto/_multi` → contexto de producto en `PaqSuite-IA-MONO\docs\00-contexto` o `PaqSuite-IA-MULTI\docs\00-contexto`
 * reglas propias del proyecto (archivos bajo `.cursor/rules` que no sean symlinks)
 
 Esto mejora:
@@ -72,7 +72,7 @@ Proyecto
  └── docs
       ├── _base       → PaqSuite-IA-BASE\.cursor\docs
       ├── _mono       → PaqSuite-IA-MONO\.cursor\docs
-      └── 00_contexto
+      └── 00-contexto
            └── _mono  → PaqSuite-IA-MONO\docs\00-contexto
 ```
 
@@ -88,7 +88,7 @@ Proyecto
  └── docs
       ├── _base       → PaqSuite-IA-BASE\.cursor\docs
       ├── _multi      → PaqSuite-IA-MULTI\.cursor\docs
-      └── 00_contexto
+      └── 00-contexto
            └── _multi → PaqSuite-IA-MULTI\docs\00-contexto
 ```
 
@@ -106,18 +106,18 @@ Además de **`.cursor/rules`**, cada producto puede enlazar **prompts** y **frag
 | `<Proyecto>\docs\_base` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\docs` | **Todos** |
 | `<Proyecto>\docs\_mono` | `C:\Programacion\PaqSuite-IA-MONO\.cursor\docs` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
 | `<Proyecto>\docs\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs` | Solo **multi** (ERP, TANGO) |
-| `<Proyecto>\docs\00_contexto\_mono` | `C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
-| `<Proyecto>\docs\00_contexto\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto` | Solo **multi** (ERP, TANGO) |
+| `<Proyecto>\docs\00-contexto\_mono` | `C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
+| `<Proyecto>\docs\00-contexto\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto` | Solo **multi** (ERP, TANGO) |
 
 
 ## Convenciones
 
 * **`prompts`** vive en la **raíz** del repo del producto (no dentro de `.cursor`), coherente con la tabla de carpetas del `Readme.md` del ecosistema.
 * **`docs/_base`**, **`docs/_mono`**, **`docs/_multi`** cuelgan de **`docs/`**, al lado del resto de documentación del producto (p. ej. historias de usuario, manuales). El prefijo `_` reduce colisiones con carpetas numéricas habituales.
-* **`docs/00_contexto/_mono`** o **`docs/00_contexto/_multi`** enlazan el **contexto de producto** compartido (`docs\00-contexto` en el repo MONO o MULTI). La carpeta **`00_contexto`** en cada proyecto es **real**; dentro de ella solo va el symlink `_mono` o `_multi` (no ambos).
+* **`docs/00-contexto/_mono`** o **`docs/00-contexto/_multi`** enlazan el **contexto de producto** compartido (`docs\00-contexto` en el repo MONO o MULTI). La carpeta **`00-contexto`** en cada proyecto es **real**; dentro de ella solo va el symlink `_mono` o `_multi` (no ambos).
 * Los **destinos finales** de los symlinks son siempre directorios **reales** en PaqSuite-IA-BASE, PaqSuite-IA-MONO o PaqSuite-IA-MULTI. **No** encadenar un symlink dentro de otro.
-* **Multiempresa:** ERP y TANGO enlazan **`docs/_multi`** → `PaqSuite-IA-MULTI\.cursor\docs` y **`docs\00_contexto\_multi`** → `PaqSuite-IA-MULTI\docs\00-contexto`.
-* **Monoempresa:** PedidosWeb, Partes Atención y NovedadesWeb enlazan **`docs/_mono`** → `PaqSuite-IA-MONO\.cursor\docs` y **`docs\00_contexto\_mono`** → `PaqSuite-IA-MONO\docs\00-contexto`. La consolidación del contenido en `PaqSuite-IA-MONO\.cursor\docs` puede priorizarse en **Partes Atención** al inicio; el mismo patrón de comandos aplica al resto de repos mono.
+* **Multiempresa:** ERP y TANGO enlazan **`docs/_multi`** → `PaqSuite-IA-MULTI\.cursor\docs` y **`docs\00-contexto\_multi`** → `PaqSuite-IA-MULTI\docs\00-contexto`.
+* **Monoempresa:** PedidosWeb, Partes Atención y NovedadesWeb enlazan **`docs/_mono`** → `PaqSuite-IA-MONO\.cursor\docs` y **`docs\00-contexto\_mono`** → `PaqSuite-IA-MONO\docs\00-contexto`. La consolidación del contenido en `PaqSuite-IA-MONO\.cursor\docs` puede priorizarse en **Partes Atención** al inicio; el mismo patrón de comandos aplica al resto de repos mono.
 
 ## Requisitos previos en los repos fuente
 
@@ -130,7 +130,7 @@ PaqSuite-IA-BASE\.cursor\docs\
 
 En **PaqSuite-IA-MONO** y **PaqSuite-IA-MULTI** debe existir la carpeta **`.cursor\docs`** (aunque al principio esté vacía o solo con un `README.md`), porque es el **target** de los symlinks `docs/_mono` y `docs/_multi`.
 
-Además, en cada repo paquete debe existir **`docs\00-contexto`** (carpeta real con guion), **target** de `docs\00_contexto\_mono` o `docs\00_contexto\_multi`:
+Además, en cada repo paquete debe existir **`docs\00-contexto`** (carpeta real con guion), **target** de `docs\00-contexto\_mono` o `docs\00-contexto\_multi`:
 
 ```text
 PaqSuite-IA-MONO\docs\00-contexto\
@@ -148,11 +148,11 @@ C:\Programacion
  ├── PaqSuite-IA-MONO          (.cursor\docs  +  docs\00-contexto)
  ├── PaqSuite-IA-MULTI         (.cursor\docs  +  docs\00-contexto)
 
- ├── PaqSuite-IA-PedidosWeb    (docs\_base, docs\_mono, docs\00_contexto\_mono)
+ ├── PaqSuite-IA-PedidosWeb    (docs\_base, docs\_mono, docs\00-contexto\_mono)
  ├── PaqSuite-IA-Partes-Atencion
  ├── PaqSuite-IA-NovedadesWeb
 
- ├── PaqSuite-IA-ERP           (docs\_base, docs\_multi, docs\00_contexto\_multi)
+ ├── PaqSuite-IA-ERP           (docs\_base, docs\_multi, docs\00-contexto\_multi)
  └── PaqSuite-IA-TANGO
 ```
 
@@ -210,28 +210,28 @@ mkdir "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\docs"
-mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\00_contexto"
+mkdir "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs"
-mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00_contexto"
+mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs"
-mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00_contexto"
+mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-ERP\docs"
-mkdir "C:\Programacion\PaqSuite-IA-ERP\docs\00_contexto"
+mkdir "C:\Programacion\PaqSuite-IA-ERP\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-TANGO\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-TANGO\docs"
-mkdir "C:\Programacion\PaqSuite-IA-TANGO\docs\00_contexto"
+mkdir "C:\Programacion\PaqSuite-IA-TANGO\docs\00-contexto"
 ```
 
 Corregir el nombre del proyecto si tu carpeta difiere (p. ej. `PaqSuite-IA-NovedadesWeb` sin typo).
 
-**Nota:** antes de **`mklink`** sobre `docs\_base`, `docs\_mono`, `docs\_multi`, `docs\00_contexto\_mono` o `docs\00_contexto\_multi`, no debe existir una carpeta **real** con ese mismo nombre en la ruta del enlace; si existe, renombrar o eliminar sólo después de backup. La carpeta **`docs\00_contexto`** del proyecto **sí** debe ser real; solo **`_mono`** / **`_multi`** dentro de ella son symlinks.
+**Nota:** antes de **`mklink`** sobre `docs\_base`, `docs\_mono`, `docs\_multi`, `docs\00-contexto\_mono` o `docs\00-contexto\_multi`, no debe existir una carpeta **real** con ese mismo nombre en la ruta del enlace; si existe, renombrar o eliminar sólo después de backup. La carpeta **`docs\00-contexto`** del proyecto **sí** debe ser real; solo **`_mono`** / **`_multi`** dentro de ella son symlinks.
 
 ---
 
@@ -252,7 +252,7 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\_base" "C:\Program
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\00_contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-PedidosWeb\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
 ```
 
 ---
@@ -270,7 +270,7 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_base" "C:\Pr
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00_contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
 ```
 
 ---
@@ -288,7 +288,7 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\_base" "C:\Progr
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00_contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
 ```
 
 ---
@@ -308,7 +308,7 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\_base" "C:\Programacion\P
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\00_contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-ERP\docs\00-contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
 ```
 
 ---
@@ -326,7 +326,7 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\_base" "C:\Programacion
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\00_contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TANGO\docs\00-contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
 ```
 
 ---
@@ -359,10 +359,10 @@ dir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs"
 
 En la **raíz** del proyecto debe aparecer **`prompts`** como `<SYMLINKD>`. Dentro de **`docs`** deben aparecer **`_base`** y **`_mono`** (proyectos mono) o **`_multi`** (proyectos multi), también como vínculos al directorio correcto.
 
-Dentro de **`docs\00_contexto`** (carpeta real):
+Dentro de **`docs\00-contexto`** (carpeta real):
 
 ```cmd
-dir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00_contexto"
+dir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00-contexto"
 ```
 
 En proyectos **mono**, **`_mono`** debe ser `<SYMLINKD>` → `PaqSuite-IA-MONO\docs\00-contexto`. En proyectos **multi**, **`_multi`** → `PaqSuite-IA-MULTI\docs\00-contexto`.
@@ -383,16 +383,16 @@ Ejemplo (reglas):
 cmd /c rmdir "C:\Programacion\PaqSuite-IA-PedidosWeb\.cursor\rules\base"
 ```
 
-Ejemplo (`prompts`, `docs\_base`, `docs\_mono` o `docs\00_contexto\_mono`, mismo criterio: **`rmdir`** del enlace, no `del`):
+Ejemplo (`prompts`, `docs\_base`, `docs\_mono` o `docs\00-contexto\_mono`, mismo criterio: **`rmdir`** del enlace, no `del`):
 
 ```cmd
 cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\prompts"
 cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_base"
 cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\_mono"
-cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00_contexto\_mono"
+cmd /c rmdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00-contexto\_mono"
 ```
 
-En proyectos **multi**, sustituir `_mono` por `_multi` en la última ruta de `docs\00_contexto`.
+En proyectos **multi**, sustituir `_mono` por `_multi` en la última ruta de `docs\00-contexto`.
 
 NO utilizar:
 
@@ -504,15 +504,15 @@ C:\Programacion\{proyectomono}   o   C:\Programacion\{proyectomulti}
 ```cmd
 mkdir "C:\Programacion\{PROYECTO}\.cursor\rules"
 mkdir "C:\Programacion\{PROYECTO}\docs"
-mkdir "C:\Programacion\{PROYECTO}\docs\00_contexto"
+mkdir "C:\Programacion\{PROYECTO}\docs\00-contexto"
 ```
 
 (`{PROYECTO}` = `{proyectomono}` o `{proyectomulti}`.)
 
-- [ ] Comprobar que **no** existan ya carpetas reales con los nombres del enlace (`_base`, `_mono`, `_multi`, `prompts`, ni `_mono`/`_multi` dentro de `docs\00_contexto`). Si existían por error, hacer backup y quitarlas antes del `mklink`.
+- [ ] Comprobar que **no** existan ya carpetas reales con los nombres del enlace (`_base`, `_mono`, `_multi`, `prompts`, ni `_mono`/`_multi` dentro de `docs\00-contexto`). Si existían por error, hacer backup y quitarlas antes del `mklink`.
 - [ ] Ejecutar los **`mklink`** de la sección correspondiente (mono o multi).
 - [ ] Añadir **reglas propias** del módulo bajo `.cursor\rules\` (archivos `.mdc` que **no** sean symlinks), p. ej. `reglas-propias.mdc` o reglas por dominio.
-- [ ] Completar la **documentación propia** del producto en `docs\` (historias, manuales, etc.), **fuera** de `_base`, `_mono`, `_multi` y de `00_contexto\_mono` / `00_contexto\_multi` (esas rutas son herencia compartida).
+- [ ] Completar la **documentación propia** del producto en `docs\` (historias, manuales, etc.), **fuera** de `_base`, `_mono`, `_multi` y de `00-contexto\_mono` / `00-contexto\_multi` (esas rutas son herencia compartida).
 - [ ] [Verificar](#verificación) symlinks con `dir`.
 - [ ] Abrir el proyecto en Cursor y confirmar que indexa reglas, `prompts` y docs heredados.
 
@@ -529,9 +529,9 @@ mkdir "C:\Programacion\{PROYECTO}\docs\00_contexto"
 | `{proyectomono}\prompts` | `PaqSuite-IA-BASE\.cursor\prompts` |
 | `{proyectomono}\docs\_base` | `PaqSuite-IA-BASE\.cursor\docs` |
 | `{proyectomono}\docs\_mono` | `PaqSuite-IA-MONO\.cursor\docs` |
-| `{proyectomono}\docs\00_contexto\_mono` | `PaqSuite-IA-MONO\docs\00-contexto` |
+| `{proyectomono}\docs\00-contexto\_mono` | `PaqSuite-IA-MONO\docs\00-contexto` |
 
-**No** crear en un mono: `rules\multi`, `docs\_multi`, `docs\00_contexto\_multi`.
+**No** crear en un mono: `rules\multi`, `docs\_multi`, `docs\00-contexto\_multi`.
 
 ### Comandos `mklink` (plantilla)
 
@@ -546,7 +546,7 @@ cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\_base" "C:\Programacion\Pa
 
 cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\00_contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
 ```
 
 ### Estructura esperada (resumen)
@@ -561,7 +561,7 @@ cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\00_contexto\_mono" "C:\Pro
  └── docs
       ├── _base         → BASE\.cursor\docs
       ├── _mono         → MONO\.cursor\docs
-      ├── 00_contexto   (carpeta real)
+      ├── 00-contexto   (carpeta real)
       │    └── _mono    → MONO\docs\00-contexto
       └── …             (docs del producto)
 ```
@@ -572,10 +572,10 @@ cmd /c mklink /D "C:\Programacion\{proyectomono}\docs\00_contexto\_mono" "C:\Pro
 dir "C:\Programacion\{proyectomono}\.cursor\rules"
 dir "C:\Programacion\{proyectomono}"
 dir "C:\Programacion\{proyectomono}\docs"
-dir "C:\Programacion\{proyectomono}\docs\00_contexto"
+dir "C:\Programacion\{proyectomono}\docs\00-contexto"
 ```
 
-Esperado en `rules`: `base`, `mono`. En raíz: `prompts` como `<SYMLINKD>`. En `docs`: `_base`, `_mono`. En `docs\00_contexto`: `_mono`.
+Esperado en `rules`: `base`, `mono`. En raíz: `prompts` como `<SYMLINKD>`. En `docs`: `_base`, `_mono`. En `docs\00-contexto`: `_mono`.
 
 ---
 
@@ -590,9 +590,9 @@ Esperado en `rules`: `base`, `mono`. En raíz: `prompts` como `<SYMLINKD>`. En `
 | `{proyectomulti}\prompts` | `PaqSuite-IA-BASE\.cursor\prompts` |
 | `{proyectomulti}\docs\_base` | `PaqSuite-IA-BASE\.cursor\docs` |
 | `{proyectomulti}\docs\_multi` | `PaqSuite-IA-MULTI\.cursor\docs` |
-| `{proyectomulti}\docs\00_contexto\_multi` | `PaqSuite-IA-MULTI\docs\00-contexto` |
+| `{proyectomulti}\docs\00-contexto\_multi` | `PaqSuite-IA-MULTI\docs\00-contexto` |
 
-**No** crear en un multi: `rules\mono`, `docs\_mono`, `docs\00_contexto\_mono`.
+**No** crear en un multi: `rules\mono`, `docs\_mono`, `docs\00-contexto\_mono`.
 
 Si el producto integra **TANGO** u otro paquete opcional, añadir **solo** los symlinks/documentación específicos de ese paquete (fuera de este núcleo BASE + MULTI); ver nota sobre TANGO en [MULTI](#multi).
 
@@ -609,7 +609,7 @@ cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\_base" "C:\Programacion\P
 
 cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
 
-cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\00_contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
+cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\00-contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
 ```
 
 ### Estructura esperada (resumen)
@@ -624,7 +624,7 @@ cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\00_contexto\_multi" "C:\P
  └── docs
       ├── _base         → BASE\.cursor\docs
       ├── _multi        → MULTI\.cursor\docs
-      ├── 00_contexto   (carpeta real)
+      ├── 00-contexto   (carpeta real)
       │    └── _multi   → MULTI\docs\00-contexto
       └── …             (docs del producto)
 ```
@@ -635,10 +635,10 @@ cmd /c mklink /D "C:\Programacion\{proyectomulti}\docs\00_contexto\_multi" "C:\P
 dir "C:\Programacion\{proyectomulti}\.cursor\rules"
 dir "C:\Programacion\{proyectomulti}"
 dir "C:\Programacion\{proyectomulti}\docs"
-dir "C:\Programacion\{proyectomulti}\docs\00_contexto"
+dir "C:\Programacion\{proyectomulti}\docs\00-contexto"
 ```
 
-Esperado en `rules`: `base`, `multi`. En `docs`: `_base`, `_multi`. En `docs\00_contexto`: `_multi`.
+Esperado en `rules`: `base`, `multi`. En `docs`: `_base`, `_multi`. En `docs\00-contexto`: `_multi`.
 
 ---
 

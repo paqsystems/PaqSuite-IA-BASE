@@ -9,15 +9,15 @@ import html2text
 
 
 SEED_URLS = [
-    "https://ayudas.axoft.com/25ar/documentos/",
+    "https://ayudas.axoft.com/24ar/documentos/",
 ]
 
 ALLOWED_PREFIXES = [
-    "https://ayudas.axoft.com/25ar/documentos/",
+    "https://ayudas.axoft.com/24ar/documentos/",
 ]
 
-OUTPUT_DIR = "axoft_md/25ar/"
-MAX_PAGES = 4500
+OUTPUT_DIR = "axoft_md/24ar/"
+MAX_PAGES = 35000
 PAUSE_SECONDS = 1
 MIN_URL_DEPTH = 5
 
@@ -222,6 +222,18 @@ def crawl():
             print(f"ERROR en {url}: {e}")
 
     print(f"\nFinalizado. Páginas procesadas: {processed}")
+
+    if processed >= MAX_PAGES and queue:
+        print(
+            f"Motivo: se alcanzó MAX_PAGES ({MAX_PAGES}). "
+            f"Enlaces pendientes sin procesar: {len(queue)}."
+        )
+    elif not queue:
+        print("Motivo: no quedan enlaces pendientes en la cola (recorrido completo).")
+    else:
+        print(
+            f"Motivo: se alcanzó MAX_PAGES ({MAX_PAGES}) y la cola quedó vacía."
+        )
 
 
 if __name__ == "__main__":
