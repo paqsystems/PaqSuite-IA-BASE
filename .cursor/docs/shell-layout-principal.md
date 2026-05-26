@@ -176,12 +176,12 @@ El login **no** usa los cuatro frames anteriores, pero comparte criterios de mar
 |------|-------------------|
 | Host, redirect, SQL (MONO) | `resolucion-host-cliente-sql-mono.md` |
 | Logo por cliente | Regla `15-host-subdominio-base-datos-y-branding` |
-| Idioma, i18n | `docs/_mono/idioma.md` o `_multi` |
-| Ítems del menú avatar | `docs/00_contexto/_mono/menu-avatar.md` o `_multi` |
-| Sidebar y `pq_menus` | `docs/_mono/Menu-general.md` o `_multi` |
+| Idioma, i18n | `docs/00-contexto/_mono/01-experiencia-base/idioma-multilingual.md` o la carpeta equivalente `_multi` |
+| Ítems del menú avatar | `docs/00-contexto/_mono/01-experiencia-base/menu-avatar.md` o la carpeta equivalente `_multi` |
+| Sidebar y `pq_menus` | `docs/00-contexto/_mono/01-experiencia-base/menu-general.md` o la carpeta equivalente `_multi` |
 | Dashboard | Regla `10-dashboard-indicadores-por-modulo` + definición de producto |
-| Apariencia / tema | **MONO:** `docs/_mono/apariencia-temas.md` (menú avatar). **MULTI:** tema por empresa en administración (`_multi`) |
-| Post-login y auth | `docs/_mono/Login.md` o `_multi` |
+| Apariencia / tema | **MONO:** `docs/00-contexto/_mono/01-experiencia-base/apariencia-temas.md` (menú avatar). **MULTI:** tema por empresa en administración (`_multi`) |
+| Post-login y auth | `docs/00-contexto/_mono/02-acceso-y-seguridad/login-y-sesion.md` o la carpeta equivalente `_multi` |
 
 ---
 

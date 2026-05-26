@@ -12,6 +12,7 @@
 
 ### 1.0 Modo de instalación y guía de arquitectura base (recomendado al iniciar)
 
+- [ ] **Iniciar el proyecto con el prompt** `prompts/scaffold-fullstack-inicio-proyecto.md` (en PaqSuite-IA-BASE: `.cursor/prompts/scaffold-fullstack-inicio-proyecto.md`), indicando explícitamente **MONO** o **MULTI**. Ese prompt debe ejecutar `docs/_base/00-inicio-arquitectura.md` como fuente normativa.
 - [ ] Declarar por escrito si el proyecto es **MONO** (mono-empresa: una sola base de datos, seguridad en el mismo esquema, sin `X-Company-Id` ni tenancy) o **MULTI** (multi-empresa: modelo tipo Dictionary/Company, tenant y reglas acordes).
 - [ ] Leer y aplicar la guía **`docs/_base/00-inicio-arquitectura.md`** como checklist de arranque (stack Laravel/React/DevExtreme, orden sugerido, reglas esenciales y referencias). Debe ser coherente con la decisión MONO/MULTI antes de profundizar en modelo de datos y FASE 4.
 - [ ] Configurar **symlinks** de herencia (reglas, `prompts`, `docs/_base`, `docs/_mono` o `docs/_multi`, `docs/00_contexto/_mono` o `_multi`) según **`docs/_base/symlinks_paqsuite_ia.md`** (§4.0 de la guía de inicio y checklist «Proyecto nuevo» en ese documento).

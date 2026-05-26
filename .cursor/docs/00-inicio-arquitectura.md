@@ -4,6 +4,8 @@ Este documento sirve como **checklist y guía** para levantar un producto nuevo 
 
 No sustituye las reglas detalladas; enlaza a ellas para que el equipo las aplique en profundidad.
 
+**Punto de arranque operativo recomendado para proyecto nuevo:** invocar primero el prompt **`prompts/scaffold-fullstack-inicio-proyecto.md`** (en PaqSuite-IA-BASE: `.cursor/prompts/scaffold-fullstack-inicio-proyecto.md`), declarando explícitamente **`MONO`** o **`MULTI`**. Ese prompt debe ejecutarse usando este documento como **fuente normativa obligatoria**.
+
 ---
 
 ## 1. Modo de instalación (obligatorio al usar este documento)

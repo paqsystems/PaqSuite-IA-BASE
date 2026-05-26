@@ -98,6 +98,80 @@ Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`do
 
 ---
 
+## Prompt literal de uso
+
+Copiar y pegar uno de los siguientes bloques al iniciar el trabajo.
+
+### Opción 1 — MONO
+
+```md
+Usá `docs/_base/00-inicio-arquitectura.md` como fuente normativa obligatoria.
+
+Plataforma: PaqSuite-IA-<NOMBRE-PROYECTO>
+Modo: MONO
+Carpetas: backend/ y frontend/
+
+Quiero que scaffoldees el inicio del proyecto siguiendo literalmente las secciones 1–7 del documento base y usando la sección 8 solo como índice de referencias.
+
+Reglas de ejecución:
+1. Leé primero `docs/_base/00-inicio-arquitectura.md`.
+2. Si falta información para continuar, preguntala antes de generar código.
+3. Empezá por la herencia IA y los symlinks definidos en `docs/_base/symlinks_paqsuite_ia.md`.
+4. Después implementá el scaffold mínimo coherente de documentación, backend, frontend y tests según el orden del documento base.
+5. No hagas commit ni push.
+```
+
+### Opción 2 — MULTI
+
+```md
+Usá `docs/_base/00-inicio-arquitectura.md` como fuente normativa obligatoria.
+
+Plataforma: PaqSuite-IA-<NOMBRE-PROYECTO>
+Modo: MULTI
+Carpetas: backend/ y frontend/
+
+Quiero que scaffoldees el inicio del proyecto siguiendo literalmente las secciones 1–7 del documento base y usando la sección 8 solo como índice de referencias.
+
+Aplicá explícitamente las reglas MULTI del §1.1:
+- Dictionary / Company
+- `X-Company-Id`
+- validación de pertenencia
+- documentación y estructura multiempresa
+
+Reglas de ejecución:
+1. Leé primero `docs/_base/00-inicio-arquitectura.md`.
+2. Si falta información para continuar, preguntala antes de generar código.
+3. Empezá por la herencia IA y los symlinks definidos en `docs/_base/symlinks_paqsuite_ia.md`.
+4. Después implementá el scaffold mínimo coherente de documentación, backend, frontend y tests según el orden del documento base.
+5. No hagas commit ni push.
+```
+
+### Opción 3 — Plantilla genérica
+
+```md
+Usá `docs/_base/00-inicio-arquitectura.md` como fuente normativa obligatoria.
+
+Plataforma: <nombre del repo o producto>
+Modo: <MONO|MULTI>
+Carpetas: <ruta backend> y <ruta frontend>
+
+Objetivo:
+Scaffoldear el inicio del proyecto aplicando literalmente las secciones 1–7 del documento base, y la sección 8 solo como índice de referencias.
+
+Condiciones:
+- leer primero el documento base;
+- respetar el modo indicado sin reinterpretarlo;
+- incluir en el plan la herencia IA / symlinks;
+- luego crear el scaffold mínimo coherente de documentación, backend, frontend y tests;
+- no hacer commit ni push.
+```
+
+### Regla de bloqueo
+
+Si el mensaje inicial **no** incluye `MONO` o `MULTI`, el asistente debe **detenerse y pedir esa definición antes de scaffoldear**.
+
+---
+
 ## Instrucciones operativas para el asistente (sin contradicción con la base)
 
 - **Prioridad:** comportamiento y entregables descritos en **`docs/_base/00-inicio-arquitectura.md`**; si este archivo y otro texto discrepan, **prevalece el documento base**.
