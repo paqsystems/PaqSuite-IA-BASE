@@ -371,7 +371,7 @@ La carpeta `docs/_projects/` contiene material histórico para re-aplicar a futu
 | Tema | Ruta genérica del checklist | En PaqSuite (si difiere) |
 |------|----------------------------|---------------------------|
 | Flujo E2E detallado | `specs/flows/e2e-core-flow.md` | `.cursor/Docs/e2e-core-flow.md` |
-| Contrato / envelope API | `specs/contracts/response-envelope.md` | `docs/api/CONTRATO_BASE.md` (carpeta `specs/` ausente) |
+| Contrato / envelope API | `specs/contracts/response-envelope.md` | `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md` + `.cursor/rules/mono/03-api-contract.md` |
 | Códigos de error dominio | `specs/errors/domain-error-codes.md` | `.cursor/Docs/domain-error-codes.md` |
 | Mapeo API ↔ datos | `architecture/api-to-data-mapping.md` | `.cursor/Docs/api-to-data-mapping.md` |
 | Prefijo tablas / ORM | — | `.cursor/rules/09-data-access-orm-sql.md` |

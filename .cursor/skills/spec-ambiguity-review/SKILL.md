@@ -1,40 +1,97 @@
 ---
 name: spec-ambiguity-review
-description: review specs for ambiguity before user stories are generated. use when a spec, spec-update, functional requirement, or open-spec artifact must be checked so two developers would not implement different behavior. identifies unclear scope, actors, rules, data, ui, api expectations, acceptance criteria, assumptions, and human decisions without inventing missing requirements.
+description: Review a SPEC for ambiguity before user stories are generated. Use on SPEC or SPEC-update so two developers would not implement different behavior. Outputs structured review with verdict on readiness for HU generation without inventing requirements.
 ---
 
-# Revisor de Ambiguedad SPEC
+# Revisión de ambigüedad del SPEC (parte A1)
 
-## Purpose
+## Cuándo usar
 
-Use this skill as a Paqsuite development-control step inside the SPEC -> HU -> TR -> plan -> code -> verify -> PR workflow.
+Paso **A1** del flujo OpenSpec: **después** de crear o actualizar un SPEC (parte A / `openspec-01`) y **antes** de derivar HU (parte B).
 
-## Non-negotiable rules
+```text
+SPEC → [A1 spec-ambiguity-review] → HU → B1 → TR → …
+```
 
-- Do not invent functional scope.
-- Prefer explicit uncertainty over silent assumptions.
-- Use the SPEC as the source of truth for functional scope.
-- If something is unclear, list it as a question, assumption, risk, or blocker.
-- Do not modify code unless the skill explicitly belongs to implementation planning and the user then asks to execute.
-- Keep output structured and actionable.
+## Regla de referencia (única)
+
+Aplicar en detalle si hace falta:
+
+`.cursor/rules/base/00-arquitectura/11-spec-ambiguity-review.md`
+
+## Entrada obligatoria
+
+- Ruta del **SPEC** base o **SPEC-update**.
+
+Opcional: contexto usado para generar el SPEC.
+
+## Principio rector
+
+```text
+Un SPEC está listo cuando dos programadores no deberían implementar soluciones funcionalmente diferentes.
+```
 
 ## Workflow
 
-1. Read the relevant SPEC, HU, TR, rules, or changed files requested by the user.
-2. Identify the current step in the Paqsuite workflow.
-3. Apply the checklist from the matching Cursor rule:
-   - `.cursor/rules/base/00-arquitectura/11-spec-ambiguity-review.md`
-   - `.cursor/rules/base/00-arquitectura/12-enrich-user-story-desde-spec.md`
-   - `.cursor/rules/base/00-arquitectura/13-ai-planning-mode.md`
-   - `.cursor/rules/base/00-arquitectura/14-agent-verification-guide.md`
-   - `.cursor/rules/base/00-arquitectura/15-write-pr-report.md`
-4. Produce the required markdown output.
-5. If a reusable methodological improvement is detected, propose it in `docs/_base/98-metodologia/learned-patterns.md` instead of changing permanent rules automatically.
+1. Leer el SPEC completo.
+2. Recorrer el checklist resumido (10 ejes).
+3. **No generar HU** en esta skill — solo informe de revisión (y recomendaciones de ajuste al SPEC si el usuario lo pide).
+4. Emitir veredicto y plantilla de salida.
 
-## Output discipline
+## Checklist resumido (10 ejes)
 
-- Separate facts, assumptions, risks, and decisions.
-- State whether the artifact can advance to the next workflow step.
-- State what evidence was reviewed.
-- State what was not verified.
+| # | Eje | Preguntas clave |
+|---|-----|-----------------|
+| 1 | Alcance | ¿Incluye / excluye / límites explícitos? |
+| 2 | Actores | ¿Quién ejecuta cada acción? ¿Permisos por perfil? |
+| 3 | Flujo | ¿Orden claro? ¿Entradas, acciones, salidas, errores? |
+| 4 | Reglas de negocio | ¿Verificables? ¿Sin términos vagos (adecuado, rápido, similar)? |
+| 5 | Datos | ¿Entidades? ¿CRUD claro? |
+| 6 | UI / experiencia | ¿Qué ve el usuario? ¿Mensajes y estados? |
+| 7 | APIs / backend | ¿Procesos afectados? ¿Contratos funcionales? |
+| 8 | Casos especiales | ¿Errores, permisos, vacíos, duplicados, estados intermedios? |
+| 9 | Criterios de aceptación | ¿Testeables? ¿Éxito, error, permisos, edge cases? |
+| 10 | Trazabilidad | ¿Origen? ¿Listo para enlazar HU/TR? |
 
+## Salida obligatoria
+
+Documentar en el chat (o en el SPEC solo si el usuario lo pide) con esta estructura:
+
+```md
+# Revisión de ambigüedad - [SPEC]
+
+## Resultado general
+- Estado: Apto / Apto con observaciones / No apto
+
+## Ambigüedades críticas
+- ...
+
+## Ambigüedades menores
+- ...
+
+## Supuestos detectados
+- ...
+
+## Preguntas para decisión humana
+- ...
+
+## Recomendaciones de ajuste del SPEC
+- ...
+
+## Veredicto
+- Puede pasar a HU: Sí / No
+```
+
+## Regla de bloqueo
+
+Si hay **ambigüedades críticas**, no generar HU hasta resolverlas o dejarlas como decisión humana explícita aceptada.
+
+## Prohibido
+
+- Resolver ambigüedades **inventando** reglas (solo proponer alternativas marcadas como opciones).
+- Generar HU o TR en este paso.
+- Modificar código.
+
+## Mejoras metodológicas
+
+Patrones reutilizables → `docs/_base/98-metodologia/learned-patterns.md`.

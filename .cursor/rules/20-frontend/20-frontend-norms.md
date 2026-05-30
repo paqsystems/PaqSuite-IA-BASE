@@ -149,6 +149,11 @@ components/
 - Regla completa: **`.cursor/rules/base/20-frontend/24-ui-abm-grilla-alta-edicion-modal.md`**
 - Resumen: **cualquier** flujo que abra un **popup** (alta/edición desde grilla, **subformularios desde detalle**, diálogos transaccionales) debe ser un **modal real** (overlay a toda la ventana, p. ej. portal a `document.body`), misma ruta que la vista de fondo, **no** una pantalla nueva por defecto. Excepciones solo si **HU/TR** lo indican (wizard, full page, otra ruta, etc.).
 
+### Columna de acciones en grillas (íconos + tooltip)
+
+- Regla completa: **`.cursor/rules/base/20-frontend/28-ui-grilla-acciones-iconos-tooltip.md`**
+- Resumen: editar, eliminar, ver detalle, etc. → **íconos DevExtreme** en la fila; la acción se identifica con **tooltip** (`hint` + i18n), **no** botones con texto visible.
+
 ### Parámetros generales por módulo (HU-007)
 
 - Regla: **`.cursor/rules/multi/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** ó **`.cursor/rules/mono/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** — listado homogéneo (valor como texto) y edición con control acorde a `tipo_valor` (no cajas de texto genéricas para todos los tipos en la grilla).

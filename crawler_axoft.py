@@ -9,14 +9,14 @@ import html2text
 
 
 SEED_URLS = [
-    "https://ayudas.axoft.com/24ar/documentos/",
+    "https://ayudas.axoft.com/25ar/documentos/",
 ]
 
 ALLOWED_PREFIXES = [
-    "https://ayudas.axoft.com/24ar/documentos/",
+    "https://ayudas.axoft.com/25ar/documentos/",
 ]
 
-OUTPUT_DIR = "axoft_md/24ar/"
+OUTPUT_DIR = "axoft_md/25ar/"
 MAX_PAGES = 35000
 PAUSE_SECONDS = 1
 MIN_URL_DEPTH = 5

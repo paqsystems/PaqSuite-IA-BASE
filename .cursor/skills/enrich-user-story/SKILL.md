@@ -1,40 +1,93 @@
 ---
 name: enrich-user-story
-description: enrich user stories using the related spec as the source of truth. use after a spec-backed hu exists and before generating technical tasks. strengthens context, acceptance criteria, business rules, gherkin scenarios, assumptions, and open questions while avoiding hallucinated scope or requirements not present in the spec.
+description: Enrich a user story using only its related SPEC as source of truth. Use after openspec-02 (part B) and before openspec-03 (part C / TR). Strengthens narrative, acceptance criteria, business rules, Gherkin, assumptions, and open questions without adding scope from context docs or hallucination.
 ---
 
-# Enriquecer HU desde SPEC
+# Enriquecer HU desde SPEC (parte B1)
 
-## Purpose
+## Cuándo usar
 
-Use this skill as a Paqsuite development-control step inside the SPEC -> HU -> TR -> plan -> code -> verify -> PR workflow.
+Paso **B1** del flujo OpenSpec: **después** de generar la HU (parte B / `openspec-02`) y **antes** de generar TR (parte C / `openspec-03`).
 
-## Non-negotiable rules
+```text
+SPEC → HU → [B1 enrich-user-story] → TR → plan → código → verificar → PR
+```
 
-- Do not invent functional scope.
-- Prefer explicit uncertainty over silent assumptions.
-- Use the SPEC as the source of truth for functional scope.
-- If something is unclear, list it as a question, assumption, risk, or blocker.
-- Do not modify code unless the skill explicitly belongs to implementation planning and the user then asks to execute.
-- Keep output structured and actionable.
+## Regla de referencia (única)
+
+Aplicar en detalle si hace falta:
+
+`.cursor/rules/base/00-arquitectura/12-enrich-user-story-desde-spec.md`
+
+## Entradas obligatorias
+
+- Ruta de la **HU** a enriquecer.
+- Ruta del **SPEC** relacionado.
+
+Opcional: SPEC-update, Control de Calidad vinculado.
+
+## Principio rector
+
+```text
+SPEC gobierna HU
+HU enriquecida gobierna TR (junto con SPEC)
+```
+
+Solo agregar información que esté:
+
+- explícita en el SPEC;
+- inferida de forma **directa y segura** desde el SPEC;
+- en reglas de proyecto aplicables (p. ej. Gherkin en `04-user-story-to-task-breakdown.md`).
+
+Todo lo demás → **Supuestos**, **Preguntas abiertas** o **Riesgos de ambigüedad**. No rellenar desde `docs/00-contexto/_mono` ni producto en B1 estricto.
 
 ## Workflow
 
-1. Read the relevant SPEC, HU, TR, rules, or changed files requested by the user.
-2. Identify the current step in the Paqsuite workflow.
-3. Apply the checklist from the matching Cursor rule:
-   - `.cursor/rules/base/00-arquitectura/11-spec-ambiguity-review.md`
-   - `.cursor/rules/base/00-arquitectura/12-enrich-user-story-desde-spec.md`
-   - `.cursor/rules/base/00-arquitectura/13-ai-planning-mode.md`
-   - `.cursor/rules/base/00-arquitectura/14-agent-verification-guide.md`
-   - `.cursor/rules/base/00-arquitectura/15-write-pr-report.md`
-4. Produce the required markdown output.
-5. If a reusable methodological improvement is detected, propose it in `docs/_base/98-metodologia/learned-patterns.md` instead of changing permanent rules automatically.
+1. Leer el **SPEC completo**.
+2. Leer la **HU completa**.
+3. Detectar omisiones: criterios medibles del SPEC sin AC en la HU; entregables del SPEC no asignados.
+4. **Editar el archivo HU** (no crear TR ni código).
+5. Añadir o completar secciones listadas abajo.
+6. Cerrar con veredicto obligatorio.
 
-## Output discipline
+## Secciones que debe tener la HU enriquecida
 
-- Separate facts, assumptions, risks, and decisions.
-- State whether the artifact can advance to the next workflow step.
-- State what evidence was reviewed.
-- State what was not verified.
+1. Metadatos (incl. **SPEC origen**, **Estado: Pendiente** salvo otro acordado).
+2. **Trazabilidad SPEC** — tabla: criterio/entregable del SPEC → AC o sección de esta HU.
+3. Narrativa (Como / quiero / para).
+4. Contexto funcional (desde objetivo del SPEC, acotado a esta HU).
+5. Alcance incluido.
+6. Fuera de alcance (SPEC + exclusiones de esta HU).
+7. Reglas de negocio.
+8. Criterios de aceptación (medibles, trazables al SPEC).
+9. **Escenarios Gherkin** (3–6 si el proyecto lo exige en HU).
+10. **Supuestos explícitos**.
+11. **Preguntas abiertas**.
+12. **Riesgos de ambigüedad** (breve).
 
+## Escenarios Gherkin (si aplica)
+
+Incluir subsección con sintaxis `Feature` / `Scenario` / `Given` / `When` / `Then`. Cubrir camino feliz, error, permisos y un edge case relevante.
+
+## Prohibido
+
+- Incorporar reglas no presentes en el SPEC.
+- Resolver vacíos funcionales con criterio propio inventado.
+- Crear funcionalidades nuevas o cambiar alcance.
+- Modificar o generar **TR**.
+- Implementar **código**.
+- Usar `docs/00-contexto/` o definición de producto como fuente en B1 estricto.
+
+## Salida al usuario
+
+Al terminar, responder con:
+
+```text
+Lista para TR: Sí | No | Sí con observaciones
+```
+
+Incluir observaciones, preguntas abiertas y qué evidencia se leyó (SPEC + HU).
+
+## Mejoras metodológicas
+
+Si detectás un patrón reutilizable, proponelo en `docs/_base/98-metodologia/learned-patterns.md` — no cambiar reglas permanentes sin acuerdo.

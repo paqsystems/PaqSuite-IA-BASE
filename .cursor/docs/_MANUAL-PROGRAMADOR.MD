@@ -1,7 +1,7 @@
 # Manual del Programador
 
-**Versión:** 1.12  
-**Última actualización:** 2026-05-09
+**Versión:** 1.13  
+**Última actualización:** 2026-05-28
 
 ---
 
@@ -100,7 +100,7 @@ Ver `docs/06-operacion/deploy-infraestructura.md` y `.cursor/rules/23-versioning
 ### Reglas obligatorias
 
 - Prefijo de tablas: `PQ_{modulo}_`
-- Formato de respuesta: envelope estándar (ver `specs/contracts/response-envelope.md`)
+- Formato de respuesta: envelope estándar `error` / `respuesta` / `resultado` (ver §4 Proceso API)
 - PHPDoc en todas las clases, métodos y propiedades
 
 ---
@@ -142,16 +142,37 @@ Ver `docs/06-operacion/deploy-infraestructura.md` y `.cursor/rules/23-versioning
 
 | Documento | Propósito |
 |-----------|-----------|
-| `docs/api/CONTRATO_BASE.md` | Formato estándar de respuestas |
-| `specs/contracts/response-envelope.md` | Estructura envelope |
-| `specs/endpoints/README.md` | Guía de especificaciones de endpoints |
+| `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md` | **MONO:** contrato envelope (`error`, `respuesta`, `resultado`) |
+| `.cursor/rules/mono/03-api-contract.md` | Regla Cursor MONO (implementación + OpenAPI) |
+| `.cursor/rules/multi/03-api-contract.md` | Regla Cursor MULTI (mismo envelope) |
+| `docs/04-tareas/_NORMAS-TRANSVERSALES-TR.md` §2 | Norma envelope en TR del producto (si existe) |
+
+> **Nota:** la ruta histórica `docs/api/CONTRATO_BASE.md` y `specs/contracts/response-envelope.md` **no aplican** en repos PaqSuite actuales; usar contexto `_mono` / reglas `03-api-contract`.
+
+### Envelope (resumen obligatorio)
+
+Todas las respuestas `/api/v1/*` — éxito o error:
+
+```json
+{
+  "error": 0,
+  "respuesta": "ok",
+  "resultado": {}
+}
+```
+
+| Campo | Regla |
+|-------|--------|
+| `error` | Entero (`0` = OK). **No booleano.** |
+| `respuesta` | String; clave i18n (`auth.*`, …) o `"ok"` |
+| `resultado` | Objeto JSON **siempre**; nunca `null` |
 
 ### Flujo típico
 
-1. Consultar especificación en `specs/endpoints/` para el endpoint
-2. Implementar según contrato (envelope, códigos de error)
+1. Consultar contrato envelope y TR del slice en `docs/04-tareas/`
+2. Implementar según contrato (envelope, códigos `error`, HTTP 401/403)
 3. Validar con Form Requests en backend
-4. Consumir desde frontend vía servicios
+4. Consumir desde frontend vía servicios (traducir `respuesta` con `t()` cuando sea clave i18n)
 
 ---
 
@@ -351,7 +372,9 @@ Si la BD está en servidor remoto: ver `docs/migracion-mssql-a-mysql.md` y `.cur
 | `docs/04-tareas/` | Tareas técnicas |
 | `backend/README.md` | Guía del backend |
 | `docs/backend/PLAYBOOK_BACKEND_LARAVEL.md` | Convenciones Laravel |
-| `docs/api/CONTRATO_BASE.md` | Contrato API |
+| `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md` | Contrato API envelope (MONO) |
+| `.cursor/rules/mono/03-api-contract.md` | Regla envelope + OpenAPI (MONO) |
+| `docs/04-tareas/_NORMAS-TRANSVERSALES-TR.md` | Normas TR (envelope §2, OpenAPI §1) |
 | `docs/frontend/ui-layer-wrappers.md` | UI Layer |
 | `.cursor/rules/12-testing.md` | Testing |
 
@@ -382,6 +405,9 @@ Este es un **MVP web** para para empresas que trabajan con el sistema Tango Gest
 ---
 
 ## Actualizaciones del manual
+
+**v1.13 (2026-05-28):**
+- §4 Proceso API y referencias rápidas: contrato envelope apunta a `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md` y `.cursor/rules/mono|multi/03-api-contract.md`. Retiradas rutas obsoletas `docs/api/CONTRATO_BASE.md` y `specs/contracts/response-envelope.md`.
 
 **v1.12 (2026-05-09):**
 - Sección 9: subsección **0. Proyecto nuevo o alineación de arquitectura** con referencia a `docs/_base/00-inicio-arquitectura.md` y obligatoriedad de declarar **MONO** o **MULTI**. Referencias rápidas: fila para ese documento.

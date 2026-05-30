@@ -1,7 +1,7 @@
 # Regla Cursor — Arquitectura Multi-Tenant PaqSuite ERP
 # Subdominios + AWS + Tailscale + SQL dinámico
 
-> **Relación con productos MONO (PedidosWeb, etc.):** el mismo patrón de tenant/cliente, tabla `EMPRESAS_CONEXION` y Tailscale se integra en `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` y en `docs/_base/resolucion-host-cliente-sql-mono.md`. En MONO el host de producto es `{cliente}.{proyecto}.paqsystems.com` con redirect a `demo.{proyecto}`; el header equivalente a `X-Tenant` se documenta como **`X-Paq-Cliente`**. Este archivo conserva el detalle ERP (`*.erp.paqsystems.com`).
+> **Relación con productos MONO (PedidosWeb, etc.):** el mismo patrón de tenant/cliente, tabla `EMPRESAS_CONEXION` y Tailscale se integra en `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` y en `docs/_base/resolucion-host-cliente-sql-mono.md`. En MONO: entrada `{cliente}.{proyecto}.paqsystems.com` → redirect a `frontend.{proyecto}.paqsystems.com`; API en `backend.{proyecto}.paqsystems.com`; header **`X-Paq-Cliente`**. Este archivo conserva el detalle ERP (`*.erp.paqsystems.com`).
 
 ## Objetivo
 

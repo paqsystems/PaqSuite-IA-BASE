@@ -1,29 +1,35 @@
 # Resolución de `{cliente}` por URL y conexión SQL (proyectos MONO)
 
-Especificación **genérica** para productos PaqSuite en modo **MONO** (un solo deploy de aplicación por `{proyecto}`, varios clientes finales con distinto servidor SQL). Aplica a **PedidosWeb** y a cualquier otro proyecto mono que enlace `docs/_base`.
+Especificación **genérica** para productos PaqSuite en modo **MONO**: un deploy de **frontend** y un deploy de **backend** por `{proyecto}`, y varios **clientes** finales (tenants) cada uno con su SQL. Los repos de producto enlazan este archivo como **`docs/_base/resolucion-host-cliente-sql-mono.md`**. La regla Cursor **`15-host-subdominio-base-datos-y-branding.md`** (repo MONO) resume logo, Tailscale y remite aquí.
 
-**No confundir con MULTI:** en MULTI el usuario elige empresa en sesión (`X-Company-Id`, Dictionary/Company). Aquí el **cliente** se infiere del **host de entrada** y define **a qué SQL conectarse**, no un selector de empresa en la UI.
+**No confundir con MULTI ERP:** en MULTI el usuario elige empresa en sesión (`X-Company-Id`, Dictionary/Company). En MONO el **`{cliente}`** se infiere del **host de entrada** (y se conserva tras el redirect), define **a qué SQL conectarse**, y **no** hay selector de empresa en la UI.
+
+Cada producto documenta en su OpenSpec solo constantes propias (`{proyecto}`, convención de nombre de BD, tenant de desarrollo).
 
 ---
 
 ## Objetivo
 
-- Un **único deploy** del frontend y backend por producto (`{proyecto}`).
-- Cada cliente final accede con su URL propia `{cliente}.{proyecto}.paqsystems.com`.
-- La aplicación en ejecución corre siempre bajo la URL canónica **`demo.{proyecto}.paqsystems.com`**, conociendo el **`{cliente}`** activo para branding y conexión de datos.
-- Desarrollo local se comporta como cliente **`demo`**.
+- **Dos deploys por producto** (artefactos separados): uno de frontend y uno de backend, ambos bajo el slug `{proyecto}`.
+- Cada cliente final entra por **`{cliente}.{proyecto}.paqsystems.com`**.
+- Esa URL **redirige** a **`frontend.{proyecto}.paqsystems.com`**, conservando qué **`{cliente}`** originó la entrada.
+- La SPA llama a **`backend.{proyecto}.paqsystems.com`** con el mismo `{cliente}`; el middleware resuelve la base SQL del tenant.
+- Desarrollo local fuerza un tenant acordado (habitualmente `demo`).
+
+**No** hay un deploy distinto por cliente: solo redirect + contexto + fila en `EMPRESAS_CONEXION`.
 
 ---
 
-## URLs
+## URLs (patrón único)
 
-| Rol | Patrón | Ejemplo (PedidosWeb) |
-|-----|--------|----------------------|
-| **Deploy canónico (producción)** | `https://demo.{proyecto}.paqsystems.com` | `https://demo.pedidosweb.paqsystems.com` |
+| Rol | Patrón | Ejemplo (PedidosWeb, `{proyecto}` = `pedidosweb`) |
+|-----|--------|-----------------------------------------------------|
 | **Entrada del cliente** | `https://{cliente}.{proyecto}.paqsystems.com` | `https://acme.pedidosweb.paqsystems.com` |
+| **Frontend canónico** | `https://frontend.{proyecto}.paqsystems.com` | `https://frontend.pedidosweb.paqsystems.com` |
+| **Backend API canónico** | `https://backend.{proyecto}.paqsystems.com` | `https://backend.pedidosweb.paqsystems.com` |
 
-`{proyecto}` identifica el producto vertical (slug en configuración del repo, ej. `pedidosweb`).  
-`{cliente}` identifica al cliente final (slug estable, ej. `acme`, `capacitacion`).
+- **`{proyecto}`** — slug del producto vertical (config del repo, ej. `pedidosweb`, `crm`).
+- **`{cliente}`** — slug estable del tenant final (ej. `acme`, `demo`). En documentación funcional de un producto puede llamarse «empresa»; en infraestructura es **`CODIGO_TENANT`** = `{cliente}`.
 
 ---
 
@@ -32,82 +38,79 @@ Especificación **genérica** para productos PaqSuite en modo **MONO** (un solo 
 ```text
 Usuario → https://{cliente}.{proyecto}.paqsystems.com
               ↓
-    Redirección HTTP(S) al deploy canónico
+    Redirect HTTP(S) (edge / proxy)
               ↓
-    https://demo.{proyecto}.paqsystems.com
-    (conservando identificación de {cliente})
+    https://frontend.{proyecto}.paqsystems.com
+    (conservando {cliente})
               ↓
-    Middleware / bootstrap resuelve conexión SQL y branding
+    SPA persiste cliente; API → backend.{proyecto}
+              ↓
+    Middleware → SQL del cliente (EMPRESAS_CONEXION)
 ```
 
 ### Redirección
 
-- La entrada `{cliente}.{proyecto}` **no** sirve otra build: redirige al host **`demo.{proyecto}`**.
-- Implementación típica: reverse proxy (nginx, ALB, CloudFront), regla de redirect en edge, o middleware en gateway.
-- La redirección debe **preservar** el conocimiento de `{cliente}` (no perder el contexto al llegar a `demo`).
+- `{cliente}.{proyecto}` **no** sirve otra build: redirige al host **`frontend.{proyecto}`**.
+- Implementación típica: reverse proxy (nginx, ALB, CloudFront) o regla en edge.
+- La redirección **debe preservar** `{cliente}` (no perder el contexto al cargar el frontend).
 
-### Cómo transportar `{cliente}` (elegir una convención por producto y documentarla)
+### Cómo transportar `{cliente}`
 
 | Mecanismo | Uso recomendado |
 |-----------|-----------------|
-| **Header HTTP** (ej. `X-Paq-Cliente: acme`) | Preferido en proxy → backend; equivalente a `X-Tenant` del patrón ERP multitenant. El proxy inyecta el header al reenviar a `demo.{proyecto}`. |
-| **Cookie firmada** | Alternativa si el redirect es solo en navegador; backend lee cookie en requests subsiguientes. |
-| **Query en redirect** (ej. `?cliente=acme`) | Solo como puente en el 302; normalizar en el primer request al backend y pasar a header/cookie; evitar dejarlo solo en query en operación normal. |
+| **Header** `X-Paq-Cliente: {cliente}` | Preferido en llamadas a `backend.{proyecto}`; el proxy puede inyectarlo tras el redirect. Equivalente conceptual a `X-Tenant` ERP. |
+| **Cookie** `Domain=.{proyecto}.paqsystems.com` | Opcional para compartir contexto entre `{cliente}.{proyecto}` y `frontend.{proyecto}`. |
+| **Query en redirect** | Solo puente en el 302 (`?cliente=acme`); normalizar a header/cookie en el primer load. |
 
-**Regla:** backend y frontend deben obtener el **mismo `{cliente}`** en toda la sesión; no mezclar fuentes sin prioridad documentada.
+**Regla:** frontend y backend deben resolver el **mismo `{cliente}`** en toda la sesión.
 
-Prioridad sugerida al resolver:
+Prioridad sugerida:
 
-1. Header acordado (`X-Paq-Cliente` o el que defina el producto).
-2. Cookie de cliente (si existe).
-3. Fallback entorno desarrollo → `demo`.
+1. Header `X-Paq-Cliente` (o el único nombre documentado en el producto).
+2. Cookie de tenant (si existe).
+3. Desarrollo → `demo` (o el slug acordado en el OpenSpec).
+
+Seguridad: validar `{cliente}` en registro central; ligar tenant al token en login; error claro si tenant inválido o BD inexistente (sin conectar a otro cliente).
 
 ---
 
-## Registro de asociación cliente → SQL
+## Registro de asociación `{cliente}` → SQL
 
-Existe un **modo de asociación** en base **central del deploy** (tabla recomendada **`EMPRESAS_CONEXION`**, mismo concepto que `docs/_base/regla-cursor-multitenant-paqsuite.md`) keyed por `{cliente}` + `{proyecto}`.
+Base **central del deploy** del producto (tabla recomendada **`EMPRESAS_CONEXION`**, alineada a `docs/_base/regla-cursor-multitenant-paqsuite.md`), keyed por `{proyecto}` + `{cliente}`.
 
 | Dato | Descripción |
 |------|-------------|
 | `cliente` / `CODIGO_TENANT` | Slug del host de entrada (ej. `acme`) |
 | `proyecto` | Slug del producto (ej. `pedidosweb`) |
 | `DOMINIO` | Host de entrada (ej. `acme.pedidosweb.paqsystems.com`) |
-| `HOST_TAILSCALE` | **Hostname Tailscale** del SQL del cliente (ej. `acme.tailnet.ts.net`). **No** usar IP pública ni abrir puertos SQL a Internet. |
-| `SQL_DATABASE` | Nombre de la base (ej. `paqsystems_pedidosweb_acme`) |
+| `HOST_TAILSCALE` | Hostname Tailscale del SQL del cliente |
+| `SQL_DATABASE` | Nombre de la base (convención del producto) |
 | `SQL_INSTANCE` | Instancia nombrada (opcional) |
-| `SQL_USER` | Usuario dedicado (ej. `paqsuite_api`); **no** `sa` |
-| `SQL_PASSWORD_ENCRYPTED` | Secreto cifrado (vault / Secrets Manager; **nunca** en repo) |
-| `ACTIVO` | Si el cliente puede conectarse |
+| `SQL_USER` / `SQL_PASSWORD_ENCRYPTED` | Credenciales mínimas privilegio; nunca en repo |
+| `ACTIVO` | Habilita o no el cliente |
 
-### Conectividad Tailscale
+### Conectividad
 
 ```text
 Frontend (AWS) → Backend API (AWS) → HOST_TAILSCALE → SQL Server del cliente
 ```
 
-- Cada cliente: SQL Server + nodo Tailscale + ACLs en su red.
-- Guía de implementación: `docs/_base/_Tailscape.md`.
-- Reglas de seguridad y cache: `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` §6.
+**Prohibido:** frontend → SQL directo. Guía Tailscale: `docs/_base/_Tailscape.md`; reglas: regla **15** §6.
 
-El backend, tras conocer `{cliente}`, consulta el registro, arma el connection string y **abre la conexión** antes de lógica de negocio. **Prohibido** que el frontend acceda al SQL del cliente directamente.
+### Cliente `demo` en desarrollo
 
-### Cliente especial `demo`
+- Sin subdominio real (`localhost`, IP LAN): middleware fija **`cliente = demo`** (u otro slug documentado en el producto).
+- SQL y credenciales = fila `demo` en `EMPRESAS_CONEXION`.
 
-- En **desarrollo** se fuerza **`cliente = demo`** (mismas variables y misma fila de asociación que el cliente DEMO de producción).
-- La URL local (`localhost`, IP LAN, etc.) **no** parsea subdominio de cliente: el middleware fija `demo`.
-- Base de datos y credenciales de trabajo local = las definidas para **`demo`** en el registro (equivalente a `paqsystems_{proyecto}_demo` si el producto adopta esa convención de nombre).
+### Cliente inválido
 
-### Cliente inválido o sin asociación
-
-- Si `{cliente}` no existe o está deshabilitado: pantalla de error clara (sin detalles de infraestructura).
-- No intentar conexión con credenciales por defecto de otro cliente.
+- Sin fila activa o BD inexistente → pantalla de error clara, sin detalles de infraestructura.
 
 ---
 
 ## Relación con branding (logo)
 
-El mismo slug **`{cliente}`** del host de entrada se usa para el **logo** en login y header (regla `15-host-subdominio-base-datos-y-branding.md`, sección logo). Debe ser el **mismo identificador** que resuelve SQL y assets bajo `images/{cliente}/`.
+El mismo **`{cliente}`** resuelve SQL y assets bajo `images/{cliente}/` (regla **15**, sección logo).
 
 ---
 
@@ -115,30 +118,26 @@ El mismo slug **`{cliente}`** del host de entrada se usa para el **logo** en log
 
 | Tema | Comportamiento |
 |------|----------------|
-| Varios deploys por cliente | **No** — un solo deploy `demo.{proyecto}`. |
-| Selector de empresa en UI | **No** — eso es **MULTI** (`menu-avatar` / `X-Company-Id`). |
-| Varios usuarios-empresa en `Pq_Permiso` por tenant | **No** en MONO de producto; permisos en la BD del SQL resuelto para ese `{cliente}`. |
-| URL distinta = build distinta | **No** — solo redirect + contexto `cliente`. |
+| Deploy por cada cliente | **No** — un frontend + un backend **por `{proyecto}`**. |
+| Un solo host para FE y API | **No** — hosts separados `frontend.{proyecto}` y `backend.{proyecto}`. |
+| Selector de empresa en UI | **No** — eso es **MULTI** ERP. |
+| URL distinta = build distinta por cliente | **No** — solo redirect + contexto. |
 
 ---
 
-## Implementación backend (resumen)
+## Implementación (resumen)
 
-1. Middleware temprano: resolver `proyecto` (config) y `cliente` (header `X-Paq-Cliente` / cookie / dev=`demo`).
-2. Validar `cliente` en `EMPRESAS_CONEXION` (`ACTIVO = 1`); cachear registro (TTL ~5 min).
-3. Construir connection string hacia `HOST_TAILSCALE` + `SQL_DATABASE` + credenciales descifradas.
-4. Establecer conexión por request (pool por cliente con aislamiento).
-5. Exponer `cliente` al frontend si hace falta (bootstrap API, ej. `/api/v1/context`).
-6. Logging: `cliente`, `proyecto`, hostname, endpoint, errores SQL/Tailscale (sin secretos).
+**Backend (`backend.{proyecto}`):**
 
----
+1. Middleware: `proyecto` desde config; `cliente` desde `X-Paq-Cliente` / cookie / dev.
+2. Validar en `EMPRESAS_CONEXION`; cache ~5 min.
+3. Connection string → Tailscale + `SQL_DATABASE`.
+4. Ligadura tenant ↔ sesión tras login.
 
-## Implementación frontend (resumen)
+**Frontend (`frontend.{proyecto}`):**
 
-- Tras redirect, la SPA se sirve desde `demo.{proyecto}`.
-- Helper centralizado `resolveClienteFromHostname` (no repetir lógica en componentes); interceptor HTTP con `X-Paq-Cliente`.
-- Desarrollo: `localhost` / IP privada → `cliente = demo`; opcional `VITE_TENANT_OVERRIDE` con prioridad documentada.
-- Logo: resolver ruta de imagen según `cliente` del contexto bootstrap.
+- Tras redirect, SPA en host canónico; interceptor con `X-Paq-Cliente`.
+- Dev: `localhost` → `demo`; opcional `VITE_TENANT_OVERRIDE` documentado.
 
 ---
 
@@ -146,49 +145,45 @@ El mismo slug **`{cliente}`** del host de entrada se usa para el **logo** en log
 
 | Aspecto | Producción | Desarrollo |
 |---------|------------|------------|
-| Host app | `demo.{proyecto}.paqsystems.com` | `localhost` / Vite proxy |
-| `cliente` | Desde redirect + header/cookie | **Forzado `demo`** |
-| SQL | Fila asociación del cliente real | Fila asociación **`demo`** |
-| Entrada `{cliente}.{proyecto}` | Redirect real en DNS/proxy | Opcional simular con header `X-Paq-Cliente` |
+| Frontend | `frontend.{proyecto}.paqsystems.com` | `localhost` / Vite |
+| Backend | `backend.{proyecto}.paqsystems.com` | API local / proxy |
+| `{cliente}` | Redirect + header/cookie | Forzado `demo` (o acordado) |
+| Entrada | `{cliente}.{proyecto}` → redirect real | Simular con header |
 
 ---
 
-## Convención de nombre de base (recomendada)
+## Convención de nombre de base
 
-Por producto puede documentarse en OpenSpec; alineada a la regla histórica:
+Por producto en OpenSpec. Ejemplos:
 
 ```text
-paqsystems_{proyecto}_{cliente}
+paqsystems_{proyecto}_{cliente}     # convención histórica regla 15
+pq_pedidosweb_{cliente}             # PedidosWeb (ver OpenSpec §5)
 ```
 
-Ejemplo PedidosWeb: `paqsystems_pedidosweb_acme`. El nombre efectivo debe coincidir con el campo `databaseName` de la asociación.
+Debe coincidir con `SQL_DATABASE` en la asociación.
 
 ---
 
 ## Criterios de aceptación (infra MONO)
 
-1. Existe un solo deploy activo en `demo.{proyecto}.paqsystems.com`.
-2. `{cliente}.{proyecto}.paqsystems.com` redirige a `demo.{proyecto}` preservando `cliente`.
-3. El backend conecta al SQL definido para ese `cliente`.
-4. Desarrollo usa siempre contexto `demo`.
-5. Logo y branding usan el mismo `cliente`.
-6. Cliente desconocido → error controlado.
+1. Un deploy de frontend en `frontend.{proyecto}.paqsystems.com` y un deploy de backend en `backend.{proyecto}.paqsystems.com`.
+2. `{cliente}.{proyecto}.paqsystems.com` redirige a `frontend.{proyecto}` preservando `{cliente}`.
+3. Toda llamada API a `backend.{proyecto}` incluye tenant válido (`X-Paq-Cliente` o convención única documentada).
+4. El backend conecta al SQL de ese `{cliente}`.
+5. Desarrollo usa tenant forzado acordado.
+6. Logo/branding usan el mismo slug `{cliente}`.
+7. Tenant desconocido → error controlado.
 
 ---
 
-## Referencias cruzadas
+## Referencias
 
 | Documento | Relación |
 |-----------|----------|
-| `00-inicio-arquitectura.md` §1.2 MONO | Modo instalación; enlaza aquí |
-| `15-host-subdominio-base-datos-y-branding.md` | Logo, Tailscale, `EMPRESAS_CONEXION`, seguridad SQL |
-| `regla-cursor-multitenant-paqsuite.md` | Mismo patrón tenant + `X-Tenant` (referencia ERP) |
-| `_Tailscape.md` | Guía operativa Tailscale |
-| `shell-layout-principal.md` | UI post-login |
-| Producto (ej. PedidosWeb OpenSpec) | Convención `{proyecto}` y datos de negocio |
+| `00-inicio-arquitectura.md` §1.2 MONO | Modo instalación |
+| `15-host-subdominio-base-datos-y-branding.md` | Logo, Tailscale |
+| `regla-cursor-multitenant-paqsuite.md` | Patrón tenant ERP |
+| OpenSpec del producto | `{proyecto}`, nombre BD, dev tenant |
 
----
-
-## Historias y specs
-
-Al generar HUs de infraestructura o deploy MONO, citar este documento (`docs/_base/resolucion-host-cliente-sql-mono.md`) como fuente de verdad para URL, redirect y SQL.
+Al generar HUs de infraestructura MONO, citar este documento como fuente de verdad para URL, redirect y SQL.

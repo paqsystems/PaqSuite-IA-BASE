@@ -47,6 +47,8 @@ También puede ejecutarse como skill:
 /enrich-user-story
 ```
 
+**Skill (ruta canónica):** `.cursor/skills/enrich-user-story/SKILL.md` (symlink a PaqSuite-IA-BASE en repos de producto).
+
 ---
 
 ## Entradas obligatorias

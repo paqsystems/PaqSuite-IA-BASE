@@ -62,6 +62,7 @@ El orden de las filas **es el alfabético A–Q** y coincide con el **orden de l
 | **B** | HU desde SPEC (**openspec-02**) | Ver **PARTE B** |
 | **B1** | Enriquecimiento de HU desde SPEC | `/enrich-user-story` |
 | **C** | TR desde SPEC + HU (**openspec-03**) | Ver **PARTE C** |
+| **C1** | Revisión de ambigüedad de la TR | `/tr-ambiguity-review` |
 | **D1** | Planificación IA antes de implementar | `/ai-planning-mode` |
 | **D** | Ejecutar TR | "Ejecutá la TR …" |
 | **E** | Tests | "Ejecutá los tests" / "Corré los tests" |
@@ -128,8 +129,8 @@ o:
 ### Skill / regla asociada
 
 ```text
-skills/_base/spec-ambiguity-review/SKILL.md
-.cursor/rules/00-arquitectura/11-spec-ambiguity-review.md
+.cursor/skills/spec-ambiguity-review/SKILL.md
+.cursor/rules/base/00-arquitectura/11-spec-ambiguity-review.md
 ```
 
 ### Objetivo
@@ -180,8 +181,8 @@ o:
 ### Skill / regla asociada
 
 ```text
-skills/_base/enrich-user-story/SKILL.md
-.cursor/rules/00-arquitectura/12-enrich-user-story-desde-spec.md
+.cursor/skills/enrich-user-story/SKILL.md
+.cursor/rules/base/00-arquitectura/12-enrich-user-story-desde-spec.md
 ```
 
 ### Objetivo
@@ -211,6 +212,43 @@ Optimizar la HU para que sea más clara, verificable y menos ambigua antes de ge
 
 ---
 
+## C1 — Revisión de ambigüedad de la TR
+
+### Comando
+
+```text
+Revisá la ambigüedad de la TR [rutaTr]
+```
+
+o:
+
+```text
+/tr-ambiguity-review
+```
+
+### Skill / regla asociada
+
+```text
+.cursor/skills/tr-ambiguity-review/SKILL.md
+.cursor/rules/base/00-arquitectura/16-tr-ambiguity-review.md
+```
+
+### Objetivo
+
+Confirmar que la TR es **implementable sin interpretar** (contratos API, envelope, dependencias, AC, coherencia con HU/SPEC) **antes** de D1 y código.
+
+### Cuándo es obligatorio
+
+- TR **Must** con endpoints, auth, tenancy o varias TR dependientes.
+- Primera TR de un bloque (ej. login, seed).
+- Tras decisiones humanas que deben estar volcadas en la TR (ej. D-01).
+
+### Salida mínima
+
+Informe con veredicto **Apto / Apto con observaciones / No apto** y **Puede pasar a D1/D: Sí/No** (plantilla en regla 16).
+
+---
+
 ## D1 — Planificación IA antes de implementación
 
 ### Comando
@@ -228,8 +266,8 @@ o:
 ### Skill / regla asociada
 
 ```text
-skills/_base/ai-planning-mode/SKILL.md
-.cursor/rules/00-arquitectura/13-ai-planning-mode.md
+.cursor/skills/ai-planning-mode/SKILL.md
+.cursor/rules/base/00-arquitectura/13-ai-planning-mode.md
 ```
 
 ### Objetivo
@@ -340,8 +378,8 @@ o:
 ### Skill / regla asociada
 
 ```text
-skills/_base/agent-verification-guide/SKILL.md
-.cursor/rules/00-arquitectura/14-agent-verification-guide.md
+.cursor/skills/agent-verification-guide/SKILL.md
+.cursor/rules/base/00-arquitectura/14-agent-verification-guide.md
 ```
 
 ### Objetivo
@@ -607,8 +645,8 @@ o:
 ### Skill / regla asociada
 
 ```text
-skills/_base/write-pr-report/SKILL.md
-.cursor/rules/00-arquitectura/15-write-pr-report.md
+.cursor/skills/write-pr-report/SKILL.md
+.cursor/rules/base/00-arquitectura/15-write-pr-report.md
 ```
 
 ### Salida
@@ -763,3 +801,13 @@ reduciendo errores humanos y mejorando la productividad.
 
 Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá el entorno de desarrollo** y **ejecutá los tests**), el asistente debe aplicar primero la PARTE **O** (abrir terminales con backend y frontend en ejecución e informar URLs de frontend, backend y OpenAPI según el punto 4 de esa parte) y luego la PARTE **E** (abrir las tres terminales de tests: backend, unitarios, E2E). Las invocaciones son acumulables en el orden **O → E**.
 
+### Funciones de las Skills
+
+| Paso | Skill | Pregunta que responde |
+|------|-------|------------------------|
+| **A1** | `/spec-ambiguity-review` | ¿El SPEC es claro antes de HU? |
+| **B1** | `/enrich-user-story` | ¿La HU está bien derivada del SPEC? |
+| **C1** | `/tr-ambiguity-review` | ¿La TR es implementable sin interpretar? (contratos, envelope, dependencias, AC) |
+| **D1** | `/ai-planning-mode` | ¿Cómo codificar (archivos, orden, riesgos técnicos)? |
+| **F1** | `/agent-verification-guide` | ¿La documentación y la codificación son consistentes? |
+| **N1** | `/write-pr-report` | ¿Qué va en el PR y con qué evidencia está listo para revisión humana? |
