@@ -15,7 +15,7 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 | Modo | Significado |
 |------|-------------|
 | **MULTI** | **Multi-empresa:** varias empresas (tenant), varias bases operativas o el modelo Dictionary / Company descrito en la arquitectura ERP de este repo. |
-| **MONO** | **Un deploy de aplicación** por producto; varios **clientes** finales con URL `{cliente}.{proyecto}` → redirect a `demo.{proyecto}` y conexión SQL por registro de asociación (ver §1.2). |
+| **MONO** | **Un deploy de frontend y un deploy de backend** por producto; varios **clientes** con URL `{cliente}.{proyecto}` → redirect a `frontend.{proyecto}` y conexión SQL por registro (ver §1.2). |
 
 ### 1.1 Modo MULTI (multi-empresa)
 
@@ -29,14 +29,14 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 
 Resumen:
 
-- **Un solo deploy** del frontend y backend por `{proyecto}` en producción: URL canónica **`https://demo.{proyecto}.paqsystems.com`** (ej. `demo.pedidosweb.paqsystems.com`).
-- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que **redirige** a `demo.{proyecto}` indicando el **`{cliente}`** activo (header acordado, ej. `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
+- **Dos deploys por `{proyecto}`** (artefactos separados): **`https://frontend.{proyecto}.paqsystems.com`** y **`https://backend.{proyecto}.paqsystems.com`** (ej. `frontend.pedidosweb`, `backend.pedidosweb`).
+- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que **redirige** a **`frontend.{proyecto}`** indicando el **`{cliente}`** activo (header `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
 - **Asociación por `{cliente}`:** registro (tabla/config/secrets) con host o DNS SQL, instancia opcional, nombre de base y credenciales.
 - **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local).
 - El **esquema de seguridad** (usuarios, roles, permisos, menú) vive en la base SQL del cliente resuelto; no hay selector de **empresa** en UI ni **`X-Company-Id`** (eso es **MULTI**).
 - **Branding:** el mismo `{cliente}` determina logo (`15-host-subdominio-base-datos-y-branding.md`).
 
-**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect a `demo` y registro de asociación (ver regla 15, apartado MONO).
+**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect a `frontend.{proyecto}` y registro de asociación (ver regla 15, apartado MONO).
 
 Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-empresa en sesión (MULTI).
 
@@ -98,17 +98,22 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 
 ### 4.2 Backend (Laravel)
 
-- Proyecto Laravel con **API** versionada (p. ej. prefijo `api/v1`).
-- **Sanctum** (u OAuth acordado) y respuestas **envelope** estables (`error`, `respuesta`, `resultado`) si se adopta el mismo contrato.
+**Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §3 (symlink `docs/00-contexto/_mono` en cada producto).
+
+- Proyecto **Laravel 10** con API versionada (`/api/v1/*`: prefijo `api` en `RouteServiceProvider` + `v1` en `routes/api.php`).
+- **Envelope** obligatorio: `App\Http\Responses\ApiResponse` (`error`, `respuesta`, `resultado`) — spec [`envelope-respuestas.md`](../00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md).
+- **Sanctum** para autenticación Bearer.
 - **Capas:** controllers delgados → **application services** → dominio / repositorios; sin lógica de negocio pesada en controllers (ver `docs/01-arquitectura/01-arquitectura-proyecto.md`).
 - **Autorización** por operación; menú refleja permisos pero la **seguridad real es en servidor** (ver README de `docs/01-arquitectura/`).
 - **Migraciones y seeders** mínimos para login y menú base; **MULTI:** datos de empresa(s) y permisos por empresa según modelo; **MONO:** sin capa empresa/tenant.
-- **OpenAPI:** `OpenApi.php` base + generación de paths (p. ej. script tipo `backend/scripts/build-openapi-paths-from-routes.mjs`) y **`php artisan l5-swagger:generate`** en el flujo de trabajo.
+- **OpenAPI:** `OpenApi.php` base + **`darkaonline/l5-swagger`** en scaffold inicial; guía [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md); UI en **`/api/documentation`**; regenerar con **`composer openapi`** (`php artisan l5-swagger:generate`).
 - **Tests** de feature por endpoints críticos; fixtures de BD cuando haga falta.
 
 ### 4.3 Frontend (React + Vite + DevExtreme)
 
-- Estructura tipo **`src/app`**, **`layouts`**, **`pages`**, **`features`**, **`services`**, **`shared`**: guía en `docs/01-arquitectura/ui/02-frontend-folder-structure.md`.
+**Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §4.
+
+- **React 18** + **Vite 5** + **TypeScript**; dependencias transversales: `react-router-dom`, `i18next`, `react-i18next`, `devextreme`, `devextreme-react`, **Vitest**, **Playwright** (comandos `npm install` en la guía).
 - **Shell post-login** (cuatro zonas: header, sidebar, content, footer): **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: docs de contexto `_mono` / `_multi`, no otra spec de layout.
 - **Cliente HTTP** centralizado (interceptores, token; **MULTI:** header de compañía si aplica).
 - **Rutas** protegidas; **MULTI:** pantalla de selección de empresa cuando el producto lo defina.
@@ -191,7 +196,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Necesidad | Documento |
 |-----------|-----------|
 | Symlinks entre repos (BASE / MONO / MULTI) | `docs/_base/symlinks_paqsuite_ia.md` (`.cursor/docs/` en **PaqSuite-IA-BASE**) |
-| Visión 3 capas (web + mobile) | `docs/arquitectura.md` |
+| Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |
 | Tenancy y resolución de BD (**MULTI**) | `docs/01-arquitectura/07-mapa-visual-tenancy-resolucion-db.md` |
 | Shell y carpetas frontend | `docs/01-arquitectura/ui/` |
