@@ -110,8 +110,8 @@ Al implementar o revisar pantallas **en cualquier módulo o feature**, verificar
 - [ ] **Menú (`PQ_MENUS` u origen equivalente):** etiquetas visibles según locale (clave i18n por procedimiento, leyenda en BD traducible, u otra estrategia documentada en `docs/frontend/i18n.md`).
 - [ ] **Dashboards:** títulos, labels, mensaje de vacío / «sin datos».
 - [ ] **ABM:** título del proceso alineado al menú.
-- [ ] **Grillas:** títulos de grilla y **captions** de columnas (incl. DevExtreme).
-- [ ] **Filtros:** textos de listas para filtros y **labels** de cada filtro.
+- [ ] **Grillas:** títulos de proceso/pantalla, **captions** de columnas (`grid.column.*`), hints de acciones por fila (`grid.action.*`), mensajes vacío/carga/error (`grid.empty`, `grid.loading`, `grid.error.load`). En MONO/PaqSuite transversal: usar **`DataGridDx`** (no `DataGrid` suelto). **Checklist detallado DevExtreme:** subsección **Grilla DevExtreme (`DataGridDx`)** más abajo.
+- [ ] **Filtros:** textos de listas para filtros y **labels** de cada filtro (en grilla transversal, los operadores de `FilterRow` van en el sub-checklist `DataGridDx`).
 - [ ] **Popups / modales:** título del diálogo; labels de campos; captions de checkboxes; aclaraciones (p. ej. «solo lectura»); botones (Guardar, Cancelar, etc.).
 - [ ] **Cinco locales:** toda clave usada en la pantalla existe en `es`, `en`, `pt`, `fr`, `it` con la misma jerarquía; **probar** cambiando idioma (evitar confiar solo en el fallback español del código).
 - [ ] **Perfil y seguridad:** pantalla de perfil, cambio de contraseña, **olvidé contraseña** y **restablecer contraseña** (títulos, ayudas, errores).
@@ -119,9 +119,36 @@ Al implementar o revisar pantallas **en cualquier módulo o feature**, verificar
 - [ ] **Placeholders y tooltips:** `placeholder`, `title` (tooltip nativo) y textos de ayuda bajo campos cuando sean visibles al usuario.
 - [ ] **Parámetros generales (HU-007, `PQ_PARAMETROS_GRAL`):** las etiquetas y ayudas por fila (`caption` / `tooltip` desde API) deben pasar por **`translateParametroCaption`** / **`translateParametroTooltip`** (`frontend/src/shared/services/parametrosGralDisplay.ts`), con claves **`parametrosGral.items.{Programa}.{clave}.caption`** y **`.tooltip`**. Al dar de alta un parámetro o un módulo nuevo, añadir esas claves en **los cinco** `frontend/src/i18n/locales/*.json` con el mismo árbol (el español puede coincidir con el texto de semilla/API; en otros idiomas no depender solo del fallback español). Ver **`.cursor/rules/multi/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`** ó **`.cursor/rules/mono/13-parametros-generales-ui-listado-y-edicion-por-tipo.md`**.
 - [ ] **Toasts, alerts y diálogos de confirmación** (p. ej. eliminar, cancelar con cambios): cuerpo del mensaje y botones.
-- [ ] **DevExtreme (DataGrid, Lookup, Form, Popup, Pager, etc.):** muchos textos vienen del paquete en inglés por defecto; cargar **localización** (`devextreme/localization` + `loadMessages`) o equivalente para los idiomas soportados, además de los `caption` definidos en código.
+- [ ] **DevExtreme (Lookup, Form, Popup, Pager, etc.):** cargar **localización** (`devextreme/localization` + `loadMessages` + `locale()`) para los idiomas soportados, además de `caption`/`hint` en código. Para **`DataGrid` transversal** no basta esta línea: aplicar el sub-checklist **Grilla DevExtreme (`DataGridDx`)** (hallazgos GEN-03 / MONO).
 - [ ] **Mensajes de validación** generados en cliente (y mensajes de error de negocio que solo llegan como string del API sin código): mapear a claves i18n cuando se muestren al usuario.
 - [ ] **E2E:** preferir `data-testid` / roles; evitar assertions que dependan de **una sola cadena** en español en pantallas que deban soportar cambio de idioma (salvo tests dedicados a i18n).
+
+#### Grilla DevExtreme (`DataGridDx`) — checklist ampliado (MONO / GEN-03)
+
+Derivado de correcciones QA 2026-06-01. **Patrón normativo:** `docs/00-contexto/_mono/03-ui-transversal/patron-i18n-grilla-devextreme.md`. **Checklist TR:** [TR-GEN-01-idioma](docs/04-tareas/001-Generaliddes/TR-GEN-01-idioma.md) ítems 21–28. **Referencia validada:** [F-GEN-03-cierre-formal](docs/04-tareas/001-Generaliddes/F-GEN-03-cierre-formal.md) (QA manual 2026-06-01).
+
+**Infraestructura (app / proyecto):**
+
+- [x] `syncDevExtremeLocale` al bootstrap y al cambiar idioma (`LocaleProvider` / `i18n.changeLanguage`).
+- [x] `loadMessages(esMessages)` con el JSON oficial DX tal cual (`{ "es": { … } }`); **prohibido** `loadMessages({ es: esMessages })` (doble anidación → menús y pager en inglés).
+- [x] Overrides `grid.dx.*` → `dxDataGrid-*` en `gridDevExtremeMessages.ts`; misma clave en los **cinco** `frontend/src/locales/*.json`.
+- [x] Tests de regresión: `syncDevExtremeLocale.test.ts`, `gridDevExtremeMessages.test.ts`.
+
+**Por cada instancia `DataGridDx` (validar en QA cambiando idioma, sin F5):**
+
+- [x] **FilterRow:** operadores (igual, contiene, empieza con, …) vía `operationDescriptions` + `grid.dx.filter.*` (no confiar solo en el bundle DX).
+- [x] **Group panel (vacío):** `GroupPanel.emptyPanelText` + `grid.dx.groupPanelEmpty`.
+- [x] **Column Chooser:** `title` + `emptyPanelText` + `grid.dx.columnChooserTitle` / `grid.dx.columnChooserEmpty`.
+- [x] **Menú contextual de encabezado** (clic derecho en cabecera): ordenar, agrupar, desagrupar, mover columna → `grid.dx.sort.*`, `grid.dx.group.*`, `grid.dx.column.move*` (overrides DX).
+- [x] **Paginador:** textos del `Pager` en idioma activo (depende de `loadMessages` correcto).
+- [x] **Captions** de columnas de negocio y **columna acciones** (`grid.column.actions`; evita ítem vacío en chooser).
+- [x] **Hints** de botones por fila (`grid.action.*`); sin texto visible en el botón.
+- [x] **Pie — totalizadores:** menú contextual por **columna** (clic derecho en celda de pie) → `grid.summary.*`; formatos `grid.dx.summary.*`; **un totalizador por columna** (no un bloque global).
+- [x] **Remount al cambiar locale:** `key={\`${gridId}-${locale}\`}` en el `DataGrid` del wrapper.
+- [x] **Vacío / carga / error** del wrapper: `grid.empty`, `grid.loading`, `grid.error.load`.
+- [x] **ABM (+):** botón alta solo con `abm.enabled`; mensaje consulta `grid.consulta.noAbmHint` donde aplique.
+
+**Al añadir un texto DX nuevo en grilla:** (1) clave en los 5 JSON, (2) mapa en `gridDevExtremeMessages.ts`, (3) si el componente expone prop (FilterRow, GroupPanel, ColumnChooser), también en `useDataGridDevExtremeTexts.ts`.
 
 **Referencia de layout:** modales de edición (alta/edición sobre grilla) deben seguir la misma política i18n que el resto de la UI (sin mezclar idiomas en un mismo modal).
 

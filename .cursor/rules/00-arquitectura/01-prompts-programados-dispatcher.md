@@ -806,7 +806,7 @@ Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá e
 | Paso | Skill | Pregunta que responde |
 |------|-------|------------------------|
 | **A1** | `/spec-ambiguity-review` | ¿El SPEC es claro antes de HU? |
-| **B1** | `/enrich-user-story` | ¿La HU está bien derivada del SPEC? |
+| **B1** | `/enrich-user-story` | ¿La HU e bien derivada del SPEC? |
 | **C1** | `/tr-ambiguity-review` | ¿La TR es implementable sin interpretar? (contratos, envelope, dependencias, AC) |
 | **D1** | `/ai-planning-mode` | ¿Cómo codificar (archivos, orden, riesgos técnicos)? |
 | **F1** | `/agent-verification-guide` | ¿La documentación y la codificación son consistentes? |
