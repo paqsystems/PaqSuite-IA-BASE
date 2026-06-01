@@ -114,6 +114,7 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 **Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §4.
 
 - **React 18** + **Vite 5** + **TypeScript**; dependencias transversales: `react-router-dom`, `i18next`, `react-i18next`, `devextreme`, `devextreme-react`, **Vitest**, **Playwright** (comandos `npm install` en la guía).
+- **Modelo estético UI (tokens, auth, shell):** **`docs/_base/00-modelo-estetica-ui-base.md`** — gradiente de marca en pantallas públicas, variables `--app-shell-*` post-login, convenciones CSS/DevExtreme.
 - **Shell post-login** (cuatro zonas: header, sidebar, content, footer): **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: docs de contexto `_mono` / `_multi`, no otra spec de layout.
 - **Cliente HTTP** centralizado (interceptores, token; **MULTI:** header de compañía si aplica).
 - **Rutas** protegidas; **MULTI:** pantalla de selección de empresa cuando el producto lo defina.
@@ -199,6 +200,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |
 | Tenancy y resolución de BD (**MULTI**) | `docs/01-arquitectura/07-mapa-visual-tenancy-resolucion-db.md` |
+| Modelo estético UI (auth + shell + tokens) | [`00-modelo-estetica-ui-base.md`](./00-modelo-estetica-ui-base.md) |
 | Shell y carpetas frontend | `docs/01-arquitectura/ui/` |
 | DevExtreme | `docs/frontend/devextreme-norms.md` |
 | Deploy y versión | `docs/06-operacion/deploy-infraestructura.md` |

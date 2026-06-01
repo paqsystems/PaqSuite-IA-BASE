@@ -174,6 +174,7 @@ El login **no** usa los cuatro frames anteriores, pero comparte criterios de mar
 
 | Tema | Dónde profundizar |
 |------|-------------------|
+| Tokens, gradiente auth, variables shell, CSS | [`00-modelo-estetica-ui-base.md`](./00-modelo-estetica-ui-base.md) |
 | Host, redirect, SQL (MONO) | `resolucion-host-cliente-sql-mono.md` |
 | Logo por cliente | Regla `15-host-subdominio-base-datos-y-branding` |
 | Idioma, i18n | `docs/00-contexto/_mono/01-experiencia-base/idioma-multilingual.md` o la carpeta equivalente `_multi` |
