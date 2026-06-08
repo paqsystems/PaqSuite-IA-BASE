@@ -140,6 +140,7 @@ Las siguientes son **obligatorias o muy recomendadas** alineadas a este reposito
 ### 5.2 Multiempresa y parámetros por módulo (**solo MULTI**)
 
 - Cuando el proyecto sea **MULTI:** header **`X-Company-Id`** y parámetros en Company DB: `.cursor/rules/27-parametros-generales-por-modulo.md`, `.cursor/rules/28-plan-tareas-hu-parametros-generales.md`.
+- **Catálogo `tipo_valor` (S/T/I/D/B/N):** `docs/_base/pq-parametros-gral-tipo-valor.md` (contrato BASE común a MONO y MULTI).
 - UI de parámetros generales (listado lectura + edición por tipo): `.cursor/rules/32-parametros-generales-ui-listado-y-edicion-por-tipo.md` (en **MONO** puede simplificarse a un único contexto de BD sin filtro por programa/empresa si el dominio lo permite, o mantenerse por módulo sin tenancy).
 
 ### 5.3 Frontend, DevExtreme y UI
