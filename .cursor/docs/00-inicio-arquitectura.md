@@ -123,7 +123,8 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 ### 4.4 Calidad, observabilidad y entrega
 
 - **Tests:** estrategia en `.cursor/rules/12-testing.md`; al cerrar tareas frontend: `npm run test:all` en `frontend/`.
-- **CI/CD** acorde a `docs/06-operacion/deploy-infraestructura.md` (versiones PHP/Node, secretos, E2E).
+- **CI (GitHub Actions):** plantilla e instalación en [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) (`docs/_base/templates/github/workflows/ci.yml` → `.github/workflows/ci.yml`; secret `VITE_DEVEXTREME_LICENSE`).
+- **CD / deploy** acorde a `docs/06-operacion/deploy-infraestructura.md` (versiones PHP/Node, secretos, E2E).
 - **Variables de entorno** documentadas en `.env.example` (sin secretos reales).
 
 ---
@@ -189,6 +190,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 - [ ] Frontend con estructura por features/servicios; DevExtreme con normas y licencia resuelta en release.
 - [ ] Tests: integración API donde importe; frontend con Vitest + al menos un E2E del flujo principal.
 - [ ] `VERSION`, `.env.example`, y documentación de deploy actualizada.
+- [ ] **CI:** `.github/workflows/ci.yml` instalado desde [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md); secret `VITE_DEVEXTREME_LICENSE` en GitHub.
 - [ ] Reglas de Cursor / equipo portadas o referenciadas para no diluir estándares.
 
 ---
@@ -199,6 +201,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 |-----------|-----------|
 | Symlinks entre repos (BASE / MONO / MULTI) | `docs/_base/symlinks_paqsuite_ia.md` (`.cursor/docs/` en **PaqSuite-IA-BASE**) |
 | Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
+| CI GitHub Actions (monorepo) | [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |
 | Tenancy y resolución de BD (**MULTI**) | `docs/01-arquitectura/07-mapa-visual-tenancy-resolucion-db.md` |
 | Modelo estético UI (auth + shell + tokens) | [`00-modelo-estetica-ui-base.md`](./00-modelo-estetica-ui-base.md) |

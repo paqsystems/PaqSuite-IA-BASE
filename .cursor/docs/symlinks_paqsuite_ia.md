@@ -552,6 +552,7 @@ mkdir "C:\Programacion\{PROYECTO}\docs\00-contexto"
 - [ ] Completar la **documentación propia** del producto en `docs\` (historias, manuales, etc.), **fuera** de `_base`, `_mono`, `_multi` y de `00-contexto\_mono` / `00-contexto\_multi` (esas rutas son herencia compartida).
 - [ ] [Verificar](#verificación) symlinks con `dir`.
 - [ ] Abrir el proyecto en Cursor y confirmar que indexa reglas, **skills**, `prompts` y docs heredados.
+- [ ] Instalar **CI** desde [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) (`.github/workflows/ci.yml` + secret `VITE_DEVEXTREME_LICENSE`).
 
 ---
 

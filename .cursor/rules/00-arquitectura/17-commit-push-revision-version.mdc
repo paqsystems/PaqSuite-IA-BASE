@@ -1,0 +1,41 @@
+---
+description: Ante commit/push, avisar si conviene revisión de versión por cambios de BD, seeds o datos fijos de deploy
+alwaysApply: true
+---
+
+# Commit / push — aviso de revisión de versión y deploy
+
+Contrato: `docs/_base/00-commit-push-revision-version-deploy.md`
+
+Runbook operativo: `docs/_base/00-runbook-actualizacion-version.md` — matriz §4 y plantilla PR §6 cuando el aviso aplique.
+
+Extensiones por producto (opcional): `docs/06-operacion/runbook-*.md` en el repo del producto.
+
+## Cuándo actuar
+
+Cuando el usuario pida **commit**, **push**, o **commit y push** (autorización explícita).
+
+**Antes** de `git add` / `git commit` / `git push`, revisar el diff y **avisar** si el release en servidor requiere pasos extra.
+
+No impedir el commit salvo pedido del usuario; el aviso es informativo.
+
+## Qué revisar en el diff
+
+- `database/migrations/**` — esquema
+- `database/seeders/**`, `backend/scripts/sql/**` — datos fijos
+- `config/*.php` de producto (menú, flags), `.env.example` — config deploy
+- `docs/backend/seed/**` — parámetros / seeds documentados
+- Catálogo **pivots**, **menú**, **parámetros**, **grillas/reportes** nuevos o alterados
+
+## Contenido del aviso (obligatorio si aplica)
+
+1. Si **conviene** bump de versión o tag release.
+2. **Comandos/SQL** a ejecutar en servidor (`migrate`, seed, SQL idempotente).
+3. **Variables `.env`** nuevas o a verificar.
+4. **Smoke test** mínimo post-deploy (1–3 ítems).
+
+Si el cambio es solo código sin BD ni datos fijos: una línea indicando que no hay pasos migrate/seed.
+
+## Ejemplo breve
+
+«Este commit incluye migraciones y seed de catálogo: en producción correr `migrate --force` y el seeder/SQL documentado en el PR; verificar flags `.env` nuevos; smoke en la pantalla tocada.»

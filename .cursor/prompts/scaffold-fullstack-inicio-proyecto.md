@@ -77,7 +77,7 @@ Antes de generar backend/frontend (§4.2–4.3), el asistente debe **incluir en 
 
 **4.3 Frontend:** estructura **`src/app`**, `layouts`, `pages`, `features`, `services`, **`shared`**: **`docs/01-arquitectura/ui/02-frontend-folder-structure.md`**; shell **`01_MainLayout_PostLogin_Specification.md`** (**MULTI:** tema/selector según spec; **MONO:** sin selector si no aplica); HTTP centralizado (**MULTI:** header compañía); rutas protegidas; DevExtreme según **`docs/frontend/devextreme-norms.md`** y grillas **`DataGridDX`** cuando corresponda.
 
-**4.4 Calidad:** **`.cursor/rules/12-testing.md`**; al cerrar tareas frontend: **`npm run test:all`** en `frontend/`; CI/CD y env según **`docs/06-operacion/deploy-infraestructura.md`**.
+**4.4 Calidad:** **`.cursor/rules/12-testing.md`**; al cerrar tareas frontend: **`npm run test:all`** en `frontend/`; **CI** con plantilla [`docs/_base/00-github-actions-ci-scaffold.md`](../docs/00-github-actions-ci-scaffold.md); CD y env según **`docs/06-operacion/deploy-infraestructura.md`**.
 
 ### Aplicar **§5 — Reglas esenciales** (portar o respetar referencias del documento base)
 
