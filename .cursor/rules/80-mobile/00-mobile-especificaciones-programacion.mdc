@@ -1,5 +1,5 @@
 ---
-description: Mobile — alcance, exclusiones, kardex y config; NO implementar hasta pedido explícito
+description: Mobile — alcance, login tenant, kardex, exclusiones y desarrollo Capacitor activo
 alwaysApply: true
 ---
 
@@ -7,109 +7,110 @@ alwaysApply: true
 
 ## Estado operativo (obligatorio)
 
-**No instalar Capacitor, no crear carpeta `mobile/`, no agregar pantallas mobile, plugins nativos, workflows de tienda ni refactors mobile en el código existente hasta que el usuario lo indique de forma explícita en el chat.**
+**Capacitor implementado v1–v3** (2026-07-01) — PedidosWeb mobile **`v1.2.2-mobile`**.
 
-Esta regla define **contrato y documentación**; no autoriza implementación por defecto.
+- Código Capacitor en `frontend/` (android + ios).
+- Cierres: [F-GEN-11-cierre-formal](../../docs/04-tareas/001-Generaliddes/F-GEN-11-cierre-formal.md), [F-101-17-cierre-formal-v3](../../docs/04-tareas/101-PedidosWeb/F-101-17-cierre-formal-v3.md).
+- Verificación F1 v3: [D-VERIFICACION-101-17-mobile-v3](../../docs/04-tareas/101-PedidosWeb/D-VERIFICACION-101-17-mobile-v3.md).
+- Tag Git `v1.2.2-mobile`: tras smoke dispositivo físico + iOS.
 
 Documentación normativa:
 
 | Documento | Contenido |
 |-----------|-----------|
-| `docs/_base/01-mobile/README.md` | Visión general, arquitectura, tiendas |
-| `docs/_base/01-mobile/01-especificacion-capacitor.md` | Spec programación Capacitor |
-| `docs/_base/01-mobile/02-especificacion-react-native-flutter.md` | Spec RN / Flutter |
-| `docs/_base/01-mobile/03-comandos-generacion-aplicaciones.md` | Comandos por objetivo (referencia; no ejecutar salvo pedido) |
+| `docs/_base/01-mobile/README.md` | Visión general |
+| [`06-instalacion-emulador-android-studio.md`](./06-instalacion-emulador-android-studio.md) | Instalación emulador Android |
+| [`05-runbook-primera-prueba-android-emulador.md`](./05-runbook-primera-prueba-android-emulador.md) | Smoke app / backend en emulador |
+| [`03-comandos-generacion-aplicaciones.md`](./03-comandos-generacion-aplicaciones.md) | Build, APK debug, release |
+| `docs/_base/01-mobile/04-patron-login-tenant-mobile-mono.md` | **Login tenant-first (MONO)** |
+| `docs/05-open-spec/001-Generaliddes/SPEC-001-11-mobile-capacitor.md` | OpenSpec transversal |
+| `docs/05-open-spec/101-PedidosWeb/SPEC-101-17-mobile-capacitor-pedidosweb.md` | OpenSpec PedidosWeb |
 
-Complementa `.cursor/rules/base/20-frontend/21-frontend-mobile-norms.md` (stack y entorno).
-
----
-
-## Alcance mobile permitido (cuando se autorice implementar)
-
-Aplica a **Capacitor** (mismo `frontend/`) y a **cliente nativo futuro** (`mobile/` con React Native o Flutter), salvo que la TR del producto indique otra cosa.
-
-### 1) Pantalla / icono de configuración (obligatorio en mobile)
-
-- Exponer un **icono de configuración** (en header post-login o accesible antes del primer uso) que abra pantalla/modal de **datos esenciales** persistidos en el dispositivo.
-- Campos mínimos:
-  - **URL base del servidor / API** (ej. `https://backend.{proyecto}.paqsystems.com/api/v1`)
-  - **`X-Paq-Cliente`** / código tenant (MONO)
-  - Opcional: nombre visible del entorno, timeout, versión de app
-- **Validación:** probar conectividad (`GET /api/v1/health` o endpoint acordado) antes de guardar.
-- **Persistencia:** `@capacitor/preferences` (Capacitor) o almacenamiento seguro equivalente (RN/Flutter); no depender solo de `.env` embebido en release.
-- **UI:** DevExtreme en Capacitor (`Button`, `TextBox`, `Popup`/`Drawer`); componentes nativos equivalentes en RN/Flutter.
-- **`data-testid`:** `mobileConfigOpen`, `mobileConfigSave`, `mobileConfigApiUrl`, `mobileConfigTenant`, `mobileConfigTestConnection`.
-- i18n obligatorio (`mobile.config.*`).
-
-### 2) Exclusiones funcionales (prohibido en mobile)
-
-No implementar en mobile (ni reutilizar rutas/pantallas web tal cual):
-
-| # | Exclusión | Referencia web (no portar) |
-|---|-----------|----------------------------|
-| 1 | **PivotGrid / informes pivot** | `frontend/src/shared/pivot/**`, procesos pivot |
-| 2 | **Importación Excel** | `frontend/src/features/excelImport/**`, rutas `/excel-import/*` |
-| 3 | **Esquema de seguridad / ABM admin** | `frontend/src/features/admin/security/**`, rutas `/admin/roles`, `/admin/permisos` |
-| 4 | **Preferencia «Pestañas separadas»** | `openInNewTab`, toggle en menú avatar, `PATCH .../preferences` para nueva pestaña |
-
-En mobile: navegación **siempre in-app** (`navigate` / stack nativo). **Nunca** `window.open(..., '_blank')` para procesos del menú.
-
-Filtrar ítems de menú server-side o client-side para ocultar procesos excluidos.
-
-### 3) Consultas — formato kardex (obligatorio en mobile)
-
-Las **grillas de consulta** de web (**DataGrid** DevExtreme) **no** son el patrón mobile.
-
-Usar **vista kardex**:
-
-- Lista **vertical** de tarjetas (`List` / cards nativas), una fila lógica = una tarjeta.
-- Cada tarjeta: identificadores principales + 2–4 campos resumen + indicador de estado si aplica.
-- **Tap** en tarjeta → detalle (pantalla secundaria, drawer o modal), no edición inline masiva.
-- Filtros en barra superior o panel colapsable; **no** menú de columnas ni agrupación tipo grilla desktop.
-- Paginación o scroll infinito; pull-to-refresh donde aplique.
-- Misma API que web; distinto **presentador** (mapper fila → modelo kardex).
-- i18n: claves `consulta.*` reutilizables; labels de campos en tarjeta desde metadata o catálogo existente.
-
-Pantallas afectadas (referencia PedidosWeb): deuda, cheques, historial ventas, stock, detalle pedidos, pedidos ingresados/pendientes, presupuestos, logs integración, parámetros (solo consulta si se incluye).
-
-### 4) Qué sí puede incluir mobile (orientativo)
-
-- Login, cambio/recuperación de contraseña (patrón auth DevExtreme / equivalente nativo)
-- Shell simplificado (drawer menú, sin opciones web excluidas)
-- Dashboard operativo **reducido** o quick-access (no paridad total con web)
-- Chat assistant (si producto lo incluye en MVP mobile)
-- Preferencias: idioma y apariencia/tema (**sin** pestañas separadas)
+Complementa `.cursor/rules/base/20-frontend/21-frontend-mobile-norms.md`.
 
 ---
 
-## Capacitor vs nativo
+## Desarrollo con Capacitor activo (obligatorio en features nuevas)
 
-| Aspecto | Capacitor | React Native / Flutter |
-|---------|-----------|------------------------|
-| Carpeta | `frontend/` + `android/` / `ios/` | `mobile/` (convención) |
-| UI | DevExtreme + CSS responsive | Componentes nativos / librería UI |
-| Config API | Pantalla config + `@capacitor/preferences` | Pantalla config + secure storage |
-| Consultas | Vista kardex (List/cards DX) | FlatList / ListView kardex |
-| Spec detallada | `01-especificacion-capacitor.md` | `02-especificacion-react-native-flutter.md` |
+Al implementar **cualquier** pantalla, proceso o flujo nuevo en `frontend/`:
 
-Backend **único**; envelope y auth sin cambios.
+1. **Evaluar mobile desde el diseño** — no dejar mobile como afterthought.
+2. **Rama native:** si el proceso está en menú MVP mobile, crear vista kardex/wizard o `isNativeApp()` branch; **no** portar DataGrid desktop ni rutas excluidas.
+3. **Policy:** actualizar `pedidosWebMobilePolicy.ts` si la ruta debe estar en native; tests en `pedidosWebMobilePolicy.test.ts`.
+4. **UI:** DevExtreme responsivo; consultas = kardex (`ConsultaKardexMobileView`); acciones en tarjeta con i18n `grid.action.*` y tooltips táctiles.
+5. **Exclusiones:** pivot, excel-import, admin seguridad, `openInNewTab` — nunca en native.
+6. **Build:** tras cambios que afecten native, verificar `npm run build:mobile` + `npx cap sync`.
+7. **Documentación:** TR/HU/SPEC si el alcance es épica mobile; observaciones en cierre F si es fix transversal.
+
+Patrón código:
+
+```typescript
+import { isNativeApp } from '../../../shared/platform/isNativeApp';
+
+export function MiProcesoPage() {
+  if (isNativeApp()) {
+    return <MiProcesoMobileView />;
+  }
+  return <MiProcesoWebView />;
+}
+```
 
 ---
 
-## Cuándo consultar otras reglas
+## Login con tenant (obligatorio — MONO mobile)
 
-- Auth mobile: `docs/00-contexto/_mono/01-experiencia-base/patron-ui-auth-devextreme.md` (Capacitor)
-- DevExtreme en Capacitor: `.cursor/rules/devextreme-frontend.mdc` (producto) + exclusiones de esta regla
-- Commit/deploy mobile: `docs/_base/00-commit-push-revision-version-deploy.md`
-- Comandos build/tiendas: `docs/_base/01-mobile/03-comandos-generacion-aplicaciones.md` (**referencia**; no ejecutar salvo pedido explícito)
+Ver [`04-patron-login-tenant-mobile-mono.md`](../../docs/_base/01-mobile/04-patron-login-tenant-mobile-mono.md).
+
+- Login: **tenant (empresa)** + **usuario** + **contraseña** — tenant **primero** en UI.
+- **Orden backend:** resolver conexión con `X-Paq-Cliente` → **después** validar credenciales.
+- `data-testid`: `loginTenant`; i18n `login.tenant`.
+
+## Config avanzada (complementaria)
+
+- Icono **configuración** solo para **override URL API** (dev/staging) + test health.
+- **El tenant no se configura en engranaje** — solo en login.
+- Persistencia: `@capacitor/preferences`.
+- Emulador Android → host: `http://10.0.2.2:<puerto>/api/v1`.
+- Dispositivo físico → IP LAN del PC (ej. `http://192.168.x.x:8088/api/v1`).
 
 ---
 
-## Checklist antes de merge (solo cuando mobile esté autorizado)
+## Exclusiones funcionales (prohibido en mobile)
 
-- [ ] Pantalla config con test de conexión y persistencia
-- [ ] Menú sin pivot, excel-import, admin seguridad
-- [ ] Sin toggle ni lógica `openInNewTab`
-- [ ] Consultas en kardex, no DataGrid desktop
+| # | Exclusión |
+|---|-----------|
+| 1 | PivotGrid / pivots |
+| 2 | Importación Excel |
+| 3 | ABM admin seguridad |
+| 4 | Preferencia «Pestañas separadas» (`openInNewTab`) |
+
+Navegación **in-app** únicamente; filtrar menú/rutas excluidas.
+
+---
+
+## Consultas — formato kardex (obligatorio)
+
+Lista vertical de tarjetas; misma API que web; **no** DataGrid desktop.
+
+---
+
+## Roadmap PedidosWeb (estado)
+
+| Fase | Release | Alcance | Estado |
+|------|---------|---------|--------|
+| v1 | `v1.2.0-mobile` | Scaffold + login tenant + stock kardex | **F** |
+| v2 | `v1.2.1-mobile` | Consultas + listados kardex | **F** |
+| v3 | `v1.2.2-mobile` | Carga pedidos + acciones listados | **F** (tag pendiente) |
+
+Plataformas: **Android + iOS** desde v1.
+
+---
+
+## Checklist antes de merge (features con impacto mobile)
+
+- [ ] Rama `isNativeApp()` o kardex si aplica al menú MVP
+- [ ] `pedidosWebMobilePolicy` + tests actualizados si hay ruta nueva
 - [ ] i18n + `data-testid` estables
-- [ ] Documentación/TR actualizada si cambia alcance
+- [ ] `npm run build:mobile` OK
+- [ ] Sin exclusiones (pivot, excel, admin, openInNewTab) en native
+- [ ] TR/SPEC actualizados si cambia alcance épica mobile

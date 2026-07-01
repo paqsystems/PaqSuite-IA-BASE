@@ -187,3 +187,12 @@ Debe coincidir con `SQL_DATABASE` en la asociación.
 | OpenSpec del producto | `{proyecto}`, nombre BD, dev tenant |
 
 Al generar HUs de infraestructura MONO, citar este documento como fuente de verdad para URL, redirect y SQL.
+
+---
+
+## Apps mobile (Capacitor / nativo)
+
+En **web**, el `{cliente}` viene del subdominio y redirect. En **mobile**, el usuario ingresa el tenant en el **login**; el resto del flujo (header `X-Paq-Cliente`, resolución SQL, auth) es el mismo.
+
+**Patrón obligatorio:** [`docs/_base/01-mobile/04-patron-login-tenant-mobile-mono.md`](./01-mobile/04-patron-login-tenant-mobile-mono.md)  
+**OpenSpec:** `SPEC-001-11-mobile-capacitor`, `SPEC-101-17-mobile-capacitor-pedidosweb` (PedidosWeb).

@@ -1,16 +1,38 @@
 # Comandos — generación de aplicaciones mobile
 
-Referencia operativa de comandos por **objetivo** (Capacitor sobre `frontend/` y, a futuro, nativo en `mobile/`).
+Referencia operativa de comandos por **objetivo** (Capacitor sobre `frontend/`).
 
-> **IMPORTANTE — NO EJECUTAR POR DEFECTO**  
-> **Por el momento no instalar Capacitor, no compilar APK/IPA, no configurar tiendas ni modificar CI** hasta que el usuario o una TR mobile lo indiquen **explícitamente**.  
-> Este documento es **documentación de referencia** para cuando se autorice la implementación.
+**Estado PedidosWeb:** D1 v1 implementado (2026-06-30). Proyectos nativos en `frontend/android/` y `frontend/ios/`.
 
 **Norma:** `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc`
 
+**Guía detallada (primera vez):**
+
+| Documento | Contenido |
+|-----------|-----------|
+| [`06-instalacion-emulador-android-studio.md`](./06-instalacion-emulador-android-studio.md) | **Instalar emulador** — Studio, SDK, Device Manager, AVD API 34, error hypervisor |
+| [`05-runbook-primera-prueba-android-emulador.md`](./05-runbook-primera-prueba-android-emulador.md) | **Probar la app** — backend, URL `10.0.2.2`, login, checklist smoke |
+
 ---
 
-## Prerrequisitos (cuando se autorice)
+## Smoke rápido (resumen)
+
+Backend Laravel en el host (ej. puerto `8088`). En **emulador Android**, la API del host es `http://10.0.2.2:8088/api/v1` (configurable en engranaje de login o `frontend/.env.mobile`).
+
+```powershell
+cd frontend
+npm run build:mobile
+npx cap sync
+npx cap open android
+```
+
+Flujo smoke: tenant `desarrollo` → login → landing `/consultas/stock` → filtro → detalle artículo.
+
+iOS: `npx cap open ios` (requiere Mac/Xcode).
+
+---
+
+## Prerrequisitos
 
 | Herramienta | Android | iOS |
 |-------------|---------|-----|
@@ -247,8 +269,8 @@ Lane típica: build → `upload_to_testflight`.
 | CI | «Autorizo workflow mobile en tag v*.*.* con artefacto descargable» |
 | Play internal | «Autorizo Fastlane internal testing; secrets ya están en GitHub» |
 
-Sin palabras como **autorizo**, **implementá mobile**, **instalá Capacitor**, el agente debe **limitarse a documentación** (esta carpeta + regla `80-mobile`).
+Sin palabras como **autorizo** para **v2/v3** o publicación tiendas, el agente no debe ampliar alcance mobile más allá de la TR activa.
 
 ---
 
-*Comandos mobile — BASE. Referencia únicamente; no ejecutar hasta indicación contraria.*
+*Comandos mobile — BASE. PedidosWeb v1 operativo desde `frontend/`.*

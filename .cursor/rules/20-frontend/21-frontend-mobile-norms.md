@@ -3,7 +3,7 @@ alwaysApply: true
 ---
 # description: Normas y Convenciones de Frontend Mobile (Capacitor)
 
-> **NO IMPLEMENTAR** Capacitor ni pantallas mobile hasta pedido explícito. Ver regla canónica: `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` y `docs/_base/01-mobile/`.
+> **Capacitor activo** en PedidosWeb (v1–v3). Regla canónica: `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` y `docs/_base/01-mobile/`.
 
 ## Alcance
 
@@ -47,6 +47,7 @@ const isNative = Capacitor.isNativePlatform();
 
 ### 3) Layout y pantallas mobile
 
+- **Nuevas pantallas:** siempre evaluar branch `isNativeApp()` o componente kardex/wizard mobile.
 - **Mobile:** Sin dashboard, sin solapas (TabPanel). Priorizar "ejecución de procesos".
 - **MobileHome:** Pantalla de quick access (acceso rápido a procesos), no versión simplificada del dashboard.
 - **Drawer:** En mobile, el menú lateral es Drawer (fullscreen modal, swipe/backdrop para cerrar).

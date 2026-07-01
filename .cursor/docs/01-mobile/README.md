@@ -2,20 +2,25 @@
 
 Guía **compartida (BASE)** para productos PaqSuite con stack **Laravel API + React/Vite** (MONO o MULTI). Aplica a PedidosWeb y a proyectos que reutilicen la misma arquitectura.
 
-> **NO IMPLEMENTAR POR DEFECTO**  
-> Por el momento **no instalar Capacitor**, **no crear `mobile/`**, **no ejecutar builds de tienda ni modificar CI** hasta indicación explícita del usuario o TR mobile autorizada. Esta carpeta y la regla Cursor definen **especificaciones**; la implementación requiere autorización literal.
+> **Implementación vía OpenSpec**  
+> Mobile se implementa tras **A1 + HU/TR** de [`SPEC-001-11-mobile-capacitor.md`](../../05-open-spec/001-Generaliddes/SPEC-001-11-mobile-capacitor.md) y [`SPEC-101-17-mobile-capacitor-pedidosweb.md`](../../05-open-spec/101-PedidosWeb/SPEC-101-17-mobile-capacitor-pedidosweb.md). Release v1: tag **`v1.2.0-mobile`**.
 
-**Estado en PedidosWeb (referencia):** Capacitor **no está instalado aún** en `frontend/`; la SPA web ya tiene base responsive parcial y la API está pensada para múltiples clientes (web, mobile, integraciones).
+**Estado en PedidosWeb:** Capacitor **instalado** (D1 v1, 2026-06-30); proyectos `frontend/android/` y `frontend/ios/`. Release v1: tag **`v1.2.0-mobile`** (smoke dispositivo pendiente).
 
 ## Índice de especificaciones
 
 | Documento | Contenido |
 |-----------|-----------|
 | **Este README** | Visión general, arquitectura, tiendas |
-| [`01-especificacion-capacitor.md`](./01-especificacion-capacitor.md) | Spec programación Capacitor (config, kardex, exclusiones) |
+| [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mono.md) | **Login tenant-first (MONO mobile)** |
+| [`01-especificacion-capacitor.md`](./01-especificacion-capacitor.md) | Spec programación Capacitor |
 | [`02-especificacion-react-native-flutter.md`](./02-especificacion-react-native-flutter.md) | Spec React Native / Flutter |
 | [`03-comandos-generacion-aplicaciones.md`](./03-comandos-generacion-aplicaciones.md) | Comandos por objetivo (teléfono, release, CI, Play, TestFlight) |
+| [`05-runbook-primera-prueba-android-emulador.md`](./05-runbook-primera-prueba-android-emulador.md) | **Primera prueba: smoke app, backend, API, troubleshooting** |
+| [`06-instalacion-emulador-android-studio.md`](./06-instalacion-emulador-android-studio.md) | **Instalación emulador Android: Studio, SDK, AVD, Device Manager, API 34** |
 | Regla Cursor | `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` |
+| OpenSpec | `docs/05-open-spec/001-Generaliddes/SPEC-001-11-mobile-capacitor.md` |
+| OpenSpec PedidosWeb | `docs/05-open-spec/101-PedidosWeb/SPEC-101-17-mobile-capacitor-pedidosweb.md` |
 
 **Complementa:**
 
@@ -33,12 +38,13 @@ Guía **compartida (BASE)** para productos PaqSuite con stack **Laravel API + Re
 
 Cuando se autorice implementar, aplicar **obligatoriamente**:
 
-1. **Icono configuración** — URL API, tenant, test conexión, persistencia en dispositivo.
-2. **No** PivotGrid / pivots.
-3. **No** importación Excel.
-4. **No** admin seguridad (`/admin/*`).
-5. **No** preferencia «Pestañas separadas» (`openInNewTab`).
-6. **Consultas en formato kardex** (tarjetas verticales), no DataGrid desktop.
+1. **Login con tenant** — tenant + usuario + contraseña; conexión antes de auth — [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mono.md).
+2. **Config avanzada** — solo override URL API (no tenant en engranaje).
+3. **No** PivotGrid / pivots.
+4. **No** importación Excel.
+5. **No** admin seguridad (`/admin/*`).
+6. **No** preferencia «Pestañas separadas» (`openInNewTab`).
+7. **Consultas en formato kardex** (tarjetas verticales), no DataGrid desktop.
 
 Detalle: [`01-especificacion-capacitor.md`](./01-especificacion-capacitor.md) y regla `80-mobile/00-mobile-especificaciones-programacion.mdc`.
 

@@ -2,9 +2,11 @@
 
 Contrato técnico para empaquetar la SPA React existente como app Android/iOS con **Capacitor**.
 
-**Estado:** **NO IMPLEMENTAR** hasta indicación explícita del usuario o TR mobile autorizada.
+**Estado:** Implementar tras **A1 + TR** — OpenSpec [`SPEC-001-11`](../../05-open-spec/001-Generaliddes/SPEC-001-11-mobile-capacitor.md), [`SPEC-101-17`](../../05-open-spec/101-PedidosWeb/SPEC-101-17-mobile-capacitor-pedidosweb.md). Release v1: **`v1.2.0-mobile`**.
 
 **Norma Cursor:** `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc`
+
+**Login tenant:** [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mono.md)
 
 **Complementa:** [`README.md`](./README.md), [`03-comandos-generacion-aplicaciones.md`](./03-comandos-generacion-aplicaciones.md)
 
@@ -25,30 +27,33 @@ Un solo código React; ramas UX mobile vía detección de plataforma (`Capacitor
 
 ## 2) Requisitos funcionales mobile (Capacitor)
 
-### 2.1 Configuración esencial (obligatorio)
+### 2.1 Login con tenant (obligatorio)
 
-**Entrada:** icono engranaje (`data-testid="mobileConfigOpen"`) en header o pantalla pre-login si no hay URL guardada.
+Ver [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mono.md).
 
-**Pantalla / popup** (`mobileConfig*` testids):
+**Pantalla login (native):** tenant + usuario + contraseña (`data-testid`: `loginTenant`, `loginUsername`, `loginPassword`).
 
-| Campo | Descripción | Validación |
-|-------|-------------|------------|
-| `apiBaseUrl` | URL base API (incluye `/api/v1` si aplica) | HTTPS en prod; formato URL |
-| `tenantCliente` | Valor `X-Paq-Cliente` (MONO) | No vacío |
-| (opcional) `displayName` | Etiqueta del entorno | — |
+| Campo | Descripción |
+|-------|-------------|
+| `tenant` | Slug empresa (`demo`, `ankasdelsur`, `quento`, …) → `X-Paq-Cliente` |
+| `username` / `password` | Igual contrato web SPEC-001-02 |
 
-**Acciones:**
+**Flujo:** fijar header tenant → (opcional health) → `POST /auth/login` → persistir token + tenant en `@capacitor/preferences`.
 
-- **Probar conexión:** `GET {apiBaseUrl}/health` (o health acordado) con header tenant.
-- **Guardar:** persistir en `@capacitor/preferences` (claves versionadas, ej. `pedidosweb.mobile.config.v1`).
-- **Tras guardar:** recargar cliente HTTP para usar valores persistidos (sustituir `import.meta.env.VITE_API_BASE_URL` fijo en native).
+**Cliente HTTP:** en native, resolver base URL: override Preferences → `import.meta.env.VITE_API_BASE_URL` → patrón `https://backend.{proyecto}.paqsystems.com/api/v1`.
 
-**Cliente HTTP:** extender `frontend/src/shared/http/client.ts` (cuando se autorice) para resolver base URL en este orden:
+### 2.2 Config avanzada (opcional)
 
-1. Preferencias Capacitor (native)
-2. `import.meta.env.VITE_API_BASE_URL` (web / fallback dev)
+**Entrada:** icono engranaje (`data-testid="mobileConfigOpen"`) — **solo override URL API**, no tenant.
 
-### 2.2 Exclusiones (no portar a Capacitor)
+| Campo | Descripción |
+|-------|-------------|
+| `apiBaseUrlOverride` | URL base API dev/staging |
+| (opcional) `displayName` | Etiqueta del entorno |
+
+**Acciones:** test health con tenant del login activo o último tenant; guardar en Preferences.
+
+### 2.3 Exclusiones (no portar a Capacitor)
 
 | Módulo | Acción |
 |--------|--------|
@@ -57,7 +62,7 @@ Un solo código React; ramas UX mobile vía detección de plataforma (`Capacitor
 | Admin seguridad | No rutas `/admin/*` |
 | Pestañas separadas | No toggle `openInNewTab`; no `window.open` en menú; ignorar campo en GET preferences para UX mobile |
 
-### 2.3 Consultas — vista kardex
+### 2.4 Consultas — vista kardex
 
 **No usar** `DataGridDx` como patrón principal en consultas mobile.
 
@@ -83,14 +88,14 @@ Un solo código React; ramas UX mobile vía detección de plataforma (`Capacitor
 - Reutilizar **mismos endpoints** que la grilla web; mapper `toKardexItem(row)`.
 - i18n: títulos desde claves existentes `pages.*` / `consulta.*`.
 
-### 2.4 Shell mobile
+### 2.5 Shell mobile
 
 - Menú: **Drawer** overlay (< 768px), alineado a `sidebarState.ts` / `shouldUseOverlaySidebar`.
 - Sin dashboard desktop completo si TR mobile define **quick access** (accesos directos a procesos).
 - Safe areas: `env(safe-area-inset-*)` en CSS shell.
 - Plugins recomendados (cuando se instale Capacitor): `@capacitor/preferences`, `@capacitor/status-bar`, `@capacitor/splash-screen`, `@capacitor/keyboard`, `@capacitor/app`.
 
-### 2.5 Auth y sesión
+### 2.6 Auth y sesión
 
 - Reutilizar flujo auth web (DevExtreme) salvo ajustes de layout.
 - Token: `localStorage` aceptable en MVP; valorar migración a `@capacitor/preferences` en release.
