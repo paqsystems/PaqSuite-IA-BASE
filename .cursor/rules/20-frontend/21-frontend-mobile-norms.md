@@ -3,6 +3,8 @@ alwaysApply: true
 ---
 # description: Normas y Convenciones de Frontend Mobile (Capacitor)
 
+> **NO IMPLEMENTAR** Capacitor ni pantallas mobile hasta pedido explícito. Ver regla canónica: `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` y `docs/_base/01-mobile/`.
+
 ## Alcance
 
 Este documento complementa `.cursor/rules/base/20-frontend/20-frontend-norms.md` con reglas específicas para el frontend mobile empaquetado con Capacitor.
@@ -104,6 +106,10 @@ npm run cap:ios
 
 ## Referencias
 
-- `docs/mobile/README.md` – Build, comandos y configuración
+- `docs/_base/01-mobile/README.md` – Visión general mobile
+- `docs/_base/01-mobile/01-especificacion-capacitor.md` – Spec Capacitor (config, kardex, exclusiones)
+- `docs/_base/01-mobile/02-especificacion-react-native-flutter.md` – Spec RN / Flutter
+- `docs/_base/01-mobile/03-comandos-generacion-aplicaciones.md` – Comandos (no ejecutar salvo autorización)
+- `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` – Regla Cursor mobile
 - `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md` – Reglas mobile (sin dashboard, sin solapas)
 - `docs/arquitectura.md` – Visión general web + mobile

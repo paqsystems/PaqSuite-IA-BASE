@@ -52,7 +52,7 @@ Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-e
 | Frontend web | **React 18** + **Vite 5** + **TypeScript** | Proxy típico de `/api` al backend en desarrollo. |
 | UI | **DevExtreme** + **devextreme-react** | Licencia vía `VITE_DEVEXTREME_LICENSE`; release con `npm run build:release`. |
 | i18n | **i18next** / **react-i18next** | Coherente con normas de test IDs y accesibilidad. |
-| Mobile (opcional mismo repo) | **Capacitor** | Mismo build web empaquetado; ver `docs/mobile/README.md` si existe en el clon/plantilla. |
+| Mobile (opcional mismo repo) | **Capacitor** (+ nativo futuro en `mobile/`) | Mismo build web empaquetado; guía [`01-mobile/README.md`](./01-mobile/README.md). |
 | Tests backend | **PHPUnit** | Integración API + BD con datos de prueba. |
 | Tests frontend | **Vitest** + **Playwright** | Por tarea/historia en frontend: unitarios en `src/` y E2E en `tests/e2e/`. |
 | Versión de producto | Archivo **`VERSION`** en la raíz | Fuente de verdad para `VITE_APP_VERSION` en Vite (ver `docs/06-operacion/deploy-infraestructura.md`). |
@@ -208,6 +208,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Shell y carpetas frontend | `docs/01-arquitectura/ui/` |
 | DevExtreme | `docs/frontend/devextreme-norms.md` |
 | Deploy y versión | `docs/06-operacion/deploy-infraestructura.md` |
+| Mobile (Capacitor, nativo, CI/tiendas) | [`01-mobile/README.md`](./01-mobile/README.md) |
 | Guía agente / DoD | `AGENTS.md` |
 
 ---

@@ -1,0 +1,115 @@
+---
+description: Mobile — alcance, exclusiones, kardex y config; NO implementar hasta pedido explícito
+alwaysApply: true
+---
+
+# Mobile — especificaciones de programación (BASE)
+
+## Estado operativo (obligatorio)
+
+**No instalar Capacitor, no crear carpeta `mobile/`, no agregar pantallas mobile, plugins nativos, workflows de tienda ni refactors mobile en el código existente hasta que el usuario lo indique de forma explícita en el chat.**
+
+Esta regla define **contrato y documentación**; no autoriza implementación por defecto.
+
+Documentación normativa:
+
+| Documento | Contenido |
+|-----------|-----------|
+| `docs/_base/01-mobile/README.md` | Visión general, arquitectura, tiendas |
+| `docs/_base/01-mobile/01-especificacion-capacitor.md` | Spec programación Capacitor |
+| `docs/_base/01-mobile/02-especificacion-react-native-flutter.md` | Spec RN / Flutter |
+| `docs/_base/01-mobile/03-comandos-generacion-aplicaciones.md` | Comandos por objetivo (referencia; no ejecutar salvo pedido) |
+
+Complementa `.cursor/rules/base/20-frontend/21-frontend-mobile-norms.md` (stack y entorno).
+
+---
+
+## Alcance mobile permitido (cuando se autorice implementar)
+
+Aplica a **Capacitor** (mismo `frontend/`) y a **cliente nativo futuro** (`mobile/` con React Native o Flutter), salvo que la TR del producto indique otra cosa.
+
+### 1) Pantalla / icono de configuración (obligatorio en mobile)
+
+- Exponer un **icono de configuración** (en header post-login o accesible antes del primer uso) que abra pantalla/modal de **datos esenciales** persistidos en el dispositivo.
+- Campos mínimos:
+  - **URL base del servidor / API** (ej. `https://backend.{proyecto}.paqsystems.com/api/v1`)
+  - **`X-Paq-Cliente`** / código tenant (MONO)
+  - Opcional: nombre visible del entorno, timeout, versión de app
+- **Validación:** probar conectividad (`GET /api/v1/health` o endpoint acordado) antes de guardar.
+- **Persistencia:** `@capacitor/preferences` (Capacitor) o almacenamiento seguro equivalente (RN/Flutter); no depender solo de `.env` embebido en release.
+- **UI:** DevExtreme en Capacitor (`Button`, `TextBox`, `Popup`/`Drawer`); componentes nativos equivalentes en RN/Flutter.
+- **`data-testid`:** `mobileConfigOpen`, `mobileConfigSave`, `mobileConfigApiUrl`, `mobileConfigTenant`, `mobileConfigTestConnection`.
+- i18n obligatorio (`mobile.config.*`).
+
+### 2) Exclusiones funcionales (prohibido en mobile)
+
+No implementar en mobile (ni reutilizar rutas/pantallas web tal cual):
+
+| # | Exclusión | Referencia web (no portar) |
+|---|-----------|----------------------------|
+| 1 | **PivotGrid / informes pivot** | `frontend/src/shared/pivot/**`, procesos pivot |
+| 2 | **Importación Excel** | `frontend/src/features/excelImport/**`, rutas `/excel-import/*` |
+| 3 | **Esquema de seguridad / ABM admin** | `frontend/src/features/admin/security/**`, rutas `/admin/roles`, `/admin/permisos` |
+| 4 | **Preferencia «Pestañas separadas»** | `openInNewTab`, toggle en menú avatar, `PATCH .../preferences` para nueva pestaña |
+
+En mobile: navegación **siempre in-app** (`navigate` / stack nativo). **Nunca** `window.open(..., '_blank')` para procesos del menú.
+
+Filtrar ítems de menú server-side o client-side para ocultar procesos excluidos.
+
+### 3) Consultas — formato kardex (obligatorio en mobile)
+
+Las **grillas de consulta** de web (**DataGrid** DevExtreme) **no** son el patrón mobile.
+
+Usar **vista kardex**:
+
+- Lista **vertical** de tarjetas (`List` / cards nativas), una fila lógica = una tarjeta.
+- Cada tarjeta: identificadores principales + 2–4 campos resumen + indicador de estado si aplica.
+- **Tap** en tarjeta → detalle (pantalla secundaria, drawer o modal), no edición inline masiva.
+- Filtros en barra superior o panel colapsable; **no** menú de columnas ni agrupación tipo grilla desktop.
+- Paginación o scroll infinito; pull-to-refresh donde aplique.
+- Misma API que web; distinto **presentador** (mapper fila → modelo kardex).
+- i18n: claves `consulta.*` reutilizables; labels de campos en tarjeta desde metadata o catálogo existente.
+
+Pantallas afectadas (referencia PedidosWeb): deuda, cheques, historial ventas, stock, detalle pedidos, pedidos ingresados/pendientes, presupuestos, logs integración, parámetros (solo consulta si se incluye).
+
+### 4) Qué sí puede incluir mobile (orientativo)
+
+- Login, cambio/recuperación de contraseña (patrón auth DevExtreme / equivalente nativo)
+- Shell simplificado (drawer menú, sin opciones web excluidas)
+- Dashboard operativo **reducido** o quick-access (no paridad total con web)
+- Chat assistant (si producto lo incluye en MVP mobile)
+- Preferencias: idioma y apariencia/tema (**sin** pestañas separadas)
+
+---
+
+## Capacitor vs nativo
+
+| Aspecto | Capacitor | React Native / Flutter |
+|---------|-----------|------------------------|
+| Carpeta | `frontend/` + `android/` / `ios/` | `mobile/` (convención) |
+| UI | DevExtreme + CSS responsive | Componentes nativos / librería UI |
+| Config API | Pantalla config + `@capacitor/preferences` | Pantalla config + secure storage |
+| Consultas | Vista kardex (List/cards DX) | FlatList / ListView kardex |
+| Spec detallada | `01-especificacion-capacitor.md` | `02-especificacion-react-native-flutter.md` |
+
+Backend **único**; envelope y auth sin cambios.
+
+---
+
+## Cuándo consultar otras reglas
+
+- Auth mobile: `docs/00-contexto/_mono/01-experiencia-base/patron-ui-auth-devextreme.md` (Capacitor)
+- DevExtreme en Capacitor: `.cursor/rules/devextreme-frontend.mdc` (producto) + exclusiones de esta regla
+- Commit/deploy mobile: `docs/_base/00-commit-push-revision-version-deploy.md`
+- Comandos build/tiendas: `docs/_base/01-mobile/03-comandos-generacion-aplicaciones.md` (**referencia**; no ejecutar salvo pedido explícito)
+
+---
+
+## Checklist antes de merge (solo cuando mobile esté autorizado)
+
+- [ ] Pantalla config con test de conexión y persistencia
+- [ ] Menú sin pivot, excel-import, admin seguridad
+- [ ] Sin toggle ni lógica `openInNewTab`
+- [ ] Consultas en kardex, no DataGrid desktop
+- [ ] i18n + `data-testid` estables
+- [ ] Documentación/TR actualizada si cambia alcance
