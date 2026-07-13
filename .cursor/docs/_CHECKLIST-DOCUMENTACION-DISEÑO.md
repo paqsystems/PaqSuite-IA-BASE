@@ -4,7 +4,7 @@
 
 **Nota sobre nombres de archivo:** En este proyecto, algunos archivos en la raíz usan prefijo `_` (ej: `_PROJECT_CONTEXT.md`, `_MANUAL-PROGRAMADOR.MD`, `_CHECKLIST-DOCUMENTACION-DISEÑO.md`).
 
-**Alineación con PaqSuite (revisión 2026-04):** Este checklist mezcla plantilla genérica y rutas históricas. En el estado actual del repo conviven: documentación en `docs/` (estructura 00–07 + `api/`, `backend/`, `frontend/`, `modelo-datos/`, `prompts/`, `00-ControlCalidad/`), reglas en `.cursor/rules/`, y material de apoyo en `.cursor/Docs/` (E2E, códigos de error, mapeo API–datos). La carpeta `specs/` **no está presente** en el árbol aunque varios textos la citan; el contrato API operativo está en `docs/api/CONTRATO_BASE.md`. El ciclo HU → TR → testeo → **Control de Calidad** → HU-update/TR-update en `updates/` → unificación está descrito en `_MANUAL-PROGRAMADOR.MD` (§7) y en `.cursor/rules/00-prompts-programados-dispatcher.md`. El campo **Estado** en metadatos de HU/TR: `.cursor/rules/31-estado-hu-tr.md`. Ver también la subsección **«Rutas efectivas en este repositorio»** al final de NOTAS IMPORTANTES.
+**Alineación con PaqSuite (revisión 2026-04):** Este checklist mezcla plantilla genérica y rutas históricas. En el estado actual del repo conviven: documentación en `docs/` (estructura 00–07 + `api/`, `backend/`, `frontend/`, `modelo-datos/`, `prompts/`, `00-ControlCalidad/`), reglas en `.cursor/rules/`, y material de apoyo en `.cursor/Docs/` (E2E, códigos de error, mapeo API–datos). La carpeta `specs/` **no está presente** en el árbol aunque varios textos la citan; el contrato API operativo está en `docs/api/CONTRATO_BASE.md`. El ciclo HU → TR → testeo → **Control de Calidad** → HU-update/TR-update en `updates/` → unificación está descrito en `_MANUAL-PROGRAMADOR.MD` (§7) y en `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md`. El campo **Estado** en metadatos de HU/TR: `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`. Ver también la subsección **«Rutas efectivas en este repositorio»** al final de NOTAS IMPORTANTES.
 
 ---
 
@@ -15,7 +15,7 @@
 - [ ] **Iniciar el proyecto con el prompt** `prompts/scaffold-fullstack-inicio-proyecto.md` (en PaqSuite-IA-BASE: `.cursor/prompts/scaffold-fullstack-inicio-proyecto.md`), indicando explícitamente **MONO** o **MULTI**. Ese prompt debe ejecutar `docs/_base/00-inicio-arquitectura.md` como fuente normativa.
 - [ ] Declarar por escrito si el proyecto es **MONO** (mono-empresa: una sola base de datos, seguridad en el mismo esquema, sin `X-Company-Id` ni tenancy) o **MULTI** (multi-empresa: modelo tipo Dictionary/Company, tenant y reglas acordes).
 - [ ] Leer y aplicar la guía **`docs/_base/00-inicio-arquitectura.md`** como checklist de arranque (stack Laravel/React/DevExtreme, orden sugerido, reglas esenciales y referencias). Debe ser coherente con la decisión MONO/MULTI antes de profundizar en modelo de datos y FASE 4.
-- [ ] Configurar **symlinks** de herencia (reglas, `prompts`, `docs/_base`, `docs/_mono` o `docs/_multi`, `docs/00_contexto/_mono` o `_multi`) según **`docs/_base/symlinks_paqsuite_ia.md`** (§4.0 de la guía de inicio y checklist «Proyecto nuevo» en ese documento).
+- [ ] Configurar **symlinks** de herencia (reglas, `prompts`, `docs/_base`, `docs/_mono` o `docs/_multi`, `docs/00-contexto/_mono` o `_multi`) según **`docs/_base/symlinks_paqsuite_ia.md`** (§4.0 de la guía de inicio y checklist «Proyecto nuevo» en ese documento).
 
 ### 1.1 Definición del Proyecto
 - [ ] Definir objetivo conceptual del sistema
@@ -173,8 +173,8 @@
 
 ### 6.3 Correcciones posteriores (Control de Calidad → updates)
 - [ ] Registrar hallazgos de prueba manual en `docs/00-ControlCalidad/` (archivo por programador, formato de bloques acordado)
-- [ ] Generar **HU-update** y **TR-update** en `docs/03-historias-usuario/updates/` y `docs/04-tareas/updates/` (misma jerarquía y nombre base + sufijo `-update`, etc.) según `.cursor/rules/00-prompts-programados-dispatcher.md` (PARTE E)
-- [ ] Implementar, testear de nuevo y, cuando **cada** archivo en `updates/` a fusionar tenga **`Estado: Finalizado`** (manual; ver `.cursor/rules/31-estado-hu-tr.md` §5), unificar en los originales (PARTE G). Los originales pasan a **Finalizado** solo si no queda otro HU/TR-update de la misma familia sin finalizar
+- [ ] Generar **HU-update** y **TR-update** en `docs/03-historias-usuario/updates/` y `docs/04-tareas/updates/` (misma jerarquía y nombre base + sufijo `-update`, etc.) según `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` (PARTE E)
+- [ ] Implementar, testear de nuevo y, cuando **cada** archivo en `updates/` a fusionar tenga **`Estado: Finalizado`** (manual; ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` §5), unificar en los originales (PARTE G). Los originales pasan a **Finalizado** solo si no queda otro HU/TR-update de la misma familia sin finalizar
 
 ---
 
@@ -371,12 +371,12 @@ La carpeta `docs/_projects/` contiene material histórico para re-aplicar a futu
 | Tema | Ruta genérica del checklist | En PaqSuite (si difiere) |
 |------|----------------------------|---------------------------|
 | Flujo E2E detallado | `specs/flows/e2e-core-flow.md` | `.cursor/Docs/e2e-core-flow.md` |
-| Contrato / envelope API | `specs/contracts/response-envelope.md` | `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md` + `.cursor/rules/mono/03-api-contract.md` |
+| Contrato / envelope API | `specs/contracts/response-envelope.md` | `docs/00-contexto/_multi/00-arquitectura-api/envelope-respuestas.md` + `.cursor/rules/multi/03-api-contract.md` |
 | Códigos de error dominio | `specs/errors/domain-error-codes.md` | `.cursor/Docs/domain-error-codes.md` |
 | Mapeo API ↔ datos | `architecture/api-to-data-mapping.md` | `.cursor/Docs/api-to-data-mapping.md` |
 | Prefijo tablas / ORM | — | `.cursor/rules/09-data-access-orm-sql.md` |
-| Dispatcher HU→TR, QA, unificación | — | `.cursor/rules/00-prompts-programados-dispatcher.md` |
-| Prompts HU→TR y ejecución TR | — | `docs/prompts/04-Prompts-HU-a-Tareas.md`, `docs/prompts/openspec-04-Ejecucion-de-una-TR.md` |
+| Dispatcher HU→TR, QA, unificación | — | `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` |
+| Prompts HU→TR y ejecución TR | — | `prompts/openspec-03-TR-desde-SPEC-y-HU.md`, `prompts/openspec-04-Ejecucion-de-una-TR.md` |
 
 ---
 
@@ -389,7 +389,7 @@ Este checklist está basado en el proceso seguido en este proyecto. Para más de
 - `docs/03-historias-usuario/` - Historias de usuario
 - `docs/04-tareas/` - Tareas técnicas (TR)
 - `docs/00-ControlCalidad/` - Registro de controles de calidad manual
-- `.cursor/rules/00-prompts-programados-dispatcher.md` - Comandos automatizados (HU→TR, QA→updates, unificación)
+- `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` - Comandos automatizados (HU→TR, QA→updates, unificación)
 
 --------------------------------------------------------------------------------------
 
@@ -424,7 +424,7 @@ Este checklist está basado en el proceso seguido en este proyecto. Para más de
 - [ ] Testing IA (unit / integrador / e2e)
 - [ ] Correcciònes al còdigo (desde spec -> codifica IA).
 - [ ] Testing manualmente; si hay correcciones, registrarlas en `docs/00-ControlCalidad/` y generar HU-update/TR-update en `updates/` (ver `_MANUAL-PROGRAMADOR.MD` §7)
-- [ ] Reprocesar implementación y tests hasta validar; luego unificar documentación cuando los updates a fusionar tengan **`Estado: Finalizado`** y actualizar originales según §5 (dispatcher PARTE G; `.cursor/rules/31-estado-hu-tr.md`)
+- [ ] Reprocesar implementación y tests hasta validar; luego unificar documentación cuando los updates a fusionar tengan **`Estado: Finalizado`** y actualizar originales según §5 (dispatcher PARTE G; `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`)
 
   ### Comandos de setup de servidores
 
@@ -490,5 +490,13 @@ Este checklist está basado en el proceso seguido en este proyecto. Para más de
 
 **Cambios 2026-02-28:** Actualizadas rutas a `docs/03-historias-usuario/` y `docs/04-tareas/`; añadida nota sobre `docs/_projects/`.
 
+---
 
+## Checklist Open-Spec (migración / proyecto MULTI)
 
+- [ ] Symlinks según `docs/_base/symlinks_paqsuite_ia.md` § Proyectos MULTI (`base`+`multi`, `_base`, `_multi`, `00-contexto/_multi`, `skills`, `prompts`)
+- [ ] Existe `docs/05-open-spec/` con README y SPEC (o overview) por épica activa
+- [ ] Dispatcher `base/00-arquitectura/01-prompts-programados-dispatcher.md` resuelve (smoke Partes A–N)
+- [ ] CC PQ/KA en plantilla Open-Spec **sin** historial legacy en el archivo activo; legado en `*-anterior.md`
+- [ ] Prompts vía `prompts/openspec-*` (no `docs/prompts/04-*` / `05-*` planos legacy)
+- [ ] Reglas propias del producto solo en `.cursor/rules/local/` (o equivalentes no duplicados de BASE/MULTI)

@@ -229,25 +229,25 @@ docs/
 
 - **Ubicación:** `docs/04-tareas/`
 - **Origen:** Derivadas de las HU (comando "Aplicá el prompt correspondiente a la historia")
-- **Ejecución:** Comando "Ejecutá la TR TR-xxx.md" (dispatcher en `.cursor/rules/00-prompts-programados-dispatcher.md`)
+- **Ejecución:** Comando "Ejecutá la TR TR-xxx.md" (dispatcher en `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md`)
 
 ### Ciclo de programación (HU → TR → implementación → testeo → control de calidad → updates → unificación)
 
 1. Leer la HU en `docs/03-historias-usuario/`
 2. Generar la TR con el dispatcher o manualmente
 3. Guardar la TR en `docs/04-tareas/` replicando la estructura de carpetas de la HU (sustituyendo la raíz `03-historias-usuario` por `04-tareas`)
-4. **Ejecutar la TR** siguiendo el prompt en `docs/prompts/openspec-04-Ejecucion-de-una-TR.md` (código, tests automatizados, documentación acordada)
+4. **Ejecutar la TR** siguiendo el prompt en `prompts/openspec-04-Ejecucion-de-una-TR.md` (código, tests automatizados, documentación acordada)
 5. **Testeo posterior a la implementación**
    - **Con IA / automatizado:** PHPUnit, Vitest, Playwright según `.cursor/rules/12-testing.md` y el checklist de la propia TR
    - **Manual:** pruebas de usuario, recorridos y revisiones que pueden dar lugar a un control de calidad formal (paso 6)
 6. **Correcciones y mejoras — registro en Control de Calidad:** si surgen hallazgos que requieran cambios, se documentan **primero** en **`docs/00-ControlCalidad/`** en el **archivo del programador que corresponda** (por ejemplo `00-ControlCalidad-PQ.md`), siguiendo el **formato de los bloques de control** (fecha, autor, errores por área o HU, estado del control, etc.). Ese archivo es la fuente para el paso siguiente; no se salta este registro cuando el flujo viene de QA manual
-7. **Generación de HU-update y TR-update:** a partir de lo registrado en Control de Calidad, se generan los documentos en **`docs/03-historias-usuario/updates/`** y **`docs/04-tareas/updates/`**, con la **misma ruta relativa y el mismo nombre base** que la HU o TR de origen y sufijos `-update`, `-update-01`, etc. (ver ejemplos en la **PARTE E** de `.cursor/rules/00-prompts-programados-dispatcher.md`: comandos del tipo *«Corrige los errores del dd/MM/yyyy de xx»* / *«Realiza las mejoras del …»*). Así la trazabilidad queda desde el control hasta el plan sin pisar aún los archivos originales
+7. **Generación de HU-update y TR-update:** a partir de lo registrado en Control de Calidad, se generan los documentos en **`docs/03-historias-usuario/updates/`** y **`docs/04-tareas/updates/`**, con la **misma ruta relativa y el mismo nombre base** que la HU o TR de origen y sufijos `-update`, `-update-01`, etc. (ver ejemplos en la **PARTE E** de `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md`: comandos del tipo *«Corrige los errores del dd/MM/yyyy de xx»* / *«Realiza las mejoras del …»*). Así la trazabilidad queda desde el control hasta el plan sin pisar aún los archivos originales
 8. **Implementar y volver a testear:** ejecutar la TR-update (o el trabajo alineado a esos documentos), repetir testeo automatizado y manual hasta validar los criterios
-9. **Unificación:** se **fusionan** los `HU-...-update*.md` y `TR-...-update*.md` con sus originales **solo** cuando cada archivo update a incorporar tiene **`Estado: Finalizado`** (manual; ver `.cursor/rules/31-estado-hu-tr.md`). Lo habitual es que los **originales** estén en **`En Control Calidad`** mientras haya updates abiertos. Tras fusionar, el **HU** y el **TR** original pasan a **`Finalizado`** **solo si** no queda **ningún** otro update de la **misma familia** (mismo número, p. ej. HU-019 y TR-019) en `updates/` con **Estado** distinto de **Finalizado**. El comando del dispatcher está en la **PARTE G** de `.cursor/rules/00-prompts-programados-dispatcher.md` («Unifica las historias de usuario»).
+9. **Unificación:** se **fusionan** los `HU-...-update*.md` y `TR-...-update*.md` con sus originales **solo** cuando cada archivo update a incorporar tiene **`Estado: Finalizado`** (manual; ver `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`). Lo habitual es que los **originales** estén en **`En Control Calidad`** mientras haya updates abiertos. Tras fusionar, el **HU** y el **TR** original pasan a **`Finalizado`** **solo si** no queda **ningún** otro update de la **misma familia** (mismo número, p. ej. HU-019 y TR-019) en `updates/` con **Estado** distinto de **Finalizado**. El comando del dispatcher está en la **PARTE G** de `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` («Unifica las historias de usuario»).
 
 ### Campo Estado en HU y TR (metadatos)
 
-Los valores y transiciones están definidos en **`.cursor/rules/31-estado-hu-tr.md`**. Resumen:
+Los valores y transiciones están definidos en **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Resumen:
 
 | Valor | Quién lo asigna |
 |-------|-----------------|
@@ -261,10 +261,10 @@ Los valores y transiciones están definidos en **`.cursor/rules/31-estado-hu-tr.
 | Documento | Propósito |
 |-----------|-----------|
 | `docs/README.md` | Guía de navegación de documentación |
-| `.cursor/rules/00-prompts-programados-dispatcher.md` | Comandos HU→TR, ejecución TR, control de calidad→updates (PARTE E), finalizar CC (PARTE F), unificación (PARTE G) |
-| `.cursor/rules/31-estado-hu-tr.md` | Valores del campo **Estado** en metadatos de HU y TR |
+| `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` | Comandos HU→TR, ejecución TR, control de calidad→updates (PARTE E), finalizar CC (PARTE F), unificación (PARTE G) |
+| `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` | Valores del campo **Estado** en metadatos de HU y TR |
 | `.cursor/rules/16-hu-simple-vs-hu-compleja.md` | Clasificación HU Simple/Compleja |
-| `docs/prompts/04-Prompts-HU-a-Tareas.md` | Prompt para generar TR desde HU |
+| `prompts/openspec-03-TR-desde-SPEC-y-HU.md` | Prompt para generar TR desde HU |
 
 ---
 
@@ -287,7 +287,7 @@ Los controles de calidad manual se registran en **`docs/00-ControlCalidad/`**: h
 - **Estado:** Pendiente (inicial) → se actualiza tras generar las HU y resolver los errores
 - **Errores encontrados** por área o módulo
 
-El historial se conserva en cada archivo. **Orden respecto al ciclo (sección 7):** las correcciones o mejoras detectadas en pruebas manuales se plasman **aquí** con el formato acordado; **después** el dispatcher (**PARTE E**) genera las **HU-update** y **TR-update** en las subcarpetas `updates/`, y recién entonces sigue la implementación y la unificación (**PARTE G**) cuando todo esté validado. La regla en `.cursor/rules/00-prompts-programados-dispatcher.md` también cubre finalizar el control de una fecha (**PARTE F**).
+El historial se conserva en cada archivo. **Orden respecto al ciclo (sección 7):** las correcciones o mejoras detectadas en pruebas manuales se plasman **aquí** con el formato acordado; **después** el dispatcher (**PARTE E**) genera las **HU-update** y **TR-update** en las subcarpetas `updates/`, y recién entonces sigue la implementación y la unificación (**PARTE G**) cuando todo esté validado. La regla en `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` también cubre finalizar el control de una fecha (**PARTE F**).
 
 ### Documentos
 
@@ -380,7 +380,7 @@ Si la BD está en servidor remoto: ver `docs/migracion-mssql-a-mysql.md` y `.cur
 
 ### Reglas Cursor
 
-- `00-prompts-programados-dispatcher.md` – Comandos HU→TR, ejecución TR
+- `base/00-arquitectura/01-prompts-programados-dispatcher.md` – Comandos HU→TR, ejecución TR
 - `16-hu-simple-vs-hu-compleja.md` – Clasificación HU
 - `12-testing.md` – Estrategia de tests
 
@@ -439,3 +439,19 @@ Este es un **MVP web** para para empresas que trabajan con el sistema Tango Gest
 
 **v1.4:** README docs/ y backend/, Ruta de Lectura, estructura del proyecto
 
+---
+
+## Open-Spec / SDD (TANGO / MULTI) — alineación 2026-07
+
+Flujo canónico: **SPEC → HU → TR → código → tests → verificación**.
+
+| Recurso | Ruta |
+|---------|------|
+| Dispatcher | `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` |
+| Estados HU/TR | `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` (incluye **Especificado**) |
+| Prompts | `prompts/openspec-01` … `openspec-05` (symlink a BASE) |
+| SPEC | `docs/05-open-spec/` |
+| CC plantilla | `docs/00-ControlCalidad/00-ControlCalidad-PQ.md` / `-KA.md` (Parte **G**; histórico `*-anterior.md`) |
+| Symlinks MULTI | `docs/_base`, `docs/_multi`, `docs/00-contexto/_multi`, `.cursor/rules/base`, `.cursor/rules/multi`, `.cursor/skills`, `prompts` |
+
+Productos **MULTI** (ERP, TANGO): heredar `base` + `multi` (no `mono`). Ejemplos metodológicos: épicas Tango (`104-Acopios`, `102-InformesGestion`, `107-Emfaco`), no el portal PedidosWeb como producto principal del ejemplo.
