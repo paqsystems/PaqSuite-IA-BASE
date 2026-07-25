@@ -48,7 +48,7 @@ Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-e
 |------|---------------------------|--------|
 | Backend | **Laravel 10**, **PHP 8.1+** | API REST; Sanctum para autenticación tipo Bearer. |
 | Contrato API | **OpenAPI 3** vía **L5-Swagger** | Anotaciones + stubs generados; UI en `/api/documentation` (ver `backend/config/l5-swagger.php`). |
-| Base de datos | **MySQL** (relacional) | **MULTI:** Dictionary + Company por empresa. **MONO:** un solo esquema (ver sección 1). |
+| Base de datos | **SQL Server** (`sqlsrv`) de referencia; **MySQL** adaptable | **MULTI:** Dictionary + Company por empresa. **MONO:** un solo esquema (ver sección 1). Norma de plataforma en PaqSuite-IA-FRAMEWORK `docs/10-overrides-framework/`. **Acceso de negocio: MUST stored procedures** ([`acceso-datos-stored-procedures.md`](./acceso-datos-stored-procedures.md); regla `70-db/74-acceso-datos-stored-procedures`). |
 | Frontend web | **React 18** + **Vite 5** + **TypeScript** | Proxy típico de `/api` al backend en desarrollo. |
 | UI | **DevExtreme** + **devextreme-react** | Licencia vía `VITE_DEVEXTREME_LICENSE`; release con `npm run build:release`. |
 | i18n | **i18next** / **react-i18next** | Coherente con normas de test IDs y accesibilidad. |
@@ -72,16 +72,20 @@ Referencia: `AGENTS.md` (secciones 2–4 y 8 Definition of Done).
 
 ## 4. Qué implementar (orden sugerido)
 
-### 4.0 Herencia IA: symlinks (antes o en paralelo al código)
+### 4.0 Herencia IA: symlinks (prerrequisito)
+
+Los **symlinks** de herencia se crean **antes** del scaffold de código (sin ellos no hay `docs/_base` ni reglas heredadas). El scaffold **verifica** que existan; **no** los crea como paso de instalación de Laravel/React.
 
 Cada **producto nuevo** en `C:\Programacion\` debe enlazar reglas, prompts y documentación compartida mediante **symlinks** en Windows (CMD/PowerShell **como administrador**). El procedimiento completo, tablas origen→destino y plantillas `{proyectomono}` / `{proyectomulti}` están en:
 
 **`docs/_base/symlinks_paqsuite_ia.md`** (en el producto; en **PaqSuite-IA-BASE**: `.cursor/docs/symlinks_paqsuite_ia.md`), sección **「Proyecto nuevo: checklist (mono o multi)」**.
 
+**Framework (SDK):** ver overrides en `PaqSuite-IA-FRAMEWORK/docs/10-overrides-framework/` (tenancy unificado, scaffold por paquetes).
+
 | Modo (§1) | Enlaces típicos en el proyecto (resumen) |
 |-----------|------------------------------------------|
-| **MONO** | `base` + `mono` en `.cursor\rules`; `prompts`; `docs\_base`, `docs\_mono`; `docs\00_contexto\_mono` |
-| **MULTI** | `base` + `multi` en `.cursor\rules`; `prompts`; `docs\_base`, `docs\_multi`; `docs\00_contexto\_multi` |
+| **MONO** | `base` + `mono` en `.cursor\rules`; `prompts`; `docs\_base`, `docs\_mono`; `docs\00-contexto\_mono` |
+| **MULTI** | `base` + `multi` en `.cursor\rules`; `prompts`; `docs\_base`, `docs\_multi`; `docs\00-contexto\_multi` |
 
 Además de los symlinks, crear **reglas propias** del módulo (archivos `.mdc` reales bajo `.cursor\rules\`, no enlaces).
 
@@ -105,7 +109,14 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 - **Sanctum** para autenticación Bearer.
 - **Capas:** controllers delgados → **application services** → dominio / repositorios; sin lógica de negocio pesada en controllers (ver `docs/01-arquitectura/01-arquitectura-proyecto.md`).
 - **Autorización** por operación; menú refleja permisos pero la **seguridad real es en servidor** (ver README de `docs/01-arquitectura/`).
-- **Migraciones y seeders** mínimos para login y menú base; **MULTI:** datos de empresa(s) y permisos por empresa según modelo; **MONO:** sin capa empresa/tenant.
+- **Migraciones y seeders** mínimos para login y menú base; **MULTI:** datos de empresa(s) y permisos por empresa según modelo; **MONO:** perfil `tenancy=single` / `db=unified`.
+- **Config de plataforma (obligatorio en scaffold):** crear `backend/config/paqsuite.php` y declarar en `backend/.env.example`:
+  - `PAQSUITE_TENANCY` = `single` (MONO) o `multi` (MULTI)
+  - `PAQSUITE_DB` = `unified` (MONO) o `split` (MULTI)
+  - `PAQSUITE_HEADER_CLIENTE` = `X-Paq-Cliente`
+  - `PAQSUITE_HEADER_COMPANY` = `X-Company-Id`
+  - `PAQSUITE_DB_DRIVER_REFERENCE` = `sqlsrv` (MySQL adaptable)
+  - Norma: PaqSuite-IA-FRAMEWORK `docs/10-overrides-framework/03-variables-tenancy-db.md`
 - **OpenAPI:** `OpenApi.php` base + **`darkaonline/l5-swagger`** en scaffold inicial; guía [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md); UI en **`/api/documentation`**; regenerar con **`composer openapi`** (`php artisan l5-swagger:generate`).
 - **Tests** de feature por endpoints críticos; fixtures de BD cuando haga falta.
 
@@ -182,10 +193,11 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 
 ## 7. Checklist rápido antes de considerar “arquitectura alineada”
 
-- [ ] **Symlinks de herencia** configurados según MONO o MULTI (`docs/_base/symlinks_paqsuite_ia.md`, §4.0 y checklist de proyecto nuevo).
+- [ ] **Symlinks de herencia** ya configurados (prerrequisito) y verificados según MONO, MULTI o FRAMEWORK (`docs/_base/symlinks_paqsuite_ia.md`, §4.0). El scaffold no los crea.
 - [ ] **Modo MONO o MULTI declarado** y decisiones de BD / seguridad coherentes con ese modo.
+- [ ] **`PAQSUITE_TENANCY` / `PAQSUITE_DB`** (y headers) en `.env.example` + `backend/config/paqsuite.php` (canónico: MONO → `single`/`unified`; MULTI → `multi`/`split`).
 - [ ] Flujo E2E documentado y reflejado en historias/tareas.
-- [ ] Backend en capas; **MULTI:** tenant y permisos por empresa; **MONO:** permisos en esquema único sin `X-Company-Id`.
+- [ ] Backend en capas; **MULTI:** tenant y permisos por empresa; **MONO:** perfil single/unified (empresa única; `X-Company-Id` auto-inyectable).
 - [ ] OpenAPI generada y accesible; tags agrupados por módulo o criterio de negocio.
 - [ ] Frontend con estructura por features/servicios; DevExtreme con normas y licencia resuelta en release.
 - [ ] Tests: integración API donde importe; frontend con Vitest + al menos un E2E del flujo principal.

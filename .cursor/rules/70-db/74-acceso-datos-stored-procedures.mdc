@@ -1,0 +1,88 @@
+---
+description: Acceso a datos de negocio vía stored procedures (MUST) — agentes, gateways y seguridad
+alwaysApply: true
+---
+
+# Acceso a datos — Stored Procedures (MUST)
+
+## Norma (todos los productos PaqSuite IA)
+
+**Toda consulta y comando SQL de negocio** (lectura/escritura de datos de dominio, catálogos operativos, staging, jobs, bitácora, menús, permisos de negocio, emisiones, importaciones, etc.) **debe ejecutarse mediante stored procedures (SP)**.
+
+Motivo: instalaciones con **agentes y gateways** (`agent_id` + `client_id` en `EMPRESAS_CONEXION`) no deben recibir SQL ad-hoc desde el backend del producto; el gateway solo debe invocar contratos SP conocidos. La misma disciplina aplica en modo SQL local por **seguridad y buenas prácticas** (superficie mínima, auditoría, parámetros tipados).
+
+Esta regla es **BASE** (symlink `.cursor/rules` → PaqSuite-IA-BASE): aplica a Framework, MONO, MULTI y productos.
+
+Referencia de ciclo de vida / gateway: Framework `docs/05-open-spec/.../SPEC-001-18` §6.1–§6.2 (MUST SP).
+
+---
+
+## Modos de acceso
+
+| Condición (`EMPRESAS_CONEXION`) | Modo | Acceso permitido |
+|--------------------------------|------|------------------|
+| `agent_id` **y** `client_id` ambos no nulos | **Agente-gateway** | Solo invocación de SP vía gateway; **prohibido** SQL directo / Query Builder / Eloquent sobre tablas de negocio desde el backend del producto |
+| En caso contrario | **SQL local** | Misma política: APIs de negocio **MUST** llamar SP en el host de la fila |
+
+Runtime del gateway: proyecto AgentesClientes. El producto solo ramifica según flags; no reimplementa el gateway.
+
+---
+
+## Qué cuenta como “de negocio” (MUST SP)
+
+- Endpoints de API que leen o escriben datos de dominio o GEN operativos.
+- Handlers de tareas programadas, import/export, emisiones, bitácora, notificaciones persistidas, ABM.
+- Seed/update de **datos** que el runtime consultará después vía API (ideal: SP de alta/upsert; si el seeder inserta filas bootstrap, los **SP de runtime** deben existir y ser la vía de las APIs).
+
+## Excepciones permitidas (documentar en TR / README del paquete)
+
+Solo con mención explícita en la TR o lista GEN canónica:
+
+| Excepción | Motivo |
+|-----------|--------|
+| Health / readiness | Sin dominio |
+| Auth Sanctum (login / forgot / reset / token plumbing) | Piezas de framework auth |
+| Envelope / middleware tenancy (lookup instalación, headers) | Plumbing de request |
+| Migraciones / DDL de esquema | No son consultas de API |
+| Scripts de **despliegue** de SP (CREATE/ALTER PROCEDURE) | Entrega del contrato |
+| Tests unitarios con fakes in-memory | Sin BD real |
+
+Cualquier otra excepción (migración temporal Eloquent, reporte ad-hoc) requiere **decisión humana documentada** en la TR con fecha y plan de cierre.
+
+**Prohibido** inventar excepciones “por comodidad” en trabajo nuevo.
+
+---
+
+## Instalación, actualización y modularización
+
+- Install/update (`18`) y matriz/módulos (`24`): el pipeline **debe desplegar los SP** del Framework y de los módulos contratados en BD diccionario y en cada BD empresa según corresponda.
+- Alta/cambio de módulo: incluir scripts SP del módulo en el export/seeders; update de instalación aplica SP junto con menús/params.
+- OpenAPI / menú pueden filtrar exposición; **no** omitir el despliegue de SP del módulo si el contrato lo incluye (pueden existir SP instalados y no publicados).
+
+---
+
+## Obligaciones en OpenSpec / TR / implementación
+
+1. **SPEC/HU/TR** de features con persistencia: declarar nombres de SP (o familia `sp_*` / `pq_sp_*`) y parámetros; no asumir Eloquent como vía de API.
+2. **Capa PHP:** un adapter/repository llama `DB::statement` / `procedure` / gateway client — **no** `Model::query()` sobre tablas de negocio en código nuevo.
+3. **Gateway:** el contrato del SP es el mismo que en SQL local (misma firma lógica).
+4. **Checklist D1/D:** “¿Todo acceso de negocio va por SP o excepción listada?”
+
+---
+
+## Anti-patrones
+
+| Anti-patrón | Por qué |
+|-------------|---------|
+| SQL concatenado / Query Builder ad-hoc en Controllers/Services de negocio | Rompe gateway y seguridad |
+| Eloquent CRUD en APIs nuevas “mientras tanto” sin excepción TR | Drift; no portable a agente |
+| Dos vías (Eloquent + SP) para el mismo caso de uso | Doble mantenimiento |
+| Gateway que acepta SQL libre | Violación de seguridad |
+
+---
+
+## Relación con otras reglas
+
+- Fecha/datetime en modelos residuales: `71` / `72` (solo donde Eloquent esté en excepciones o mapeo de resultados).
+- Envelope y errores: reglas de API / SPEC-001-20 del producto o Framework.
+- Commit/deploy: avisar si el release incluye scripts SP nuevos (`17-commit-push-revision-version`).
