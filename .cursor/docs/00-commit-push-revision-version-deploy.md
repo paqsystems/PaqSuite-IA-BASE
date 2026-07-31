@@ -2,7 +2,7 @@
 
 Guía **transversal MONO/MULTI** para el agente y el equipo cuando el usuario pide **commit** y/o **push**.
 
-Complementa: [`00-inicio-arquitectura.md`](./00-inicio-arquitectura.md), [`00-runbook-actualizacion-version.md`](./00-runbook-actualizacion-version.md), planes de deploy en `00-plans/`, y la regla Cursor `.cursor/rules/base/00-arquitectura/17-commit-push-revision-version.mdc`.
+Complementa: [`00-inicio-arquitectura.md`](./00-inicio-arquitectura.md), [`00-runbook-actualizacion-version.md`](./00-runbook-actualizacion-version.md), planes de deploy en `00-plans/`, y las reglas Cursor `.cursor/rules/base/00-arquitectura/17-commit-push-revision-version.mdc` y `.cursor/rules/base/00-arquitectura/18-git-flujo-main-desde-develop.mdc` (**no push a `main`**; `main` solo vía PR desde `develop`).
 
 Al avisar en commit/push, enlazar el **runbook BASE** y, si existe, la extensión del producto en `docs/06-operacion/runbook-actualizacion-version-*.md`.
 
@@ -103,6 +103,7 @@ Frontend (Vercel u otro): rebuild si cambió `frontend/` o `VITE_*`.
 
 ## 6) Relación con PR y documentación
 
+- **Flujo de ramas:** no hacer push a `main`/`master`. `main` solo se actualiza con un **Pull Request desde `develop`**. El push diario va a `develop` (u otras ramas de trabajo). Detalle: regla `18-git-flujo-main-desde-develop.mdc`.
 - Si el aviso es relevante, mencionarlo en el **cuerpo del PR** (sección «Observaciones deploy» o «Test plan»).
 - Si el cambio introduce SQL repetible, preferir versionarlo en `backend/scripts/sql/` (como `seed-pivot-catalog.sql`).
 - No sustituye consentimiento para operaciones **destructivas** de BD (ver reglas `no-drop-database` del producto).

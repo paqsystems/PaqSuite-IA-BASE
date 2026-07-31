@@ -14,6 +14,7 @@ Orquestación completa: `.cursor/rules/base/00-arquitectura/01-prompts-programad
 | [ai-planning-mode](ai-planning-mode/SKILL.md) | `/ai-planning-mode` | D1 | `13-ai-planning-mode.md` |
 | [agent-verification-guide](agent-verification-guide/SKILL.md) | `/agent-verification-guide` | F1 | `14-agent-verification-guide.md` |
 | [write-pr-report](write-pr-report/SKILL.md) | `/write-pr-report` | PR | `15-write-pr-report.md` |
+| [write-user-manual](write-user-manual/SKILL.md) | `/write-user-manual` | Docs corpus | `.cursor/rules/99-manual-usuario-corpus.mdc` + [SPEC-001-99](../../docs/05-open-spec/001-Generalidades/SPEC-001-99-manual-usuario-corpus.md) |
 
 ## Flujo resumido
 

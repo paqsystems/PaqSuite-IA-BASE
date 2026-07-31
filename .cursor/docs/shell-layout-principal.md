@@ -75,7 +75,7 @@ Contenedor tipo **DropDownButton** o menú contextual anclado al avatar, en el *
 
 ### Regla de contenido (MONO / MULTI)
 
-Las **opciones concretas** del menú avatar **no** se listan completas en esta spec: el núcleo común (perfil, contraseña, cierre de sesión, etc.) más **una preferencia distintiva por modo de instalación** se documentan en `docs/00_contexto/_mono` o `_multi`.
+Las **opciones concretas** del menú avatar **no** se listan completas en esta spec: el núcleo común (perfil, contraseña, cierre de sesión, etc.) más **una preferencia distintiva por modo de instalación** se documentan en `docs/00-contexto/_mono` o `_multi`.
 
 Esta spec establece:
 

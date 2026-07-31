@@ -110,9 +110,9 @@ Además de **`.cursor/rules`**, cada producto puede enlazar **skills** (bajo `.c
 | `<Proyecto>\.cursor\skills` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\skills` | **Todos** (mono y multi) |
 | `<Proyecto>\prompts` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts` | **Todos** (mono y multi) |
 | `<Proyecto>\docs\_base` | `C:\Programacion\PaqSuite-IA-BASE\.cursor\docs` | **Todos** |
-| `<Proyecto>\docs\_mono` | `C:\Programacion\PaqSuite-IA-MONO\.cursor\docs` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
+| `<Proyecto>\docs\_mono` | `C:\Programacion\PaqSuite-IA-MONO\.cursor\docs` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb, TMS, Framework) |
 | `<Proyecto>\docs\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs` | Solo **multi** (ERP, TANGO) |
-| `<Proyecto>\docs\00-contexto\_mono` | `C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb) |
+| `<Proyecto>\docs\00-contexto\_mono` | `C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto` | Solo **mono** (PedidosWeb, Partes Atención, NovedadesWeb, TMS, Framework) |
 | `<Proyecto>\docs\00-contexto\_multi` | `C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto` | Solo **multi** (ERP, TANGO) |
 
 
@@ -125,7 +125,7 @@ Además de **`.cursor/rules`**, cada producto puede enlazar **skills** (bajo `.c
 * **`docs/00-contexto/_mono`** o **`docs/00-contexto/_multi`** enlazan el **contexto de producto** compartido (`docs\00-contexto` en el repo MONO o MULTI). La carpeta **`00-contexto`** en cada proyecto es **real**; dentro de ella solo va el symlink `_mono` o `_multi` (no ambos).
 * Los **destinos finales** de los symlinks son siempre directorios **reales** en PaqSuite-IA-BASE, PaqSuite-IA-MONO o PaqSuite-IA-MULTI. **No** encadenar un symlink dentro de otro.
 * **Multiempresa:** ERP y TANGO enlazan **`docs/_multi`** → `PaqSuite-IA-MULTI\.cursor\docs` y **`docs\00-contexto\_multi`** → `PaqSuite-IA-MULTI\docs\00-contexto`.
-* **Monoempresa:** PedidosWeb, Partes Atención y NovedadesWeb enlazan **`docs/_mono`** → `PaqSuite-IA-MONO\.cursor\docs` y **`docs\00-contexto\_mono`** → `PaqSuite-IA-MONO\docs\00-contexto`. La consolidación del contenido en `PaqSuite-IA-MONO\.cursor\docs` puede priorizarse en **Partes Atención** al inicio; el mismo patrón de comandos aplica al resto de repos mono.
+* **Monoempresa:** PedidosWeb, Partes Atención, NovedadesWeb, **TMS (Logística entrega)** y **Framework** enlazan **`docs/_mono`** → `PaqSuite-IA-MONO\.cursor\docs` y **`docs\00-contexto\_mono`** → `PaqSuite-IA-MONO\docs\00-contexto`. La consolidación del contenido en `PaqSuite-IA-MONO\.cursor\docs` puede priorizarse en **Partes Atención** al inicio; el mismo patrón de comandos aplica al resto de repos mono.
 
 ## Requisitos previos en los repos fuente
 
@@ -162,6 +162,8 @@ C:\Programacion
  ├── PaqSuite-IA-PedidosWeb    (.cursor\skills, docs\_base, docs\_mono, docs\00-contexto\_mono)
  ├── PaqSuite-IA-Partes-Atencion   (.cursor\skills, docs\_base, docs\_mono, …)
  ├── PaqSuite-IA-NovedadesWeb
+ ├── PaqSuite-IA-TMS           (TMS - Logística entrega; .cursor\skills, docs\_base, docs\_mono, …)
+ ├── PaqSuite-IA-Framework     (SDK / framework compartido; .cursor\skills, docs\_base, docs\_mono, …)
 
  ├── PaqSuite-IA-ERP           (.cursor\skills, docs\_base, docs\_multi, docs\00-contexto\_multi)
  └── PaqSuite-IA-TANGO         (.cursor\skills, docs\_base, docs\_multi, …)
@@ -231,6 +233,14 @@ mkdir "C:\Programacion\PaqSuite-IA-Partes-Atencion\docs\00-contexto"
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs"
 mkdir "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00-contexto"
+
+mkdir "C:\Programacion\PaqSuite-IA-TMS\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-TMS\docs"
+mkdir "C:\Programacion\PaqSuite-IA-TMS\docs\00-contexto"
+
+mkdir "C:\Programacion\PaqSuite-IA-Framework\.cursor\rules"
+mkdir "C:\Programacion\PaqSuite-IA-Framework\docs"
+mkdir "C:\Programacion\PaqSuite-IA-Framework\docs\00-contexto"
 
 mkdir "C:\Programacion\PaqSuite-IA-ERP\.cursor\rules"
 mkdir "C:\Programacion\PaqSuite-IA-ERP\docs"
@@ -308,6 +318,96 @@ cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\_mono" "C:\Progr
 
 cmd /c mklink /D "C:\Programacion\PaqSuite-IA-NovedadesWeb\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
 ```
+
+---
+
+### TMS (Logística entrega)
+
+El proyecto **TMS** es monoempresa y su carpeta de trabajo es `C:\Programacion\PaqSuite-IA-TMS`.
+
+```cmd
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\.cursor\rules\mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\.cursor\skills" "C:\Programacion\PaqSuite-IA-BASE\.cursor\skills"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-TMS\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+```
+
+Verificación específica:
+
+```cmd
+dir "C:\Programacion\PaqSuite-IA-TMS\.cursor"
+dir "C:\Programacion\PaqSuite-IA-TMS\.cursor\rules"
+dir "C:\Programacion\PaqSuite-IA-TMS\.cursor\skills"
+dir "C:\Programacion\PaqSuite-IA-TMS"
+dir "C:\Programacion\PaqSuite-IA-TMS\docs"
+dir "C:\Programacion\PaqSuite-IA-TMS\docs\00-contexto"
+```
+
+Resultado esperado:
+
+* `.cursor\skills` y `prompts` son `<SYMLINKD>` hacia BASE.
+* `.cursor\rules` contiene `base` y `mono`.
+* `docs` contiene `_base` y `_mono`.
+* `docs\00-contexto` contiene `_mono`.
+* No existen `rules\multi`, `docs\_multi` ni `docs\00-contexto\_multi`.
+
+---
+
+### Framework (SDK compartido)
+
+El proyecto **Framework** es monoempresa (capa SDK / paquetes compartidos GEN) y su carpeta de trabajo es `C:\Programacion\PaqSuite-IA-Framework`.
+
+Relacionado: [`00-plans/PLAN-paqsuite-framework-compartido.md`](./00-plans/PLAN-paqsuite-framework-compartido.md).
+
+```cmd
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\.cursor\rules\base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\.cursor\rules\mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\rules"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\.cursor\skills" "C:\Programacion\PaqSuite-IA-BASE\.cursor\skills"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\prompts" "C:\Programacion\PaqSuite-IA-BASE\.cursor\prompts"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\docs\_base" "C:\Programacion\PaqSuite-IA-BASE\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\docs\_mono" "C:\Programacion\PaqSuite-IA-MONO\.cursor\docs"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\docs\00-contexto\_mono" "C:\Programacion\PaqSuite-IA-MONO\docs\00-contexto"
+
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\.cursor\rules\multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\rules"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\docs\_multi" "C:\Programacion\PaqSuite-IA-MULTI\.cursor\docs"
+cmd /c mklink /D "C:\Programacion\PaqSuite-IA-Framework\docs\00-contexto\_multi" "C:\Programacion\PaqSuite-IA-MULTI\docs\00-contexto"
+
+
+```
+
+Verificación específica:
+
+```cmd
+dir "C:\Programacion\PaqSuite-IA-Framework\.cursor"
+dir "C:\Programacion\PaqSuite-IA-Framework\.cursor\rules"
+dir "C:\Programacion\PaqSuite-IA-Framework\.cursor\skills"
+dir "C:\Programacion\PaqSuite-IA-Framework"
+dir "C:\Programacion\PaqSuite-IA-Framework\docs"
+dir "C:\Programacion\PaqSuite-IA-Framework\docs\00-contexto"
+```
+
+Resultado esperado:
+
+* `.cursor\skills` y `prompts` son `<SYMLINKD>` hacia BASE.
+* `.cursor\rules` contiene `base` y `mono`.
+* `docs` contiene `_base` y `_mono`.
+* `docs\00-contexto` contiene `_mono`.
+* No existen `rules\multi`, `docs\_multi` ni `docs\00-contexto\_multi`.
 
 ---
 
