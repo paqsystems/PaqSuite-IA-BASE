@@ -364,7 +364,7 @@ Si la BD está en servidor remoto: ver `docs/migracion-mssql-a-mysql.md` y `.cur
 | Documento | Propósito |
 |-----------|-----------|
 | `docs/_base/00-inicio-arquitectura.md` | Guía de inicio de proyecto (stack, MONO/MULTI, symlinks §4.0, reglas esenciales) |
-| `docs/_base/symlinks_paqsuite_ia.md` | Symlinks `base`/`mono`/`multi`, `prompts`, `docs/_base`, `docs/00_contexto`, checklist proyecto nuevo |
+| `docs/_base/symlinks_paqsuite_ia.md` | Symlinks `base`/`mono`/`multi`, `prompts`, `docs/_base`, `docs/00-contexto`, checklist proyecto nuevo |
 | `docs/README.md` | Navegación de documentación |
 | `docs/00-ControlCalidad/` | Control de calidad manual: un archivo por programador (errores, historial, estado) |
 | `docs/00-contexto/01-guia-estructura-documental-corporativa.md` | Estructura 00–07 |

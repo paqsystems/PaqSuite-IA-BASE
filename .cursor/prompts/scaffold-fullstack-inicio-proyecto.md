@@ -20,9 +20,27 @@ La guía exige que **siempre** quede explícito si el objetivo es **MONO** o **M
 2. **`MONO` o `MULTI`** — mismos significados que en **§1** del documento base (no reinterpretar).
 3. **Rutas del monorepo:** p. ej. `backend/` y `frontend/` en la raíz, salvo que el usuario indique otra convención.
 
-**Si falta el modo, el asistente no debe scaffoldear:** pedir **MONO** o **MULTI** al usuario.
+**Si falta el modo, el asistente no debe scaffoldear:** pedir **MONO**, **MULTI** o **FRAMEWORK** al usuario.
 
 *Ejemplo:* «Plataforma: *PaqSuite-IA-Partes-Atencion*. Modo: **MONO**. Carpetas: `backend/` + `frontend/`.»
+
+### Variables de plataforma (obligatorias en todo producto nuevo)
+
+Al crear o completar el scaffold de **backend**, el asistente **debe** generar (si faltan):
+
+1. `backend/config/paqsuite.php` — keys `tenancy`, `db`, `headers`, `databaseDriverReference`.
+2. Entradas en `backend/.env.example` (y documentar en `.env` local si existe):
+
+| Variable | MONO canónico | MULTI canónico |
+|----------|---------------|----------------|
+| `PAQSUITE_TENANCY` | `single` | `multi` |
+| `PAQSUITE_DB` | `unified` | `split` |
+| `PAQSUITE_HEADER_CLIENTE` | `X-Paq-Cliente` | `X-Paq-Cliente` |
+| `PAQSUITE_HEADER_COMPANY` | `X-Company-Id` | `X-Company-Id` |
+| `PAQSUITE_DB_DRIVER_REFERENCE` | `sqlsrv` | `sqlsrv` |
+
+Norma detallada: **PaqSuite-IA-FRAMEWORK** `docs/10-overrides-framework/03-variables-tenancy-db.md` (y tenancy unificado en `01-tenancy-unificado-mono-multi.md`).  
+**No** omitir estas variables aunque la lógica completa de tenancy se implemente en slices posteriores.
 
 ---
 
@@ -64,16 +82,18 @@ Antes de generar backend/frontend (§4.2–4.3), el asistente debe **incluir en 
 
 | Modo | Placeholder del doc de symlinks | Enlaces clave |
 |------|----------------------------------|---------------|
-| **MONO** | `{proyectomono}` (nombre del repo del producto) | `rules\base`, `rules\mono`, `prompts`, `docs\_base`, `docs\_mono`, `docs\00_contexto\_mono` |
-| **MULTI** | `{proyectomulti}` | `rules\base`, `rules\multi`, `prompts`, `docs\_base`, `docs\_multi`, `docs\00_contexto\_multi` |
+| **MONO** | `{proyectomono}` (nombre del repo del producto) | `rules\base`, `rules\mono`, `prompts`, `docs\_base`, `docs\_mono`, `docs\00-contexto\_mono` |
+| **MULTI** | `{proyectomulti}` | `rules\base`, `rules\multi`, `prompts`, `docs\_base`, `docs\_multi`, `docs\00-contexto\_multi` |
+| **FRAMEWORK** | Repo SDK `PaqSuite-IA-FRAMEWORK` | Ver `docs/10-overrides-framework/`; symlinks mono **y** multi pueden coexistir para unificar |
 
-- Los **`mklink`** requieren **Windows + privilegios de administrador**; si el asistente no puede ejecutarlos, debe entregar la **lista de comandos** sustituyendo el placeholder por el nombre real del repo (p. ej. `PaqSuite-IA-Partes-Atencion`) y recordar crear carpetas reales (`docs`, `docs\00_contexto`) antes de enlazar.
+- Los symlinks son **prerrequisito**: deben existir **antes** de scaffoldear. El asistente **verifica**; **no** los crea como paso del scaffold. Si faltan, detenerse y pedir al humano los `mklink` (admin) según `docs/_base/symlinks_paqsuite_ia.md`, con carpetas reales `docs` y `docs\00-contexto`.
 - **No** encadenar symlinks MONO→BASE ni MULTI→BASE.
 - Tras los enlaces, las reglas heredadas viven bajo `.cursor\rules\base` y `mono`/`multi`; la guía base del scaffold se lee como **`docs/_base/00-inicio-arquitectura.md`** en el producto.
+- **Modo FRAMEWORK:** no usar el flujo de producto completo; aplicar `docs/10-overrides-framework/prompts/scaffold-framework-sdk.md` (paquetes Composer/npm).
 
 **4.1 Documentación y diseño (mínimo coherente con el scaffold):** flujo E2E y criterios; modelo de datos según **MULTI** o **MONO**; **`docs/01-arquitectura/01-arquitectura-proyecto.md`** y README de `docs/01-arquitectura/`; **solo MULTI:** `07-mapa-visual-tenancy-resolucion-db.md`.
 
-**4.2 Backend:** API versionada (p. ej. prefijo **`api/v1`**); Sanctum; respuestas **envelope** estables (`error`, `respuesta`, `resultado`) si se adopta el mismo contrato del lineamiento; capas como en **`01-arquitectura-proyecto.md`**; autorización por operación; migraciones/seeders mínimos (**MULTI:** empresa(s) y permisos por empresa; **MONO:** sin capa empresa/tenant); **OpenAPI:** instalar **L5-Swagger** en scaffold (`docs/_base/00-openapi-l5-swagger-scaffold.md`), base `OpenApi.php`, anotaciones en controllers, **`composer openapi`**; tests feature en endpoints críticos.
+**4.2 Backend:** API versionada (p. ej. prefijo **`api/v1`**); Sanctum; respuestas **envelope** estables (`error`, `respuesta`, `resultado`) si se adopta el mismo contrato del lineamiento; capas como en **`01-arquitectura-proyecto.md`**; autorización por operación; migraciones/seeders mínimos (**MULTI:** empresa(s) y permisos por empresa; **MONO:** perfil `tenancy=single`); **obligatorio:** `config/paqsuite.php` + `PAQSUITE_TENANCY` / `PAQSUITE_DB` en `.env.example` (ver bloque «Variables de plataforma» arriba); **OpenAPI:** instalar **L5-Swagger** en scaffold (`docs/_base/00-openapi-l5-swagger-scaffold.md`), base `OpenApi.php`, anotaciones en controllers, **`composer openapi`**; tests feature en endpoints críticos.
 
 **4.3 Frontend:** estructura **`src/app`**, `layouts`, `pages`, `features`, `services`, **`shared`**: **`docs/01-arquitectura/ui/02-frontend-folder-structure.md`**; shell **`01_MainLayout_PostLogin_Specification.md`** (**MULTI:** tema/selector según spec; **MONO:** sin selector si no aplica); HTTP centralizado (**MULTI:** header compañía); rutas protegidas; DevExtreme según **`docs/frontend/devextreme-norms.md`** y grillas **`DataGridDX`** cuando corresponda.
 
@@ -92,7 +112,7 @@ El scaffold y el código deben ser **compatibles** con las reglas citadas en **�
 
 ### Cierre con **§7 — Checklist** del documento base
 
-Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`docs/_base/symlinks_paqsuite_ia.md`** y §4.0; modo declarado; E2E; capas; OpenAPI; frontend DevExtreme; tests Vitest + E2E flujo principal; `VERSION`; `.env.example`; reglas referenciadas).
+Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`docs/_base/symlinks_paqsuite_ia.md`** y §4.0; modo declarado; **`PAQSUITE_TENANCY` / `PAQSUITE_DB` + `config/paqsuite.php`**; E2E; capas; OpenAPI; frontend DevExtreme; tests Vitest + E2E flujo principal; `VERSION`; `.env.example`; reglas referenciadas).
 
 **Referencias centralizadas:** usar la tabla del **§8** del documento base (`docs/arquitectura.md`, `docs/01-arquitectura/README.md`, `ui/`, `devextreme-norms.md`, deploy, `AGENTS.md`).
 
@@ -168,7 +188,20 @@ Condiciones:
 
 ### Regla de bloqueo
 
-Si el mensaje inicial **no** incluye `MONO` o `MULTI`, el asistente debe **detenerse y pedir esa definición antes de scaffoldear**.
+Si el mensaje inicial **no** incluye `MONO`, `MULTI` o `FRAMEWORK`, el asistente debe **detenerse y pedir esa definición antes de scaffoldear**.
+
+### Opción 4 — FRAMEWORK (SDK)
+
+```md
+Usá `docs/10-overrides-framework/` como norma obligatoria (precedencia sobre BASE/MONO/MULTI).
+
+Plataforma: PaqSuite-IA-FRAMEWORK
+Modo: FRAMEWORK
+Carpetas: packages/php y packages/js
+
+Seguí `docs/10-overrides-framework/prompts/scaffold-framework-sdk.md`.
+Verificá symlinks; no los crees. No hagas commit ni push.
+```
 
 ---
 

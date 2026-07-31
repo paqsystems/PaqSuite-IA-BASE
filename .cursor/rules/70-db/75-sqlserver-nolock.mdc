@@ -1,0 +1,54 @@
+---
+description: SQL Server — WITH (NOLOCK) obligatorio en tablas de lectura/origen en SP y scripts T-SQL
+globs:
+  - "**/*.sql"
+  - "**/database/sp/**"
+alwaysApply: false
+---
+
+# SQL Server — `WITH (NOLOCK)` (MUST)
+
+Complementa: `74-acceso-datos-stored-procedures.mdc`.  
+Override Framework (cuando aplica): `docs/10-overrides-framework/02-base-datos-sqlserver-mysql.md`.
+
+## Norma
+
+En **SQL Server** (scripts SP / T-SQL de negocio), **toda tabla persistente** usada como **consulta** o **origen** de un `INSERT`/`UPDATE`/`DELETE` **MUST** llevar `WITH (NOLOCK)`.
+
+| Caso | Obligación |
+|------|------------|
+| `SELECT` / `JOIN` / subconsultas / CTEs que lean tablas físicas | Cada tabla: `… alias WITH (NOLOCK)` |
+| `INSERT … SELECT` | Orígenes del `SELECT` con NOLOCK; **destino** del `INSERT` sin NOLOCK |
+| `UPDATE … FROM` / `DELETE … FROM` (multi-tabla) | Tablas del `FROM`/`JOIN` con NOLOCK |
+| `UPDATE tabla SET` / `DELETE FROM tabla WHERE` (solo destino) | Destino **sin** NOLOCK |
+| `#temp` / `@table` / TVF (`STRING_SPLIT`, `OPENJSON`) / CTE aliases | Sin NOLOCK |
+| MySQL | Norma **no aplica** |
+
+Riesgo aceptado: lecturas dirty. Motivo: reducir bloqueos.
+
+## Correcto
+
+```sql
+FROM dbo.pq_menus m WITH (NOLOCK)
+INNER JOIN dbo.pq_permisos p WITH (NOLOCK) ON p.menu_id = m.id
+
+INSERT INTO pq_audit_events (...)
+SELECT ... FROM pq_source s WITH (NOLOCK);
+
+DELETE a
+FROM pq_audit_events a WITH (NOLOCK)
+INNER JOIN doomed d ON d.id = a.id;
+```
+
+## Incorrecto
+
+```sql
+FROM dbo.pq_menus m
+INNER JOIN dbo.pq_permisos p ON ...
+```
+
+## Al escribir o editar SP
+
+1. Revisar cada `FROM` / `JOIN` a tabla física.
+2. Añadir `WITH (NOLOCK)` si falta.
+3. No inventar NOLOCK en destinos de escritura ni en temporales.

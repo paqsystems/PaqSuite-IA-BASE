@@ -86,3 +86,4 @@ Cualquier otra excepción (migración temporal Eloquent, reporte ad-hoc) requier
 - Fecha/datetime en modelos residuales: `71` / `72` (solo donde Eloquent esté en excepciones o mapeo de resultados).
 - Envelope y errores: reglas de API / SPEC-001-20 del producto o Framework.
 - Commit/deploy: avisar si el release incluye scripts SP nuevos (`17-commit-push-revision-version`).
+- **NOLOCK** en lecturas/orígenes SQL Server: `75-sqlserver-nolock.mdc` (MUST junto a esta regla).
