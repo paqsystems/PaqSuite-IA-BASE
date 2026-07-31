@@ -1,0 +1,62 @@
+---
+description: Codificación jerárquica de id en pq_menus (raíces en decenas de miles; hijos en rango del padre)
+alwaysApply: true
+---
+
+# `pq_menus` — codificación de `id` (MUST)
+
+## Norma (todos los productos PaqSuite IA)
+
+Al crear o mantener registros de **`pq_menus`** (seeders, SQL de catálogo, migraciones de datos, scripts de install/update), el **`id` se asigna con inteligencia jerárquica**. No usar identity secuencial opaco (1, 2, 3…).
+
+Objetivo: que la tabla **ordenada por `id`** se presente igual que el menú visual en la aplicación (raíz → hijos → nietos).
+
+Documentación de producto (Framework): `docs/02-producto/07-menu-opciones.md` §1.2 · OpenSpec `SPEC-001-07`.
+
+Esta regla es **BASE** (symlink `.cursor/rules` → PaqSuite-IA-BASE): aplica a Framework, MONO, MULTI y hosts.
+
+---
+
+## Reglas de numeración
+
+### 1) Raíces (`parent = 0`)
+
+- `id` = múltiplo de **10 000** (decenas de miles): `10000`, `20000`, `30000`, …
+- Una raíz por módulo / rama principal del menú.
+
+### 2) Hijos (cualquier profundidad)
+
+- El `id` del hijo **depende del rango del padre** (queda numéricamente “dentro” del bloque del padre).
+- Hermanos en orden ascendente = orden de aparición en UI.
+- Dejar **huecos** entre hermanos para altas futuras.
+
+Pasos típicos (orientativos; el producto puede afinar si conserva el principio):
+
+| Nivel bajo la raíz | Paso típico entre hermanos | Ejemplo |
+|--------------------|----------------------------|---------|
+| 1.er nivel | 100 | Padre `10000` → `10100`, `10200`, `10300` |
+| 2.º nivel / hojas | 5 o 10 | Padre `10100` → `10105`, `10110`, …; padre `10300` → `10310`, `10320` |
+
+### 3) Relación con `parent` y `orden`
+
+- `parent` / `idParent` define la jerarquía.
+- `ORDER BY id` debe coincidir con el recorrido visual del árbol.
+- Si existe columna `orden`, no debe contradecir el orden implícito por `id`.
+
+---
+
+## Prohibido
+
+- Raíces con `id` que no sea múltiplo de 10 000 (o `id` &lt; 10 000 salvo excepción documentada y justificada).
+- Hijos cuyo `id` quede fuera del bloque numérico del padre.
+- Renumerar en masa solo por estética sin plan de impacto en FKs / permisos (`Pq_Permiso`, etc.).
+
+---
+
+## Checklist al seedear menú
+
+- [ ] Raíces en 10000, 20000, …
+- [ ] Cada hijo en el rango del padre; hermanos ordenados
+- [ ] `ORDER BY id` ≈ árbol del sidebar
+- [ ] Huecos para inserciones futuras
+- [ ] Permisos / matriz de módulos alineados a esos `id` (o a `menu_codigo` estable si el producto lo usa)

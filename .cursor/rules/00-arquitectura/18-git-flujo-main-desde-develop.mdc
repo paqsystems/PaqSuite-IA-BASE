@@ -1,0 +1,43 @@
+---
+description: Prohíbe push directo a main; main solo se actualiza con PR desde develop
+alwaysApply: true
+---
+
+# Git — `main` solo vía PR desde `develop`
+
+Contrato de flujo de ramas **transversal** (todos los productos PaqSuite IA).
+
+Complementa: `.cursor/rules/base/00-arquitectura/17-commit-push-revision-version.mdc` y `docs/_base/00-commit-push-revision-version-deploy.md`.
+
+## Política
+
+1. **Prohibido** hacer `git push` (directo, `--force`, tags asociados o cualquier variante) sobre la rama **`main`** (y alias `master` si existiera).
+2. **`main` solo se actualiza** fusionando un **Pull Request** cuya rama origen sea **`develop`**.
+3. El trabajo diario (commits, push, PRs de feature) va a **`develop`** u otras ramas de trabajo; **nunca** a `main` por push local.
+
+## Obligaciones del agente
+
+Cuando el usuario pida **push**, **commit y push**, o publicar una rama:
+
+1. Comprobar la rama actual (`git branch --show-current` / `git status`).
+2. Si la rama es **`main`** o **`master`**: **no ejecutar** el push. Explicar la política y proponer el flujo correcto.
+3. Si pide abrir/crear un PR hacia **`main`** desde una rama distinta de **`develop`**: **no crearlo**. Indicar que el PR a `main` debe salir de `develop`.
+4. Si pide merge local a `main` + push: **no hacerlo**. El camino es PR `develop` → `main` en GitHub.
+
+## Flujo correcto
+
+```text
+feature / fix  →  develop  (push + PR si aplica)
+develop        →  main     (solo Pull Request; sin push directo a main)
+```
+
+## Excepciones
+
+Ninguna por defecto. Solo si el usuario **autoriza de forma explícita y literal** una excepción puntual en el chat (comando y motivo). Aun así, advertir el riesgo y preferir el PR desde `develop`.
+
+## Enforcement en GitHub (recomendado)
+
+La regla del IDE **no alcanza**. En cada repo de producto conviene activar en GitHub:
+
+1. **Branch protection** (o ruleset) sobre `main`: exigir PR, bloquear force push/borrado, `enforce_admins`.
+2. **Check Actions** que falle si el PR a `main` no viene de `develop` (ej. job `main-solo-desde-develop`) y marcarlo como **required status check**.

@@ -47,7 +47,7 @@ Usuario → frontend.{proyecto}.paqsystems.com
 | Código PHP | Forge `git pull` + `composer install` | — |
 | Código SPA | Build del host frontend al push | `VITE_*` en panel del host |
 | Migraciones | Solo si está en Deploy Script | `php artisan migrate --force` |
-| Seeds / SQL datos fijos | **No** | SSH Forge o cliente SQL |
+| Seeds / SQL datos fijos | `paqsuite:seed-deploy` en Deploy Script (recomendado) | SSH Forge si el script aún no lo incluye |
 | Flags `.env` | Forge Environment | Claves nuevas del release |
 | `config:cache` | Deploy Script típico | Tras cambiar `.env` |
 
@@ -72,12 +72,16 @@ composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 php artisan migrate --force
 
+php artisan paqsuite:seed-deploy
+
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
 php artisan queue:restart || true
 ```
+
+Detalle PedidosWeb / Forge: [`docs/Migraciones-en-forge.md`](../Migraciones-en-forge.md) (Opción A).
 
 ### 3.3 Frontend
 

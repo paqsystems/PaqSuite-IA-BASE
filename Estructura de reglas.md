@@ -8,6 +8,8 @@
 15-task-execution-traceability.md
 16-hu-simple-vs-hu-compleja.md
 17-orquestador-hu-tr.md
+17-commit-push-revision-version.mdc
+18-git-flujo-main-desde-develop.mdc
 31-estado-hu-tr.md
 Carpeta sugerida
 BASE

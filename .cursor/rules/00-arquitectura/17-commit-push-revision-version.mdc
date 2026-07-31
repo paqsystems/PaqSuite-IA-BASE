@@ -17,6 +17,8 @@ Cuando el usuario pida **commit**, **push**, o **commit y push** (autorización 
 
 **Antes** de `git add` / `git commit` / `git push`, revisar el diff y **avisar** si el release en servidor requiere pasos extra.
 
+**Push a `main`:** prohibido; ver `.cursor/rules/base/00-arquitectura/18-git-flujo-main-desde-develop.mdc` (`main` solo vía PR desde `develop`).
+
 No impedir el commit salvo pedido del usuario; el aviso es informativo.
 
 ## Qué revisar en el diff
