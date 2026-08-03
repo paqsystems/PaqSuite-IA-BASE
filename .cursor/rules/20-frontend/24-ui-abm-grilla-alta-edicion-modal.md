@@ -9,7 +9,7 @@ Unificar el patrón de **cualquier UI tipo popup** (formulario o panel superpues
 
 Casos típicos (no exhaustivo):
 
-- **Grilla + alta/edición:** listado inicial y luego **crear** o **editar** en un popup. En listados con **`DataGridDX`**, el **crear** debe dispararse desde el **“+”** de la grilla (ver `.cursor/rules/multi/08-devextreme-grid-standards.md` ó `.cursor/rules/mono/08-devextreme-grid-standards.md` §1.1), no desde un segundo botón en el encabezado de la página.
+- **Grilla + alta/edición:** listado inicial y luego **crear** o **editar** en un popup. El **crear** MUST dispararse desde el ícono **`plus`** de la **toolbar de la DataGrid** (ver `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`), **no** desde un botón «Nuevo/Agregar» en el encabezado de la página.
 - **Detalle + subformulario:** pantalla de detalle (p. ej. asignación) y **agregar ítem**, **editar ítem**, o **gestión de operarios** en popup sobre el detalle.
 - Otros **diálogos transaccionales** (confirmaciones con formulario, listas auxiliares, etc.) que el producto describa como ventana superpuesta.
 
@@ -46,7 +46,7 @@ Salvo excepción en **HU/TR**, no se navega a otra ruta **solo** para ese formul
 
 ## Relación con otras reglas
 
-- Grillas y estándar DevExtreme: `.cursor/rules/multi/08-devextreme-grid-standards.md` ó `.cursor/rules/mono/08-devextreme-grid-standards.md`
+- Estándar DataGrid (alta `plus` en toolbar): `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`
 - Catálogos y etiquetas (código/descripción): `.cursor/rules/base/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`
 - Normas frontend: `.cursor/rules/base/20-frontend/20-frontend-norms.md`
 - **Helper de referencia (frontend):** `ModalPortal` en `frontend/src/shared/ui/ModalPortal.tsx` — portal a `document.body` + bloqueo de scroll del documento.

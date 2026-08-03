@@ -45,7 +45,7 @@ Aplicar en detalle si hace falta:
 | 4 | Backend | Validaciones, permisos, errores, sin filtrar datos sensibles |
 | 5 | Frontend | loading/empty/error/success; data-testid; a11y mínima |
 | 6 | Tests | Ejecutados con evidencia; faltantes declarados |
-| 7 | Documentación | OpenAPI/docs si hubo cambio de contrato o comportamiento |
+| 7 | Documentación | OpenAPI/docs si hubo cambio de contrato o comportamiento (**MUST:** endpoint anotado; GET con diseño de `resultado`; POST/PUT con Body tipado + example — `10-openapi-documentacion`) |
 | 8 | Trazabilidad | TR con archivos, comandos y pendientes claros |
 
 ## Salida obligatoria
