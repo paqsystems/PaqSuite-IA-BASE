@@ -81,7 +81,7 @@ También puede ejecutarse como skill:
 
 ### 7. Documentación
 
-- ¿Se actualizó Swagger/OpenAPI si había endpoints?
+- ¿Se actualizó Swagger/OpenAPI si había endpoints? (**MUST:** toda API documentada; GET con schema/example de `resultado`; POST/PUT con `RequestBody` + example del Body — ver `10-backend/10-openapi-documentacion.md`)
 - ¿Se actualizó documentación funcional si cambió comportamiento?
 
 ### 8. Trazabilidad

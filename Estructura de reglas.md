@@ -30,9 +30,11 @@ BASE
 22-frontend-build-typescript.md
 24-devextreme-grid-standards.md
 29-ui-catalogos-fk-codigo-descripcion.md
-30-ui-abm-grilla-alta-edicion-modal.md
+24-ui-abm-grilla-alta-edicion-modal.md
+26-devextreme-prefer-native-behavior.md
+28-ui-grilla-acciones-iconos-tooltip.md
+29-devextreme-grid-standards.md
 31-ui-entrada-horarios-hhmm.md
-33-devextreme-prefer-native-behavior.md
 35-ui-formularios-carga-caption-izquierda.md
 Carpeta sugerida
 BASE

@@ -61,9 +61,15 @@ Plantilla mínima con:
 
 Ver implementación de referencia: `PaqSuite-IA-PedidosWeb/backend/OpenApi.php`.
 
-### 2.4 Anotaciones por endpoint
+### 2.4 Anotaciones por endpoint (MUST — sin excepción)
 
-En cada controller protegido:
+Norma completa: **`.cursor/rules/base/10-backend/10-openapi-documentacion.md`**.
+
+1. **Toda** ruta API nueva o cambiada → anotación OpenAPI + regenerar spec.
+2. **GET:** documentar el diseño concreto de **`resultado`** (schema tipado + `example`). **Prohibido** responder solo con `ref` a `ApiEnvelope` genérico (`resultado: {}`).
+3. **POST / PUT:** documentar `@OA\RequestBody` con schema + `example` del JSON del Body (alineado a validación). **PATCH** con body: igual.
+
+En cada controller protegido (patrón GET):
 
 ```php
 /**
@@ -71,15 +77,43 @@ En cada controller protegido:
  *     path="/api/v1/...",
  *     tags={"Modulo"},
  *     security={{"sanctum":{}},{"tenant":{}}},
- *     @OA\Response(response=200, @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(
+ *         response=200,
+ *         description="OK",
+ *         @OA\JsonContent(ref="#/components/schemas/ApiEnvelopeMiRecurso")
+ *     ),
  *     @OA\Response(response=401, description="No autenticado")
+ * )
+ */
+```
+
+Patrón POST/PUT (Body obligatorio en la spec):
+
+```php
+/**
+ * @OA\Post(
+ *     path="/api/v1/...",
+ *     tags={"Modulo"},
+ *     security={{"sanctum":{}},{"tenant":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"campoObligatorio"},
+ *             @OA\Property(property="campoObligatorio", type="string", example="valor"),
+ *             @OA\Property(property="opcional", type="integer", example=1)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         @OA\JsonContent(ref="#/components/schemas/ApiEnvelopeMiRecurso")
+ *     )
  * )
  */
 ```
 
 Login público: solo `security={{"tenant":{}}}`.
 
-**Ejemplos de `resultado`:** el schema base `ApiEnvelope` declara `resultado` como `object` genérico (Swagger muestra `{}`). Por endpoint conviene definir schemas compuestos (`ApiEnvelopeMenuList`, `ApiEnvelopeSessionContext`, …) en `app/OpenApi/OpenApiSchemas.php` con `allOf` + `example` concreto.
+**Schemas de `resultado`:** el schema base `ApiEnvelope` declara `resultado` como `object` genérico (Swagger muestra `{}`). **Por cada endpoint** definir schemas compuestos (`ApiEnvelopeMenuList`, `ApiEnvelopeSessionContext`, …) en `app/OpenApi/OpenApiSchemas.php` (o equivalente) con `allOf` + propiedades de `resultado` + `example` concreto.
 
 ---
 
@@ -122,7 +156,9 @@ En producción: `L5_SWAGGER_GENERATE_ALWAYS=false` y generar en CI/deploy con `c
 
 Al cerrar slices con endpoints nuevos:
 
-- [ ] Anotaciones `@OA\` en controller (o DTO)
+- [ ] Anotaciones `@OA\` en controller (o DTO) — **sin excepción**
+- [ ] GET: schema + example de `resultado` (no solo `ApiEnvelope` genérico)
+- [ ] POST/PUT: `RequestBody` + schema + example del JSON del Body
 - [ ] `security` coherente (Bearer + tenant MONO)
 - [ ] Respuestas 401/403/422 documentadas
 - [ ] `composer openapi` y revisión visual en `/api/documentation`
@@ -130,4 +166,4 @@ Al cerrar slices con endpoints nuevos:
 
 ---
 
-*Última actualización: 2026-05-30 — PedidosWeb referencia implementación.*
+*Última actualización: 2026-08-03 — MUST OpenAPI: toda API + `resultado` en GET + Body en POST/PUT.*

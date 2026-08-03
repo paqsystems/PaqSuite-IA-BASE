@@ -19,7 +19,7 @@ Aplica a **todo el ecosistema PaqSuite IA** (MONO y MULTI).
 - **Sí** usar íconos del set DevExtreme (`edit`, `trash`, `info`, `copy`, `eyeopen`, etc.) vía:
   - columna `type: 'buttons'` del `DataGrid`, **o**
   - `Button` DevExtreme con `stylingMode="text"` (o equivalente en wrapper) **solo icono**, sin `text` visible.
-- Mantener ancho de columna compacto; evitar columna titulada **«Acciones»** con celdas de texto (ver también `.cursor/rules/mono/08-devextreme-grid-standards.md` §1.1).
+- Mantener ancho de columna compacto; evitar columna titulada **«Acciones»** con celdas de texto (ver `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`).
 
 ### 2) Tooltip en cada acción
 
@@ -81,7 +81,7 @@ Aplica a **todo el ecosistema PaqSuite IA** (MONO y MULTI).
 
 ## Relación con otras reglas
 
-- Estándar completo DataGrid MONO: `.cursor/rules/mono/08-devextreme-grid-standards.md`
+- Estándar DataGrid (alta `plus` en toolbar): `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`
 - Comportamiento nativo DevExtreme: `.cursor/rules/base/20-frontend/26-devextreme-prefer-native-behavior.md`
 - Modal alta/edición: `.cursor/rules/base/20-frontend/24-ui-abm-grilla-alta-edicion-modal.md`
 - Normas frontend: `.cursor/rules/base/20-frontend/20-frontend-norms.md`
