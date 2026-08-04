@@ -172,10 +172,15 @@ SQL o seed documentado en `docs/backend/seed/**` del producto. Ejecutar en SSMS 
 
 ## 5) Deploy Script sugerido (Forge)
 
-```bash
-cd /home/forge/default
-git pull origin $FORGE_SITE_BRANCH
+Hosts que consumen `paqsuite/laravel-core` por **path** al repo Framework (**Must** hasta registry): ver [`adopcion-forge-framework-path.md`](../06-operacion/adopcion-forge-framework-path.md).
 
+```bash
+cd $FORGE_RELEASE_DIRECTORY
+
+# Obligatorium path-based: acceso git al repo Framework en el server
+bash backend/scripts/forge-ensure-framework.sh
+
+cd backend
 composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 php artisan migrate --force
@@ -189,6 +194,7 @@ php artisan view:cache
 php artisan queue:restart || true
 ```
 
+Copiar el script canónico desde Framework: `docs/06-operacion/scripts/forge-ensure-framework.sh` → `backend/scripts/` del producto.
 ---
 
 ## 6) Plantilla — notas de deploy en PR
