@@ -1,0 +1,81 @@
+---
+description: >-
+  Antes de SPEC/HU/TR o implementar informe, pivot, grilla, dashboard, Excel,
+  emisión, chat, LLM, tareas, tablero BI u otra pantalla transversal: adoptar
+  capacidad GEN del Framework (índice, estado, componente). No reinventar motor.
+  PaqSuite IA hosts que consumen @paqsuite/react-core y paqsuite/laravel-core.
+globs:
+  - "docs/05-open-spec/**"
+  - "docs/03-historias-usuario/**"
+  - "docs/04-tareas/**"
+  - "docs/02-producto/**"
+  - "docs/00-Conceptualizacion/**"
+alwaysApply: true
+---
+
+# Framework GEN — adoptar, no reinventar (hosts)
+
+Aplica a productos que consumen el SDK (`paqsuite/laravel-core` + `@paqsuite/react-core`). Asociar el paquete **no** enciende la capacidad ni hace que OpenSpec “detecte” GEN-xx.
+
+**SoT:** repo `PaqSuite-IA-FRAMEWORK` — `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1).
+
+## MUST al definir un proceso (SPEC/HU/TR del host)
+
+1. Si el pedido encaja en una fila **listo** → **nombrar GEN-xx** y el export; no reimplementar PivotGrid/Excel/emisión/etc.
+2. Si es **diferido** → no inventar el motor en el host; abrir/esperar Framework, salvo que sea 100 % de ese producto (entonces no es GEN).
+3. El host aporta dominio: menú, permisos, `consultaId`/`processCode`, catálogo, API/SP, filtros, widgets.
+4. No copiar carpetas GEN del Framework al producto.
+
+Plantilla en el enunciado:
+
+```text
+[Proceso] de [host]: adoptar GEN-xx. UI/motor = [export]. No reimplementar.
+SoT: Framework SPEC-001-xx. Host: [consultaId/processCode, catálogo, API/SP, filtros, menú].
+```
+
+Si hay duda de existencia o invocación, preguntar en el repo Framework (no adivinar).
+
+## Índice (estado = invocable en SDK, no el doc conceptual)
+
+| GEN | Tema | Estado | Invocar (host) |
+|-----|------|--------|----------------|
+| 01 | Estética UI | listo (norma) | Controles **100 % DX**; layouts `AuthPageLayout` / `ShellLayout` / `ProcessPageLayout` |
+| 02 | i18n | listo | `LanguageSelector`; claves envelope + namespaces GEN |
+| 03 | Smart Capture | listo | `SmartCapturePanel` (prereq GEN-16 BD+SP) |
+| 04 | Login | listo | Flujo auth SDK; no rehacer login |
+| 05 | Selector empresas | listo | `EmpresaSelectorPage` (MULTI / N>1) |
+| 06 | Seguridad admin | listo | ABM roles/permisos GEN; **excluido mobile** |
+| 07 | Menú | listo | `MenuSidebar` + API menú; `id` jerárquico `pq_menus` |
+| 08 | Menú avatar | listo | `UserAvatarMenu` |
+| 09 | Dashboard inicio | listo | `DashboardContainer` + widgets **del producto** (no es BI) |
+| 10 | ABM Parámetros | listo | Pantalla parámetros GEN |
+| 11 | Grillas/layouts | listo | `ProcessDataGrid` / `DataGridDx` + `/grid-layouts*` |
+| 12 | Pivots | listo | `ConsultaGrillaPivotShell` / `PivotGridBlock` + `consultaId`; **excluido mobile** |
+| 13 | Tareas programadas | listo | `TaskProcessesPage` / Definitions / Executions; `TaskProcessRegistry` |
+| 14 | Import Excel | listo | `ExcelImportToolbar` (fila propia) + handler/seed host; **excluido mobile** |
+| 15 | Emisiones | listo | `EmissionDialog` / `ReportDesignerHost` |
+| 16 | Provider IA BYOK | listo | `LlmPreferencesPanel`; migrate+SP `adopcion-gen-16-byok.md` |
+| 17 | Auditoría / notif | listo | `AuditEventsPage` + `NotificationsBell` |
+| 18 | Install/update | listo (ops) | Runbook Framework; no redefinir ciclo |
+| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa |
+| 20 | Envelope API | listo | `{ error, respuesta, resultado }` |
+| 21 | Chat / ayuda | listo | `ChatAssistantPage` / `openExternalHelp` (prereq 16) |
+| 22 | Mobile Capacitor | listo | `isNativeApp()`; kardex; sin pivot/excel/admin/`openInNewTab` |
+| 23 | Grupos empresarios | listo | `GruposEmpresariosPage`; visible si `tenancy=multi` |
+| 24 | Módulos clientes | diferido | Ops/dev; no ABM prod |
+| 25 | Tablero BI | **diferido** | **No hay componente.** ≠ GEN-09. No armar BI propio si debe ser transversal |
+| 26 | Cobros digitales | diferido | — |
+| 27 | WhatsApp/Telegram | diferido | — |
+| 28 | Cámara/biometría | diferido | Post-MVP mobile |
+| 29 | Voz en modales | diferido | — |
+
+## Fronteras frecuentes
+
+| Pedido | Usar | No usar |
+|--------|------|---------|
+| Inicio con KPIs | GEN-09 `DashboardContainer` | GEN-25 |
+| Informe con pivots | GEN-12 shell/block | `PivotGrid` DX suelto sin GEN |
+| Importar planilla | GEN-14 toolbar | Parser/plantilla propios |
+| Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
+
+Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`.
