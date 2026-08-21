@@ -19,7 +19,7 @@ alwaysApply: true
 **Framework:** React  
 **Build Tool:** Vite (recomendado) o Webpack  
 **State Management:** Context API o Redux/Zustand (según necesidad)  
-**UI Library:** DevExtreme React Components (DevExpress). Convención: **preferir capacidades nativas del componente** antes de duplicar la misma acción en UI propia; ver `docs/frontend/devextreme-norms.md` y `.cursor/rules/base/20-frontend/26-devextreme-prefer-native-behavior.md`.
+**UI Library:** DevExtreme React Components (DevExpress). Convención: **preferir capacidades nativas del componente** antes de duplicar la misma acción en UI propia; ver `docs/frontend/devextreme-norms.md` y `.cursor/rules/base/20-frontend/26-devextreme-prefer-native-behavior.md`. **Docs oficiales:** API, props y ejemplos vía MCP `dxdocs` (`.cursor/rules/base/20-frontend/33-devextreme-mcp-dxdocs.md`); no Context7 ni búsqueda web.
 
 Ver `.cursor/rules/base/20-frontend/21-frontend-mobile-norms.md` para normas específicas de mobile (Capacitor).
 
