@@ -17,16 +17,25 @@ alwaysApply: true
 
 Aplica a productos que consumen el SDK (`paqsuite/laravel-core` + `@paqsuite/react-core`). Asociar el paquete **no** enciende la capacidad ni hace que OpenSpec “detecte” GEN-xx.
 
-**SoT:** repo `PaqSuite-IA-FRAMEWORK` — `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1).
+## Dónde consultar el checklist de componentes
 
-## MUST al definir un proceso (SPEC/HU/TR del host)
+| Qué necesitás | Dónde |
+|---------------|--------|
+| **Checklist operativo en el host** (GEN, estado listo/diferido, export a invocar) | **Esta regla** — índice abajo. Es la referencia diaria en el producto (symlink `rules/base`). |
+| **Detalle de producto / adopción / guías** | Repo **`PaqSuite-IA-FRAMEWORK`**: `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1). |
 
-1. Si el pedido encaja en una fila **listo** → **nombrar GEN-xx** y el export; no reimplementar PivotGrid/Excel/emisión/etc.
+Antes de inventar UI/login/shell/grilla/pivot/excel/etc.: **abrir esta regla** (y el SoT Framework si hace falta profundidad). No adivinar.
+
+**SoT:** repo `PaqSuite-IA-FRAMEWORK` — paths de la tabla anterior.
+
+## MUST en todo SPEC / HU / TR del host (proceso con UI o capacidad transversal)
+
+1. Si el pedido encaja en una fila **listo** → **nombrar GEN-xx** y el **export**; **no reimplementar**.
 2. Si es **diferido** → no inventar el motor en el host; abrir/esperar Framework, salvo que sea 100 % de ese producto (entonces no es GEN).
-3. El host aporta dominio: menú, permisos, `consultaId`/`processCode`, catálogo, API/SP, filtros, widgets.
-4. No copiar carpetas GEN del Framework al producto.
+3. El host aporta solo dominio: menú, permisos, `consultaId`/`processCode`, catálogo, API/SP, filtros, widgets.
+4. **Prohibido** copiar carpetas GEN (u homólogos) del Framework al producto.
 
-Plantilla en el enunciado:
+Plantilla **obligatoria** en el enunciado (SPEC y, por trazabilidad, HU/TR):
 
 ```text
 [Proceso] de [host]: adoptar GEN-xx. UI/motor = [export]. No reimplementar.
@@ -34,6 +43,13 @@ SoT: Framework SPEC-001-xx. Host: [consultaId/processCode, catálogo, API/SP, fi
 ```
 
 Si hay duda de existencia o invocación, preguntar en el repo Framework (no adivinar).
+
+## Básicos (día 0) vs adicionales
+
+| Tipo | GEN típicos | Criterio |
+|------|-------------|----------|
+| **Básicos** — usar desde scaffold / UI base | 01 estética, 02 i18n, 04 login, 07 menú, 08 avatar, 11 grillas, 19 shell/tenancy, 20 envelope (+ 05 selector si MULTI) | No codificar login/shell/envelope/grilla de proceso propios |
+| **Adicionales** — cuando el proceso lo pida | 03, 06, 09–10, 12–18, 21–24, … | Solo si estado **listo**; si **diferido**, no inventar |
 
 ## Índice (estado = invocable en SDK, no el doc conceptual)
 
@@ -53,9 +69,9 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 12 | Pivots | listo | `ConsultaGrillaPivotShell` / `PivotGridBlock` + `consultaId`; **excluido mobile** |
 | 13 | Tareas programadas | listo | `TaskProcessesPage` / Definitions / Executions; `TaskProcessRegistry` |
 | 14 | Import Excel | listo | `ExcelImportToolbar` (fila propia) + handler/seed host; **excluido mobile** |
-| 15 | Emisiones | listo | `EmissionDialog` / `ReportDesignerHost` |
+| 15 | Emisiones | **redefinir** | SoT = `15-reportes-emisiones-update.md`; `EmissionDialog` smoke = antecedente. Comunicación dirigida = GEN-30. Regenerar OpenSpec |
 | 16 | Provider IA BYOK | listo | `LlmPreferencesPanel`; migrate+SP `adopcion-gen-16-byok.md` |
-| 17 | Auditoría / notif | listo | `AuditEventsPage` + `NotificationsBell` |
+| 17 | Auditoría / bandeja | listo | `AuditEventsPage` + `NotificationsBell`. Mail/canales dirigidos → GEN-30 |
 | 18 | Install/update | listo (ops) | Runbook Framework; no redefinir ciclo |
 | 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa |
 | 20 | Envelope API | listo | `{ error, respuesta, resultado }` |
@@ -65,9 +81,10 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 24 | Módulos clientes | diferido | Ops/dev; no ABM prod |
 | 25 | Tablero BI | **diferido** | **No hay componente.** ≠ GEN-09. No armar BI propio si debe ser transversal |
 | 26 | Cobros digitales | diferido | — |
-| 27 | WhatsApp/Telegram | diferido | — |
+| 27 | WhatsApp/Telegram | diferido | Casos de uso; **canales** = GEN-30 (no motor paralelo en el host) |
 | 28 | Cámara/biometría | diferido | Post-MVP mobile |
 | 29 | Voz en modales | diferido | — |
+| 30 | Notification Service | **diferido** | Definición funcional en `docs/02-producto/30-…`. Sin exports SDK. No reinventar mail/WA/TG en el host |
 
 ## Fronteras frecuentes
 
@@ -76,6 +93,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | Inicio con KPIs | GEN-09 `DashboardContainer` | GEN-25 |
 | Informe con pivots | GEN-12 shell/block | `PivotGrid` DX suelto sin GEN |
 | Importar planilla | GEN-14 toolbar | Parser/plantilla propios |
+| Emitir PDF/informe | GEN-15 (update) + GEN-30 si hay mail/WA/TG | SMTP o plantillas mail en el host |
 | Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
 
 Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`.

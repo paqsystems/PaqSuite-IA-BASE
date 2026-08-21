@@ -12,7 +12,7 @@ Contrato **obligatorio** para apps mobile (Capacitor, React Native, Flutter) en 
 | Aspecto | Web (SPA) | Mobile (app nativa / Capacitor) |
 |---------|-----------|----------------------------------|
 | Origen del `{cliente}` | Subdominio `{cliente}.{proyecto}` → redirect → header/cookie | **Campo explícito en login** (tenant / empresa) |
-| URL API | `backend.{proyecto}.paqsystems.com` (fija por build) | Misma convención; override opcional en config avanzada |
+| URL API | `backend{proyecto}paqsystems.on-forge.com` (fija por build; ver `00-urls-deploy-proyecto.md`) | Misma convención; override opcional en config avanzada |
 | Header API | `X-Paq-Cliente: {cliente}` | **Idéntico** — valor del login |
 | Resolución SQL | Middleware backend antes de auth | **Idéntico** — tenant **antes** de validar usuario |
 
@@ -91,7 +91,7 @@ Backend (sin cambio de contrato envelope):
 
 | Entorno | Resolución |
 |---------|------------|
-| **Producción** | `https://backend.{proyecto}.paqsystems.com/api/v1` embebido en build (PedidosWeb: `pedidosweb`) |
+| **Producción** | `https://backend{proyecto}paqsystems.on-forge.com/api/v1` embebido en build (ej. `{proyecto}` = `tango` → `backendtangopaqsystems…`) |
 | **Staging / dev** | Override en pantalla **Configuración avanzada** (icono engranaje): URL + test health |
 | **Capacitor live reload** | Solo desarrollo; no en release store |
 

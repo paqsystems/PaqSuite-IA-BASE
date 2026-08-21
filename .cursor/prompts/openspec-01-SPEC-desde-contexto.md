@@ -50,10 +50,11 @@ Podés partir de:
 ## Comportamiento
 
 1. Leer **`.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md`** y la plantilla **`docs/05-open-spec/_template-spec.md`** si existe.
-2. Crear o actualizar **`docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md`** (subcarpeta alineada a épica/HU del proyecto).
-3. Metadatos: **`Estado: Pendiente`** hasta cerrar alcance; completar criterios verificables, fuera de alcance, riesgos.
-4. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
-5. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
+2. Si el alcance toca UI o capacidad transversal (login, shell, grilla, pivot, Excel, dashboard, emisión, chat, etc.): leer **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`**, nombrar **GEN-xx** + export, plantilla *adoptar GEN-xx; …; no reimplementar*; **prohibido** copiar carpetas GEN del Framework. Checklist = índice de esa regla; detalle en `PaqSuite-IA-FRAMEWORK`.
+3. Crear o actualizar **`docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md`** (subcarpeta alineada a épica/HU del proyecto).
+4. Metadatos: **`Estado: Pendiente`** hasta cerrar alcance; completar criterios verificables, fuera de alcance, riesgos.
+5. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
+6. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
 
 ---
 

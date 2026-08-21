@@ -157,7 +157,7 @@ Archivo ejemplo: `frontend/.env.mobile.example`
 
 ```env
 VITE_API_BASE_URL=/api/v1
-VITE_MOBILE_API_BASE_URL=https://backend.{proyecto}.paqsystems.com/api/v1
+VITE_MOBILE_API_BASE_URL=https://backend{proyecto}paqsystems.on-forge.com/api/v1
 VITE_TENANT_DEFAULT_CLIENT=desarrollo
 VITE_DEVEXTREME_LICENSE=
 ```

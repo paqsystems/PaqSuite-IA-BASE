@@ -18,11 +18,13 @@ La guía exige que **siempre** quede explícito si el objetivo es **MONO** o **M
 
 1. **Plataforma / producto** (nombre del repo o cliente).
 2. **`MONO` o `MULTI`** — mismos significados que en **§1** del documento base (no reinterpretar).
-3. **Rutas del monorepo:** p. ej. `backend/` y `frontend/` en la raíz, salvo que el usuario indique otra convención.
+3. **Slug `{proyecto}`** — identificador corto en minúsculas para hosts Vercel/Forge (ej. `tango`, `pedidosweb`). Obligatorio para persistir URLs de deploy.
+4. **Rutas del monorepo:** p. ej. `backend/` y `frontend/` en la raíz, salvo que el usuario indique otra convención.
 
-**Si falta el modo, el asistente no debe scaffoldear:** pedir **MONO**, **MULTI** o **FRAMEWORK** al usuario.
+**Si falta el modo, el asistente no debe scaffoldear:** pedir **MONO**, **MULTI** o **FRAMEWORK** al usuario.  
+**Si falta `{proyecto}` en producto MONO/MULTI desplegable:** pedirlo antes de cerrar el scaffold (ver bloque URLs abajo).
 
-*Ejemplo:* «Plataforma: *PaqSuite-IA-Partes-Atencion*. Modo: **MONO**. Carpetas: `backend/` + `frontend/`.»
+*Ejemplo:* «Plataforma: *PaqSuite-IA-Partes-Atencion*. Modo: **MONO**. Slug `{proyecto}`: **partesatencion**. Carpetas: `backend/` + `frontend/`.»
 
 ### Variables de plataforma (obligatorias en todo producto nuevo)
 
@@ -41,6 +43,38 @@ Al crear o completar el scaffold de **backend**, el asistente **debe** generar (
 
 Norma detallada: **PaqSuite-IA-FRAMEWORK** `docs/10-overrides-framework/03-variables-tenancy-db.md` (y tenancy unificado en `01-tenancy-unificado-mono-multi.md`).  
 **No** omitir estas variables aunque la lógica completa de tenancy se implemente en slices posteriores.
+
+### Framework SDK (MUST — importar en scaffold MONO/MULTI)
+
+En producto **MONO** o **MULTI**, el scaffold **debe** incorporar el SDK del Framework (no dejarlo “para cuando aparezca un proceso”):
+
+1. **Backend:** dependencia Composer `paqsuite/laravel-core` (y variante mono/multi del Framework si el producto la usa). Hasta registry: path/repo según runbook de adopción Forge/path del Framework.
+2. **Frontend:** dependencia npm `@paqsuite/react-core` (y paquetes mono/multi afines si aplican).
+3. **Wire mínimo día 0** (usar exports GEN; **no** reimplementar): envelope API, login/auth, estética/shell, i18n base, menú/avatar, cliente HTTP, grillas de proceso (`ProcessDataGrid` / layouts). Ver índice GEN en **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`**.
+4. **Prohibido:** copiar carpetas GEN del Framework al host; inventar login/shell/grilla/pivot “provisorios”.
+5. Capacidades **adicionales** (pivot, Excel, chat, etc.): no cablear todas en scaffold; al diseñar cada proceso, SPEC/HU/TR con plantilla *adoptar GEN-xx; export = …; no reimplementar* (misma regla 19).
+
+**Dónde consultar qué ofrece el Framework:** checklist operativo = regla **19** (índice GEN listo/diferido/export). Detalle = repo `PaqSuite-IA-FRAMEWORK` (`docs/02-producto/`, `SPEC-001-xx`, `adopcion-*.md`, guía *COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO*).
+
+**Modo FRAMEWORK** (construir el SDK): no aplica este bloque de host; usar `scaffold-framework-sdk.md`.
+
+### URLs de deploy (MUST — persistir en el repo)
+
+SoT: **`docs/_base/00-urls-deploy-proyecto.md`**.
+
+Al scaffoldear, el asistente **debe** crear **`docs/06-operacion/urls-deploy.md`** con el slug `{proyecto}` y las URLs rellenas:
+
+| Rol | Patrón |
+|-----|--------|
+| Frontend producción | `https://{proyecto}paqsystems.vercel.app/` |
+| Frontend desarrollo | `https://{proyecto}paqsystems-dev.vercel.app/` |
+| Backend producción | `https://backend{proyecto}paqsystems.on-forge.com/` |
+| Backend desarrollo | `https://backenddev{proyecto}paqsystems.on-forge.com/` |
+| Entrada cliente (sin cambio) | `https://{cliente}.{proyecto}.paqsystems.com` |
+
+Ejemplo (`{proyecto}` = `tango`): `https://tangopaqsystems.vercel.app/`, `https://backendtangopaqsystems.on-forge.com/`, etc.
+
+**No** usar ya `frontend.{proyecto}.paqsystems.com` / `backend.{proyecto}.paqsystems.com` como hosts canónicos de deploy.
 
 ---
 
@@ -93,9 +127,9 @@ Antes de generar backend/frontend (§4.2–4.3), el asistente debe **incluir en 
 
 **4.1 Documentación y diseño (mínimo coherente con el scaffold):** flujo E2E y criterios; modelo de datos según **MULTI** o **MONO**; **`docs/01-arquitectura/01-arquitectura-proyecto.md`** y README de `docs/01-arquitectura/`; **solo MULTI:** `07-mapa-visual-tenancy-resolucion-db.md`.
 
-**4.2 Backend:** API versionada (p. ej. prefijo **`api/v1`**); Sanctum; respuestas **envelope** estables (`error`, `respuesta`, `resultado`) si se adopta el mismo contrato del lineamiento; capas como en **`01-arquitectura-proyecto.md`**; autorización por operación; migraciones/seeders mínimos (**MULTI:** empresa(s) y permisos por empresa; **MONO:** perfil `tenancy=single`); **obligatorio:** `config/paqsuite.php` + `PAQSUITE_TENANCY` / `PAQSUITE_DB` en `.env.example` (ver bloque «Variables de plataforma» arriba); **OpenAPI:** instalar **L5-Swagger** en scaffold (`docs/_base/00-openapi-l5-swagger-scaffold.md`), base `OpenApi.php`, anotaciones en controllers, **`composer openapi`**; tests feature en endpoints críticos.
+**4.2 Backend:** **primero** dependencia **`paqsuite/laravel-core`** (bloque Framework SDK arriba); API versionada (p. ej. prefijo **`api/v1`**); Sanctum; **envelope** vía SDK (no inventar `ApiResponse` paralelo); capas como en **`01-arquitectura-proyecto.md`**; autorización por operación; migraciones/seeders mínimos (**MULTI:** empresa(s) y permisos por empresa; **MONO:** perfil `tenancy=single`); **obligatorio:** `config/paqsuite.php` + `PAQSUITE_TENANCY` / `PAQSUITE_DB` en `.env.example` (ver bloque «Variables de plataforma» arriba); **OpenAPI:** instalar **L5-Swagger** en scaffold (`docs/_base/00-openapi-l5-swagger-scaffold.md`), base `OpenApi.php`, anotaciones en controllers, **`composer openapi`**; tests feature en endpoints críticos.
 
-**4.3 Frontend:** estructura **`src/app`**, `layouts`, `pages`, `features`, `services`, **`shared`**: **`docs/01-arquitectura/ui/02-frontend-folder-structure.md`**; shell **`01_MainLayout_PostLogin_Specification.md`** (**MULTI:** tema/selector según spec; **MONO:** sin selector si no aplica); HTTP centralizado (**MULTI:** header compañía); rutas protegidas; DevExtreme según **`docs/frontend/devextreme-norms.md`** y grillas **`DataGridDX`** cuando corresponda.
+**4.3 Frontend:** **primero** dependencia **`@paqsuite/react-core`**; estructura **`src/app`**, `layouts`, `pages`, `features`, `services`, **`shared`**: **`docs/01-arquitectura/ui/02-frontend-folder-structure.md`**; **login / shell / menú / i18n / grillas de proceso** desde exports GEN (regla **19**), no pantallas base propias; shell **`01_MainLayout_PostLogin_Specification.md`** solo como especificación de zonas si hace falta (**MULTI:** tema/selector GEN-05); HTTP centralizado del SDK (**MULTI:** header compañía); rutas protegidas; DevExtreme según normas + **`ProcessDataGrid`** / layouts GEN-11.
 
 **4.4 Calidad:** **`.cursor/rules/12-testing.md`**; al cerrar tareas frontend: **`npm run test:all`** en `frontend/`; **CI** con plantilla [`docs/_base/00-github-actions-ci-scaffold.md`](../docs/00-github-actions-ci-scaffold.md); CD y env según **`docs/06-operacion/deploy-infraestructura.md`**.
 
@@ -112,7 +146,7 @@ El scaffold y el código deben ser **compatibles** con las reglas citadas en **�
 
 ### Cierre con **§7 — Checklist** del documento base
 
-Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`docs/_base/symlinks_paqsuite_ia.md`** y §4.0; modo declarado; **`PAQSUITE_TENANCY` / `PAQSUITE_DB` + `config/paqsuite.php`**; E2E; capas; OpenAPI; frontend DevExtreme; tests Vitest + E2E flujo principal; `VERSION`; `.env.example`; reglas referenciadas).
+Al terminar, debe poder marcarse el checklist del **§7** (symlinks según **`docs/_base/symlinks_paqsuite_ia.md`** y §4.0; modo declarado; **SDK Framework** `laravel-core` + `@paqsuite/react-core` + wire GEN día 0 según regla **19**; **`docs/06-operacion/urls-deploy.md`** con hosts Vercel/Forge según **`docs/_base/00-urls-deploy-proyecto.md`**; **`PAQSUITE_TENANCY` / `PAQSUITE_DB` + `config/paqsuite.php`**; E2E; capas; OpenAPI; frontend DevExtreme vía GEN; tests Vitest + E2E flujo principal; `VERSION`; `.env.example`; reglas referenciadas).
 
 **Referencias centralizadas:** usar la tabla del **§8** del documento base (`docs/arquitectura.md`, `docs/01-arquitectura/README.md`, `ui/`, `devextreme-norms.md`, deploy, `AGENTS.md`).
 

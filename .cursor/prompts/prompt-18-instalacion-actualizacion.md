@@ -1,9 +1,15 @@
 te comento cómo tengo pensada la instalación de un cliente nuevo.
 
-recordemos primero que vamos a tener un solo deploy del producto (ej : backend.{proyecto}.paqsystems.com y frontend.{proyecto}.paqsystems.com
-un cliente va invocar una url de la forma {cliente}.{proyecto}.paqsystems.com
-este redirige a frontend.{proyecto}.paqsystems.com indicando el {cliente}
-se hace login al backend llevando el {cliente} como parámetro de alguna forma.
+recordemos primero que vamos a tener deploys de plataforma por producto:
+- frontend producción: https://{proyecto}paqsystems.vercel.app/
+- frontend desarrollo: https://{proyecto}paqsystems-dev.vercel.app/
+- backend producción: https://backend{proyecto}paqsystems.on-forge.com/
+- backend desarrollo: https://backenddev{proyecto}paqsystems.on-forge.com/
+(SoT: docs/_base/00-urls-deploy-proyecto.md; persistir en docs/06-operacion/urls-deploy.md al scaffoldear)
+
+un cliente va invocar una url de la forma {cliente}.{proyecto}.paqsystems.com (sin cambio)
+este redirige al frontend Vercel de producción indicando el {cliente}
+se hace login al backend Forge llevando el {cliente} como parámetro de alguna forma.
 con {cliente} y {proyecto} se accede a paqsystems.empresas_conexion para obtener:
 a) base sql y credenciales.
 b) base de datos del diccionario y base de datos de la empresa inicial (en caso de sistemas mono, ambas bases coinciden)

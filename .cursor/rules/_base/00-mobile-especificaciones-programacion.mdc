@@ -37,7 +37,7 @@ Aplica a **Capacitor** (mismo `frontend/`) y a **cliente nativo futuro** (`mobil
 
 - Exponer un **icono de configuración** (en header post-login o accesible antes del primer uso) que abra pantalla/modal de **datos esenciales** persistidos en el dispositivo.
 - Campos mínimos:
-  - **URL base del servidor / API** (ej. `https://backend.{proyecto}.paqsystems.com/api/v1`)
+  - **URL base del servidor / API** (ej. `https://backend{proyecto}paqsystems.on-forge.com/api/v1`)
   - **`X-Paq-Cliente`** / código tenant (MONO)
   - Opcional: nombre visible del entorno, timeout, versión de app
 - **Validación:** probar conectividad (`GET /api/v1/health` o endpoint acordado) antes de guardar.

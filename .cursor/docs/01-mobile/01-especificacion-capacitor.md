@@ -40,7 +40,7 @@ Ver [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mo
 
 **Flujo:** fijar header tenant → (opcional health) → `POST /auth/login` → persistir token + tenant en `@capacitor/preferences`.
 
-**Cliente HTTP:** en native, resolver base URL: override Preferences → `import.meta.env.VITE_API_BASE_URL` → patrón `https://backend.{proyecto}.paqsystems.com/api/v1`.
+**Cliente HTTP:** en native, resolver base URL: override Preferences → `import.meta.env.VITE_API_BASE_URL` → patrón `https://backend{proyecto}paqsystems.on-forge.com/api/v1` (dev: `https://backenddev{proyecto}paqsystems.on-forge.com/api/v1`). SoT: `docs/_base/00-urls-deploy-proyecto.md`.
 
 ### 2.2 Config avanzada (opcional)
 

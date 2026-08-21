@@ -127,7 +127,7 @@ En desarrollo web, Vite hace proxy de `/api` al backend. **En mobile no existe e
 El cliente HTTP debe usar URL absoluta vía `VITE_API_BASE_URL`:
 
 ```env
-VITE_API_BASE_URL=https://backend.{proyecto}.paqsystems.com/api/v1
+VITE_API_BASE_URL=https://backend{proyecto}paqsystems.on-forge.com/api/v1
 VITE_TENANT_DEFAULT_CLIENT=desarrollo
 VITE_DEVEXTREME_LICENSE=...
 ```

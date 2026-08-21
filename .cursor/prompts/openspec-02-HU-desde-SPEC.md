@@ -22,7 +22,8 @@ Leé el SPEC completo. Si enlaza una HU existente, preguntá si **crear nueva HU
 
 1. **Ruta sugerida:** `docs/03-historias-usuario/<subcarpeta>/HU-XXX-titulo-slug.md`.
 2. **Contenido** mínimo: metadatos con referencias al SPEC; **Estado** **`Pendiente`** (`07-estado-hu-tr.md`); narrativa; alcance; CA alineados al SPEC; Gherkin solo si el proyecto lo exige en HU.
-3. Foco **funcional**, sin detalle técnico del TR.
+3. Si el SPEC declara **GEN-xx**: conservar en la HU la adopción (*adoptar GEN-xx; no reimplementar*) sin inventar UI/motor propio; detalle técnico del export queda en TR.
+4. Foco **funcional**, sin detalle técnico del TR.
 
 ---
 

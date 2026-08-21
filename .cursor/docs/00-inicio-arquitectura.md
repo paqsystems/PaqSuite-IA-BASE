@@ -15,7 +15,7 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 | Modo | Significado |
 |------|-------------|
 | **MULTI** | **Multi-empresa:** varias empresas (tenant), varias bases operativas o el modelo Dictionary / Company descrito en la arquitectura ERP de este repo. |
-| **MONO** | **Un deploy de frontend y un deploy de backend** por producto; varios **clientes** con URL `{cliente}.{proyecto}` → redirect a `frontend.{proyecto}` y conexión SQL por registro (ver §1.2). |
+| **MONO** | **Deploys de plataforma por producto** (FE Vercel + BE Forge, prod/dev); varios **clientes** con URL `{cliente}.{proyecto}` → redirect al FE Vercel de producción y conexión SQL por registro (ver §1.2). |
 
 ### 1.1 Modo MULTI (multi-empresa)
 
@@ -25,18 +25,25 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 
 ### 1.2 Modo MONO (deploy único + clientes por URL)
 
-**Fuente de verdad:** [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).
+**Fuente de verdad:** [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).  
+**Nombres de hosts de plataforma:** [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
 
 Resumen:
 
-- **Dos deploys por `{proyecto}`** (artefactos separados): **`https://frontend.{proyecto}.paqsystems.com`** y **`https://backend.{proyecto}.paqsystems.com`** (ej. `frontend.pedidosweb`, `backend.pedidosweb`).
-- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que **redirige** a **`frontend.{proyecto}`** indicando el **`{cliente}`** activo (header `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
+- **Deploys por `{proyecto}`** (artefactos separados):
+  - Frontend prod: `https://{proyecto}paqsystems.vercel.app/`
+  - Frontend dev: `https://{proyecto}paqsystems-dev.vercel.app/`
+  - Backend prod: `https://backend{proyecto}paqsystems.on-forge.com/`
+  - Backend dev: `https://backenddev{proyecto}paqsystems.on-forge.com/`
+  - Ej. (`{proyecto}` = `tango`): `tangopaqsystems.vercel.app`, `backendtangopaqsystems.on-forge.com`, etc.
+- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`** (**sin cambio**), que **redirige** al **frontend Vercel de producción** indicando el **`{cliente}`** activo (header `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
 - **Asociación por `{cliente}`:** registro (tabla/config/secrets) con host o DNS SQL, instancia opcional, nombre de base y credenciales.
-- **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local).
+- **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local); deploys de plataforma de desarrollo usan los hosts `*-dev` / `backenddev*`.
 - El **esquema de seguridad** (usuarios, roles, permisos, menú) vive en la base SQL del cliente resuelto; no hay selector de **empresa** en UI ni **`X-Company-Id`** (eso es **MULTI**).
 - **Branding:** el mismo `{cliente}` determina logo (`15-host-subdominio-base-datos-y-branding.md`).
+- **Scaffold MUST:** persistir el slug `{proyecto}` y las cuatro URLs + patrón de cliente en **`docs/06-operacion/urls-deploy.md`** del producto (ver [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md) §4).
 
-**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect a `frontend.{proyecto}` y registro de asociación (ver regla 15, apartado MONO).
+**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect al FE Vercel y registro de asociación (ver regla 15, apartado MONO).
 
 Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-empresa en sesión (MULTI).
 
@@ -104,8 +111,9 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 
 **Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §3 (symlink `docs/00-contexto/_mono` en cada producto).
 
+- **MUST SDK:** dependencia **`paqsuite/laravel-core`** en scaffold (regla **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`** — checklist GEN). Envelope/auth base vía SDK; **no** copiar carpetas GEN del Framework.
 - Proyecto **Laravel 10** con API versionada (`/api/v1/*`: prefijo `api` en `RouteServiceProvider` + `v1` en `routes/api.php`).
-- **Envelope** obligatorio: `App\Http\Responses\ApiResponse` (`error`, `respuesta`, `resultado`) — spec [`envelope-respuestas.md`](../00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md).
+- **Envelope** obligatorio alineado al SDK (`error`, `respuesta`, `resultado`) — spec [`envelope-respuestas.md`](../00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md).
 - **Sanctum** para autenticación Bearer.
 - **Capas:** controllers delgados → **application services** → dominio / repositorios; sin lógica de negocio pesada en controllers (ver `docs/01-arquitectura/01-arquitectura-proyecto.md`).
 - **Autorización** por operación; menú refleja permisos pero la **seguridad real es en servidor** (ver README de `docs/01-arquitectura/`).
@@ -124,12 +132,13 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 
 **Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §4.
 
+- **MUST SDK:** dependencia **`@paqsuite/react-core`** en scaffold; login, shell, menú, i18n y grillas de proceso desde exports GEN (regla **19**); **no** reimplementar UI base ni copiar carpetas GEN.
 - **React 18** + **Vite 5** + **TypeScript**; dependencias transversales: `react-router-dom`, `i18next`, `react-i18next`, `devextreme`, `devextreme-react`, **Vitest**, **Playwright** (comandos `npm install` en la guía).
-- **Modelo estético UI (tokens, auth, shell):** **`docs/_base/00-modelo-estetica-ui-base.md`** — gradiente de marca en pantallas públicas, variables `--app-shell-*` post-login, convenciones CSS/DevExtreme.
-- **Shell post-login** (cuatro zonas: header, sidebar, content, footer): **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: docs de contexto `_mono` / `_multi`, no otra spec de layout.
-- **Cliente HTTP** centralizado (interceptores, token; **MULTI:** header de compañía si aplica).
-- **Rutas** protegidas; **MULTI:** pantalla de selección de empresa cuando el producto lo defina.
-- Componentes DevExtreme siguiendo **`docs/frontend/devextreme-norms.md`** y grillas con **`DataGridDX`** cuando corresponda.
+- **Modelo estético UI (tokens, auth, shell):** GEN-01 + **`docs/_base/00-modelo-estetica-ui-base.md`** — gradiente de marca en pantallas públicas, variables `--app-shell-*` post-login, convenciones CSS/DevExtreme.
+- **Shell post-login** (cuatro zonas: header, sidebar, content, footer): exports GEN + **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: GEN-08 / docs de contexto `_mono` / `_multi`.
+- **Cliente HTTP** centralizado del SDK (interceptores, token; **MULTI:** header de compañía si aplica).
+- **Rutas** protegidas; **MULTI:** selector de empresa GEN-05 cuando el producto lo defina.
+- Componentes DevExtreme siguiendo normas del producto y grillas **`ProcessDataGrid`** / layouts GEN-11.
 
 ### 4.4 Calidad, observabilidad y entrega
 
@@ -173,6 +182,7 @@ Las siguientes son **obligatorias o muy recomendadas** alineadas a este reposito
 - Desglose HU → tareas: `.cursor/rules/13-user-story-to-task-breakdown.md`.
 - Estado de HU/TR: `.cursor/rules/31-estado-hu-tr.md`.
 - Entregables MVP: `.cursor/rules/02-mvp-entregables.md`.
+- **Adoptar GEN (no reinventar):** `.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc` — plantilla en SPEC/HU/TR; checklist de componentes = índice de esa regla; detalle en `PaqSuite-IA-FRAMEWORK`.
 
 ### 5.6 Contexto institucional (si aplica)
 
@@ -194,7 +204,9 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 ## 7. Checklist rápido antes de considerar “arquitectura alineada”
 
 - [ ] **Symlinks de herencia** ya configurados (prerrequisito) y verificados según MONO, MULTI o FRAMEWORK (`docs/_base/symlinks_paqsuite_ia.md`, §4.0). El scaffold no los crea.
+- [ ] **SDK Framework** en scaffold: `paqsuite/laravel-core` + `@paqsuite/react-core`; wire GEN día 0; checklist en regla **19** (`19-framework-gen-capacidades-adopcion.mdc`). Sin carpetas GEN copiadas al host.
 - [ ] **Modo MONO o MULTI declarado** y decisiones de BD / seguridad coherentes con ese modo.
+- [ ] **URLs de deploy** (MONO/producto): slug `{proyecto}` + `docs/06-operacion/urls-deploy.md` con FE Vercel (prod/dev) y BE Forge (prod/dev) según [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
 - [ ] **`PAQSUITE_TENANCY` / `PAQSUITE_DB`** (y headers) en `.env.example` + `backend/config/paqsuite.php` (canónico: MONO → `single`/`unified`; MULTI → `multi`/`split`).
 - [ ] Flujo E2E documentado y reflejado en historias/tareas.
 - [ ] Backend en capas; **MULTI:** tenant y permisos por empresa; **MONO:** perfil single/unified (empresa única; `X-Company-Id` auto-inyectable).
@@ -212,6 +224,8 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Necesidad | Documento |
 |-----------|-----------|
 | Symlinks entre repos (BASE / MONO / MULTI) | `docs/_base/symlinks_paqsuite_ia.md` (`.cursor/docs/` en **PaqSuite-IA-BASE**) |
+| Checklist GEN / adoptar Framework | `.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc` (+ SoT en `PaqSuite-IA-FRAMEWORK`) |
+| URLs deploy FE/BE (Vercel / Forge) | [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md) |
 | Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
 | CI GitHub Actions (monorepo) | [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |

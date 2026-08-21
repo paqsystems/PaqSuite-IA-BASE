@@ -23,6 +23,8 @@ Si hay contradicción, **priorizá el SPEC** para alcance y la **HU** para redac
 
 **`.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md`**
 
+Si el SPEC/HU tocan capacidad transversal: cumplir **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`** — plantilla *adoptar GEN-xx; UI/motor = [export]; no reimplementar*; **prohibido** copiar carpetas GEN. Checklist de componentes = índice de esa regla.
+
 Tabla de metadatos del TR:
 
 | Campo | Instrucción |

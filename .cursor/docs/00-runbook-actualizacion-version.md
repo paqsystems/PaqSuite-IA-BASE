@@ -35,13 +35,16 @@ Semver orientativo:
 ## 2) Arquitectura deploy (qué hace cada pieza)
 
 ```text
-Usuario → frontend.{proyecto}.paqsystems.com
+Usuario → {cliente}.{proyecto}.paqsystems.com
+              ↓ redirect
+         {proyecto}paqsystems.vercel.app
               ↓ API + X-Paq-Cliente (o header tenant del producto)
-         backend.{proyecto} (Forge / Laravel)
+         backend{proyecto}paqsystems.on-forge.com (Forge / Laravel)
               ↓ DB_CONNECTION
          SQL del tenant
 ```
 
+Hosts prod/dev (SoT): `docs/_base/00-urls-deploy-proyecto.md`.
 | Componente | Automático en deploy | Manual / condicional |
 |------------|---------------------|----------------------|
 | Código PHP | Forge `git pull` + `composer install` | — |
