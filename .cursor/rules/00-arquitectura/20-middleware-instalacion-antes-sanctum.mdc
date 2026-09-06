@@ -1,0 +1,22 @@
+# Middleware instalación antes de Sanctum (MUST — MONO opción B)
+
+Aplica a hosts que usan **`paqsuite.instalacion` + `paqsuite.instalacion.db`** (reconfiguración SQL por `X-Paq-Cliente` / `EMPRESAS_CONEXION`).
+
+SoT detalle: `docs/_base/resolucion-host-cliente-sql-mono.md` § «Prioridad de middleware…» · Framework `docs/06-operacion/adopcion-instalacion-sql.md` · package `paqsuite/laravel-core` ≥ **1.3.5**.
+
+## Problema
+
+Laravel reordena `AuthenticatesRequests` / `auth:sanctum` al frente del stack de ruta si los middleware de instalación no están en `$middlewarePriority`. Sanctum entonces busca el personal access token en la BD **default** (`DB_*`).
+
+Síntoma: login al tenant B **200** (token en BD B) + `/me` / menú **401** → FE “sesión vencida”.
+
+## MUST
+
+1. Orden lógico: **resolver instalación** → **aplicar BD del tenant** → **auth:sanctum**.
+2. Prioridad: `ResolveInstalacionMiddleware` y `ApplyInstalacionDatabaseMiddleware` **antes** de `AuthenticatesRequests`.
+3. No asumir que el orden en `Route::middleware([...])` basta sin el mapa de prioridad.
+4. Smoke con un cliente **distinto** de `DB_DATABASE` tras cada alta en `EMPRESAS_CONEXION`.
+
+## Anti-patrón
+
+Declarar solo `middleware(['paqsuite.instalacion', 'paqsuite.instalacion.db', 'auth:sanctum'])` sin prioridad (o con package &lt; 1.3.5 sin parche en `Http\Kernel`).
