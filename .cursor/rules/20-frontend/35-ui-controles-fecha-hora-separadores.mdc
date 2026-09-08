@@ -1,0 +1,62 @@
+---
+description: >-
+  Controles de fecha/hora (DateBox): siempre mostrar separadores `/` en fecha
+  y `:` en hora; useMaskBehavior para no forzar tipeo manual.
+globs:
+  - "**/*DateBox*"
+  - "**/*.{tsx,ts,jsx,js}"
+  - "**/ParametroEditPopup.tsx"
+  - "**/features/**/*.tsx"
+alwaysApply: false
+---
+
+# 35 — Controles de fecha y hora: separadores visibles (MUST)
+
+## Objetivo
+
+En **controles de entrada** de fecha y/o hora (DevExtreme `DateBox` / `DateRangeBox`, wrappers equivalentes), el usuario **nunca** debe tipear a mano las barras `/` ni los dos puntos `:`. El formato visible **siempre** incluye esos separadores.
+
+Complementa: **25** (hora `HH:mm` en campos no-DateBox) · **32** (fechas en PivotGrid / grillas de consulta — display, no input).
+
+## MUST
+
+| Tipo de control | `displayFormat` (DX) | Separadores |
+|-----------------|----------------------|-------------|
+| Solo fecha (`type="date"`) | `dd/MM/yyyy` | `/` entre día, mes y año |
+| Solo hora (`type="time"`) | `HH:mm` | `:` entre hora y minutos |
+| Fecha y hora (`type="datetime"`) | `dd/MM/yyyy HH:mm` | `/` y `:` |
+
+1. Setear **`displayFormat`** explícito según la tabla (no dejar el default del locale si oculta separadores o fuerza tipeo).
+2. Setear **`useMaskBehavior={true}`** para que la máscara inserte `/` y `:` al completar dígitos.
+3. API / almacenamiento: sin cambio de contrato (ISO, `YYYY-MM-DD`, `HH:mm`, etc.); esto es solo **UX de presentación e ingreso**.
+
+## Prohibido
+
+- `DateBox` de fecha/datetime/time **sin** `displayFormat` con separadores.
+- Obligate al usuario a escribir `/` o `:` a mano.
+- Usar formatos con guiones (`yyyy-MM-dd`) o sin separadores en la UI de entrada (salvo excepción HU/TR documentada).
+
+## Ejemplo (React + DevExtreme)
+
+```tsx
+{/* Solo fecha */}
+<DateBox type="date" displayFormat="dd/MM/yyyy" useMaskBehavior />
+
+{/* Solo hora */}
+<DateBox type="time" displayFormat="HH:mm" useMaskBehavior />
+
+{/* Fecha + hora */}
+<DateBox type="datetime" displayFormat="dd/MM/yyyy HH:mm" useMaskBehavior />
+```
+
+## Checklist
+
+- [ ] Todo `DateBox` / rango de fechas nuevo cumple la tabla
+- [ ] `useMaskBehavior` activo
+- [ ] Valor enviado a API sigue el contrato (no el string enmascarado crudo si el adapter ya normaliza)
+
+## Referencias
+
+- DX: [Value Formatting and Masked Input](https://js.devexpress.com/React/Documentation/Guide/UI_Components/DateBox/Value_Formatting_and_Masked_Input/)
+- Regla horarios texto/máscara: `.cursor/rules/base/20-frontend/25-ui-entrada-horarios-hhmm.md`
+- Pivot (display): `.cursor/rules/base/20-frontend/32-ui-pivot-fechas-i18n.md`
