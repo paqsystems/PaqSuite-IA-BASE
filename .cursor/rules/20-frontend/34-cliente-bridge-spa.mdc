@@ -1,0 +1,49 @@
+---
+description: >-
+  Puente `{cliente}` en SPA (GEN-19): persistir `?cliente=` en main.tsx ANTES
+  del React Router. El 302 a Vercel no conserva el subdominio; sin query se
+  cae a DEMO. Hosts que consumen @paqsuite/react-core.
+globs:
+  - frontend/src/main.tsx
+  - frontend/src/App.tsx
+  - frontend/src/app/**/*.tsx
+  - frontend/src/features/auth/**
+  - "**/platformContext.ts"
+  - "**/clienteBridge.ts"
+  - "**/vercel.json"
+alwaysApply: false
+---
+
+# GEN-19 — Puente `{cliente}` en la SPA (MUST)
+
+SoT: en el host `docs/_base/resolucion-host-cliente-sql-mono.md` · Framework override `06-contrato-api-headers.md` · SPEC-001-19 · `bootstrapClienteFromWindow` en `@paqsuite/react-core`.
+
+La SPA **no** infiere el tenant del hostname de Vercel (`{proyecto}paqsystems.vercel.app`). Tras el redirect, `{cliente}` solo vive en **query**, **cookie `paqCliente`** o **`sessionStorage`**. Sin orígenes → **`DEMO`**.
+
+## MUST
+
+1. El 302 de `{cliente}.{proyecto}.paqsystems.com` apunta a la **raíz** del FE con query:
+   `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}`
+   (no a `/login`: Vercel 404 si no hay rewrite SPA).
+2. En `main.tsx`, **antes** de `createRoot` / `BrowserRouter`, llamar `bootstrapClienteFromWindow` (o `resolvePlatformCliente` leyendo `location.search`). El `useEffect` del router **llega tarde**: `<Navigate to="/login">` ya tiró el query.
+3. Todo `<Navigate to="/login">` **conserva** `search` (`to={{ pathname: '/login', search: location.search }}`).
+4. Precedencia: query **gana** sobre cookie/`sessionStorage`. No inicializar el campo tenant con cookie `DEMO` si hay `?cliente=`.
+5. `vercel.json`: rewrite SPA `/(.*) → /index.html` para que un refresh en `/login` no sea 404.
+
+## Anti-patrones
+
+```tsx
+// MAL: el effect corre después del Navigate → search vacío → DEMO
+useEffect(() => {
+  resolvePlatformCliente(new URLSearchParams(location.search).get('cliente'))
+}, [])
+<Route path="/" element={<Navigate to="/login" replace />} />
+
+// BIEN: persistir en main.tsx, luego el router puede ir a /login
+bootstrapClienteFromWindow({ persistence, isDevBuild: import.meta.env.DEV })
+createRoot(...).render(<App />)
+```
+
+Cookie `Domain=.{proyecto}.paqsystems.com` **no** viaja al origen `*.vercel.app`. El puente del 302 es **query**, no cookie cross-site.
+
+Mobile: el tenant se escribe en el login (`loginTenant`); este puente es **web**.

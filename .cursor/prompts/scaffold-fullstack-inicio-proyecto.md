@@ -60,9 +60,10 @@ En producto **MONO** o **MULTI**, el scaffold **debe** incorporar el SDK del Fra
 
 ### URLs de deploy (MUST — persistir en el repo)
 
-SoT: **`docs/_base/00-urls-deploy-proyecto.md`**.
+SoT: **`docs/_base/00-urls-deploy-proyecto.md`**.  
+Registro vivo de nombres precisos: **`docs/_base/00-urls-deploy-registro.md`** (en BASE: `.cursor/docs/00-urls-deploy-registro.md`).
 
-Al scaffoldear, el asistente **debe** crear **`docs/06-operacion/urls-deploy.md`** con el slug `{proyecto}` y las URLs rellenas:
+Al scaffoldear, el asistente **debe** crear **`docs/06-operacion/urls-deploy.md`** con el slug `{proyecto}` y las URLs rellenas, **y** agregar/actualizar la entrada en el registro BASE:
 
 | Rol | Patrón |
 |-----|--------|

@@ -69,11 +69,11 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 12 | Pivots | listo | `ConsultaGrillaPivotShell` / `PivotGridBlock` + `consultaId`; **excluido mobile** |
 | 13 | Tareas programadas | listo | `TaskProcessesPage` / Definitions / Executions; `TaskProcessRegistry` |
 | 14 | Import Excel | listo | `ExcelImportToolbar` (fila propia) + handler/seed host; **excluido mobile** |
-| 15 | Emisiones | **redefinir** | SoT = `15-reportes-emisiones-update.md`; `EmissionDialog` smoke = antecedente. Comunicación dirigida = GEN-30. Regenerar OpenSpec |
+| 15 | Emisiones | **redefinir** | SoT = `15-reportes-emisiones-update.md`; SPEC-001-15 …+**D1 Aprobado** (siguiente D). Comunicación = GEN-30 |
 | 16 | Provider IA BYOK | listo | `LlmPreferencesPanel`; migrate+SP `adopcion-gen-16-byok.md` |
 | 17 | Auditoría / bandeja | listo | `AuditEventsPage` + `NotificationsBell`. Mail/canales dirigidos → GEN-30 |
 | 18 | Install/update | listo (ops) | Runbook Framework; no redefinir ciclo |
-| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa |
+| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa. **Puente `{cliente}`:** `bootstrapClienteFromWindow` en `main.tsx` **antes** del Router; 302 con `?cliente=`. Regla `20-frontend/34-cliente-bridge-spa.mdc` |
 | 20 | Envelope API | listo | `{ error, respuesta, resultado }` |
 | 21 | Chat / ayuda | listo | `ChatAssistantPage` / `openExternalHelp` (prereq 16) |
 | 22 | Mobile Capacitor | listo | `isNativeApp()`; kardex; sin pivot/excel/admin/`openInNewTab` |
@@ -85,15 +85,19 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 28 | Cámara/biometría | diferido | Post-MVP mobile |
 | 29 | Voz en modales | diferido | — |
 | 30 | Notification Service | **diferido** | Definición funcional en `docs/02-producto/30-…`. Sin exports SDK. No reinventar mail/WA/TG en el host |
+| 31 | Integración bancaria | **diferido** | Definición en `docs/02-producto/31-…`. Sin exports SDK. No reinventar conectores bancarios en el host |
+| 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...`; UI smoke `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host arma JSON + persiste CAE. migrate+SP `adopcion-gen-32-arca.md`. **excluido mobile** |
 
 ## Fronteras frecuentes
 
 | Pedido | Usar | No usar |
 |--------|------|---------|
+| Tenant cae en DEMO en prod | GEN-19: 302 `/?cliente=` + persistir en `main.tsx` antes del Router | Cookie `DEMO` / `<Navigate to="/login">` sin `search` |
 | Inicio con KPIs | GEN-09 `DashboardContainer` | GEN-25 |
 | Informe con pivots | GEN-12 shell/block | `PivotGrid` DX suelto sin GEN |
 | Importar planilla | GEN-14 toolbar | Parser/plantilla propios |
 | Emitir PDF/informe | GEN-15 (update) + GEN-30 si hay mail/WA/TG | SMTP o plantillas mail en el host |
+| CAE/CAEA ARCA (FE) | GEN-32 `/api/v1/arca` + JSON SoT | WSAA/WSFE/CAE en el host; menú smoke 70xxx |
 | Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
 
-Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`.
+Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`.

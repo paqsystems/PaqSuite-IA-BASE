@@ -36,7 +36,7 @@ Resumen:
   - Backend prod: `https://backend{proyecto}paqsystems.on-forge.com/`
   - Backend dev: `https://backenddev{proyecto}paqsystems.on-forge.com/`
   - Ej. (`{proyecto}` = `tango`): `tangopaqsystems.vercel.app`, `backendtangopaqsystems.on-forge.com`, etc.
-- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`** (**sin cambio**), que **redirige** al **frontend Vercel de producción** indicando el **`{cliente}`** activo (header `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
+- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`** (**sin cambio**), que **redirige** al **frontend Vercel de producción** con query **MUST** `?cliente={cliente}` (raíz: `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}`). La SPA persiste ese código **antes** del React Router; si el 302 no lleva query, el SDK cae a **`DEMO`**. Detalle: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md) y regla `.cursor/rules/base/20-frontend/34-cliente-bridge-spa.mdc`.
 - **Asociación por `{cliente}`:** registro (tabla/config/secrets) con host o DNS SQL, instancia opcional, nombre de base y credenciales.
 - **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local); deploys de plataforma de desarrollo usan los hosts `*-dev` / `backenddev*`.
 - El **esquema de seguridad** (usuarios, roles, permisos, menú) vive en la base SQL del cliente resuelto; no hay selector de **empresa** en UI ni **`X-Company-Id`** (eso es **MULTI**).

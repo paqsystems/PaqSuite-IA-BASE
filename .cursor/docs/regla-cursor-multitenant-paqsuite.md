@@ -1,7 +1,7 @@
 # Regla Cursor — Arquitectura Multi-Tenant PaqSuite ERP
 # Subdominios + AWS + Tailscale + SQL dinámico
 
-> **Relación con productos MONO (PedidosWeb, etc.):** el mismo patrón de tenant/cliente, tabla `EMPRESAS_CONEXION` y Tailscale se integra en `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` y en `docs/_base/resolucion-host-cliente-sql-mono.md`. En MONO: entrada `{cliente}.{proyecto}.paqsystems.com` → redirect al FE Vercel `https://{proyecto}paqsystems.vercel.app/`; API Forge `https://backend{proyecto}paqsystems.on-forge.com/`; header **`X-Paq-Cliente`**. SoT de hosts: `docs/_base/00-urls-deploy-proyecto.md`. Este archivo conserva el detalle ERP (`*.erp.paqsystems.com`).
+> **Relación con productos MONO (PedidosWeb, etc.):** el mismo patrón de tenant/cliente, tabla `EMPRESAS_CONEXION` y Tailscale se integra en `.cursor/rules/15-host-subdominio-base-datos-y-branding.md` y en `docs/_base/resolucion-host-cliente-sql-mono.md`. En MONO: entrada `{cliente}.{proyecto}.paqsystems.com` → redirect al FE Vercel `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}` (query **MUST**); API Forge `https://backend{proyecto}paqsystems.on-forge.com/`; header **`X-Paq-Cliente`**. La SPA persiste el código **antes** del React Router. SoT de hosts: `docs/_base/00-urls-deploy-proyecto.md`. Este archivo conserva el detalle ERP (`*.erp.paqsystems.com`).
 
 ## Objetivo
 

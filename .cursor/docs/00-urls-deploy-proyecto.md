@@ -4,13 +4,15 @@ Convención **obligatoria** de hosts de plataforma para productos PaqSuite. Comp
 
 Las URLs que **ven e invocan los usuarios finales** (`{cliente}.{proyecto}.paqsystems.com`) **no cambian**.
 
+**Nombres precisos ya asignados** (registro vivo): [`00-urls-deploy-registro.md`](./00-urls-deploy-registro.md) — hoy: `partesatencion`, `tango`.
+
 ---
 
 ## 1. Slug `{proyecto}`
 
-- Identificador **corto, minúsculas, sin puntos ni guiones** usado en los hostnames de plataforma (ej. `tango`, `pedidosweb`).
+- Identificador **corto, minúsculas, sin puntos ni guiones** usado en los hostnames de plataforma (ej. `partesatencion`, `tango`, `pedidosweb`).
 - Se concatena **sin separador** con el sufijo fijo `paqsystems` en Vercel y Forge.
-- Se declara al crear el producto (scaffold) y queda documentado en el repo (ver §4).
+- Se declara al crear el producto (scaffold) y queda documentado en el repo (ver §4) **y** en el [registro BASE](./00-urls-deploy-registro.md).
 
 ---
 
@@ -44,10 +46,12 @@ Flujo:
 ```text
 Usuario → https://{cliente}.{proyecto}.paqsystems.com
               ↓ redirect (edge / DNS / proxy)
-         https://{proyecto}paqsystems.vercel.app/   (FE producción)
-              ↓ API + X-Paq-Cliente
+         https://{proyecto}paqsystems.vercel.app/?cliente={cliente}
+              ↓ SPA persiste en main.tsx (antes del Router) → API + X-Paq-Cliente
          https://backend{proyecto}paqsystems.on-forge.com/
 ```
+
+El 302 **MUST** incluir `?cliente={cliente}` y apuntar a la **raíz** (no a `/login`: Vercel 404 sin rewrite SPA). Una cookie en el host de entrada **no** llega a `*.vercel.app`. Norma: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).
 
 En **desarrollo** de plataforma, el FE base es `https://{proyecto}paqsystems-dev.vercel.app/` y el API `https://backenddev{proyecto}paqsystems.on-forge.com/` (o localhost con proxy). El tenant sigue resolviéndose por header / login / `demo`.
 
@@ -57,16 +61,17 @@ En **desarrollo** de plataforma, el FE base es `https://{proyecto}paqsystems-dev
 
 Al procesar el scaffold de un producto nuevo, el asistente **debe**:
 
-1. Pedir o confirmar el slug **`{proyecto}`** (ej. `tango` para Partes de Atención).
+1. Pedir o confirmar el slug **`{proyecto}`** (ej. `partesatencion`, `tango`) y verificar que no choque con el [registro](./00-urls-deploy-registro.md).
 2. **Crear** en el repo del producto el archivo:
 
    **`docs/06-operacion/urls-deploy.md`**
 
    con la tabla completa de §2 y §3 rellenada (sin placeholders).
-3. Reflejar las bases en `.env.example` cuando existan variables equivalentes, por ejemplo:
+3. **Actualizar** en PaqSuite-IA-BASE el [registro de nombres precisos](./00-urls-deploy-registro.md) (índice + sección del slug).
+4. Reflejar las bases en `.env.example` cuando existan variables equivalentes, por ejemplo:
    - Frontend: `VITE_API_BASE_URL` → API de **desarrollo** o **producción** según entorno documentado.
    - Comentario o bloque en `docs/06-operacion/urls-deploy.md` con los cuatro hosts + patrón de cliente.
-4. Enlazar ese archivo desde el README operativo del producto o desde `docs/06-operacion/` si hay índice.
+5. Enlazar ese archivo desde el README operativo del producto o desde `docs/06-operacion/` si hay índice.
 
 Plantilla mínima de `docs/06-operacion/urls-deploy.md`:
 
@@ -92,6 +97,7 @@ Fuente: `docs/_base/00-urls-deploy-proyecto.md`
 
 | Documento | Uso |
 |-----------|-----|
+| [`00-urls-deploy-registro.md`](./00-urls-deploy-registro.md) | Nombres precisos por producto (vivo) |
 | [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md) | Redirect, `X-Paq-Cliente`, SQL |
 | [`00-inicio-arquitectura.md`](./00-inicio-arquitectura.md) §1.2 | Modo MONO |
 | [`_MANUAL-PROGRAMADOR.MD`](./_MANUAL-PROGRAMADOR.MD) | Onboarding programador |
