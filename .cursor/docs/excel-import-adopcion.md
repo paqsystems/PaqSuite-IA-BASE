@@ -9,6 +9,7 @@ Checklist host (SPEC-001-14 §12) para productos que adoptan el paquete.
 | 3 | Catálogo 13 | `EXCEL_IMPORT_BATCH` (system-only) + `EXCEL_IMPORT_STAGING_PURGE` (diario) |
 | 4 | Handler | `ExcelImportHandlerRegistry::register(processCode, handler)` |
 | 5 | FE | Montar `ExcelImportToolbar` embebido; `onComplete` de negocio |
+| 5b | FE deploy | `bootstrapApiBaseUrl` + `@paqsuite/react-core` **≥ 2.4.10** (`downloadTemplate` / `exportBatchErrors` / `uploadBatch` usan `resolveRequestUrl`). Ver `PaqSuite-IA-FRAMEWORK/docs/06-operacion/adopcion-api-base-url.md` § «apiRequest no es el único camino HTTP». Smoke: plantilla en Vercel → Network a Forge, archivo `.xlsx` abre en Excel. |
 | 6 | Mobile | No montar toolbar; excluir rutas de import en policy native |
 | 7 | Writers | Bitácora `source=excelImport`; bandeja solo al resolver async |
 | 8 | PedidosWeb | Intacta en esta ola; primer host de prueba = Partes-Atención |
