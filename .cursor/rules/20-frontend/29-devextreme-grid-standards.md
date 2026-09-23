@@ -13,12 +13,39 @@ Aplica a **Framework, MONO, MULTI y productos** (incl. Partes).
 
 ## MUST — Componente estándar
 
-1. Toda grilla de **proceso** usa **`ProcessDataGrid`** de `@paqsuite/react-core` (no `DataGrid` crudo con defaults ad hoc).
+1. Toda grilla de **proceso** usa el **wrapper del proyecto** (ver § siguiente), **nunca** `DataGrid` crudo con defaults ad hoc.
 2. El shell autentica menú con **`MenuAuthProvider`** + `MenuSidebar.onItemsLoaded` → el `+` se gobierna por `permissions.create` del **proceso de menú** de la ruta actual.
 3. Pasar **`onCreate`** (abre modal regla `24`) cuando el proceso admite alta. Sin `onCreate` o sin `permissions.create` → **no** se muestra el `+`.
 4. Override puntual: `allowCreate={true|false}` solo si la HU/TR lo justifica.
 5. **Prohibido** `Button` «Nuevo / Agregar» en el encabezado de página para el mismo alta.
 6. Plantillas GEN-11: pasar **`proceso`**, **`gridId`** y **`accessToken`** para habilitar el toolbar de layouts en la misma barra que chooser / `+`.
+
+### Wrappers obligatorios — prohibición de `DataGrid` crudo (MUST)
+
+**Prohibido** importar `DataGrid` desde `devextreme-react/data-grid` en **features**, **páginas**, **modales** o componentes de dominio. Solo los archivos **wrapper** del repo pueden importarlo.
+
+| Stack / contexto | Wrapper | Cuándo usarlo |
+|----------------|---------|---------------|
+| Producto con **`@paqsuite/react-core`** | **`ProcessDataGrid`** | Listados de proceso, layouts GEN-11, alta `+` nativa |
+| Producto ERP (wrappers locales) — columnas declarativas | **`DataGridDX`** | Listados con `columns: ColumnDef[]`, `serverPaging`, CRUD nativo |
+| Producto ERP — columnas nativas DevExtreme | **`NativeDataGridWithExport`** | `<Column />`, `cellRender`, `CustomStore`, grillas embebidas en modal |
+
+Ambos wrappers ERP comparten **`GridStandardFeatures`** (filter row, group panel, pie de totales según props). **No** reimplementar `FilterRow` / `GroupPanel` / `Summary` a mano en un `DataGrid` suelto.
+
+#### Grillas en modales, popups y detalle embebido (MUST)
+
+Aplica el **mismo criterio** que en listados de página: **no** usar `DataGrid` directo “por ser chica” o “por estar en un modal”.
+
+- Preferir **`DataGridDX`** si el modal puede definir columnas con `ColumnDef`.
+- Usar **`NativeDataGridWithExport`** si hace falta `<Column />` nativo, `cellRender`, edición inline con widgets DX, o `CustomStore` con paginación remota.
+- **Filter row** activa por defecto (`showFilterRow`, default `true`) salvo excepción explícita en HU/TR.
+- En modales **compactos**, se permiten opt-outs documentados (sin romper el wrapper):
+  - `showGroupPanel={false}`
+  - `showSearchPanel={false}` / `showColumnChooser={false}`
+  - `alwaysShowSummaryFooter={false}` / `enableSummaryContextMenu={false}`
+- Mantener **`data-testid`** estables en el wrapper (`testId` / `elementAttr`) para E2E.
+
+**Anti-patrón:** modal con `import DataGrid from 'devextreme-react/data-grid'` y solo `filterRow={{ visible: true }}` — migrar a wrapper + `GridStandardFeatures`.
 
 ### Capacidades incluidas en `ProcessDataGrid` (defaults ON)
 
@@ -98,12 +125,14 @@ Import: `import { ProcessDataGrid } from '@paqsuite/react-core'`
 ### Excepciones (documentar en HU/TR)
 
 - Solo consulta / sin alta → sin `onCreate`.
-- Bulk fuera de toolbar; alta unitaria = `+` de `ProcessDataGrid`.
+- Bulk fuera de toolbar; alta unitaria = `+` de `ProcessDataGrid` (o `enableNativeCreate` en `DataGridDX` en productos ERP).
 - Selectores embebidos: `layoutsEnabled={false}` + opt-outs documentados.
+- Modales compactos: opt-outs de § «Grillas en modales» (no eximen del wrapper).
 - Mobile / kardex: no aplica DataGrid desktop.
 
 ## Relación
 
-- Código: `ProcessDataGrid.tsx`, `useGridLayouts.ts`, `gridLayoutsClient.ts`, `GridLayoutsToolbarControls.tsx`, `gridSummaryTypes.ts`
+- **Framework:** `ProcessDataGrid.tsx`, `useGridLayouts.ts`, `gridLayoutsClient.ts`, `GridLayoutsToolbarControls.tsx`, `gridSummaryTypes.ts`
+- **Productos ERP (ej. TANGO):** `DataGridDX`, `NativeDataGridWithExport`, `gridStandardFeatures.tsx` — detalle operativo en regla MULTI `08-devextreme-grid-standards.md` y `docs/frontend/devextreme-norms.md`
 - Producto `11` · OpenSpec `SPEC-001-11` §2–§5
 - Reglas `24`, `26`, `28`

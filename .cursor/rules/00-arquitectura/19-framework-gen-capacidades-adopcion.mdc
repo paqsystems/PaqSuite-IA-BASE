@@ -56,12 +56,12 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | GEN | Tema | Estado | Invocar (host) |
 |-----|------|--------|----------------|
 | 01 | Estética UI | listo (norma) | Controles **100 % DX**; layouts `AuthPageLayout` / `ShellLayout` / `ProcessPageLayout` |
-| 02 | i18n | listo | `LanguageSelector`; claves envelope + namespaces GEN |
+| 02 | i18n | listo | `LanguageSelector`; claves envelope + namespaces GEN; menú/títulos → `adopcion-menu-i18n.md` |
 | 03 | Smart Capture | listo | `SmartCapturePanel` (prereq GEN-16 BD+SP) |
 | 04 | Login | listo | Flujo auth SDK; no rehacer login |
 | 05 | Selector empresas | listo | `EmpresaSelectorPage` (MULTI / N>1) |
 | 06 | Seguridad admin | listo | ABM roles/permisos GEN; **excluido mobile** |
-| 07 | Menú | listo | `MenuSidebar` + API menú; `id` jerárquico `pq_menus` |
+| 07 | Menú | listo | `MenuSidebar` + API menú; `id` jerárquico `pq_menus`; **Must** `t`+`locale` + `labelKey` (regla `42-host-menu-shell-i18n`) |
 | 08 | Menú avatar | listo | `UserAvatarMenu` |
 | 09 | Dashboard inicio | listo | `DashboardContainer` + widgets **del producto** (no es BI) |
 | 10 | ABM Parámetros | listo | Pantalla parámetros GEN |

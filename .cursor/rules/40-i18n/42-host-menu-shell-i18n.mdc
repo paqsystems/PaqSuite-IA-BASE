@@ -1,0 +1,81 @@
+---
+description: GEN-02/GEN-07 — hosts MUST cablear MenuSidebar (t+locale), labelKey en pq_menus y títulos de proceso
+alwaysApply: true
+---
+
+# Host — menú lateral y títulos de proceso (i18n MUST)
+
+Aplica a **todo host** del SDK (`@paqsuite/react-core` + `paqsuite/laravel-core`): Partes-Atención, TANGO, PedidosWeb al adoptar GEN, template `create-app`, smoke.
+
+Complementa: `docs/02-producto/02-multilingual.md` · `docs/02-producto/07-menu-opciones.md` · SPEC-001-07 · HU/TR-GEN-02 · HU/TR-GEN-07-menu-sidebar.
+
+Adopción operativa: `docs/06-operacion/adopcion-menu-i18n.md`.
+
+---
+
+## Problema que evita esta regla
+
+Montar `MenuSidebar` **sin** `t` y `locale` hace que el árbol muestre siempre el `text` español de la API (`pq_menus`), **aunque** el usuario cambie idioma o vuelva a iniciar sesión. Los títulos de proceso con literales ES en `ProcessPageLayout` no siguen el idioma activo.
+
+El SDK ya traduce con `localizeMenuTree` / `resolveMenuCaption`; **el host debe cablear y alimentar claves**.
+
+---
+
+## MUST — Shell (`ShellPage` o equivalente)
+
+1. Estado `locale` alineado a `users.locale` / `getGuestLocale` y `LanguageSelector`.
+2. Al cambiar `locale`: `setGuestLocale`, `PATCH /api/v1/user/preferences`, `syncDevExtremeLocale(locale)` (si no lo hace el selector en ese flujo).
+3. `MenuSidebar` **obligatorio**:
+
+```tsx
+<MenuSidebar
+  platform={platform}
+  accessToken={token}
+  locale={locale}
+  t={(key) => appT(key)}
+  labels={{
+    ...menuSidebarLabelsFromT(appT),
+  }}
+  onItemsLoaded={setMenuItems}
+  onNavigate={...}
+/>
+```
+
+4. `labels` del sidebar (toolbar, búsqueda, empty/retry/loadError) vía `t('menu.*')` — **no** depender solo de `defaultMenuSidebarLabels` (español).
+5. `MenuAuthProvider` envolviendo el shell autenticado; `onItemsLoaded` alimenta `items` para permisos (`ProcessDataGrid`) y títulos derivados del menú.
+
+## MUST — Catálogo `pq_menus` (backend / seed / SQL)
+
+1. Cada nodo visible (raíz, agrupadores, **todos** los procesos) con `labelKey` estable (ej. `menu.partes.consultaDetallada`).
+2. `text` en español como **fallback API** (SPEC-001-07).
+3. Prohibido: solo `labelKey` en el primer nivel y hijos con `labelKey` null salvo excepción TR documentada.
+
+## MUST — JSON i18n del producto (5 locales)
+
+1. Mismas claves `labelKey` del menú en `es`, `en`, `pt`, `fr`, `it`.
+2. Formato: `t(key, { defaultValue: fallbackEs })` o catálogo equivalente; anti-patrón: pantalla en FR con menú/títulos en ES por claves faltantes.
+
+## MUST — Títulos de procesos
+
+1. Prohibido: título fijo en español en `ProcessPageLayout` / cabecera de página si el proceso está en menú.
+2. Preferido: `resolveMenuCaption` sobre el nodo `findMenuProcessByRoute(menuItems, pathname)` (menú ya localizado con el mismo `t`).
+3. Alternativa: clave de producto `feature.process.title` con `t()`; debe existir en los 5 locales.
+
+## Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| `MenuSidebar` sin `t` / `locale` | Menú siempre en `text` API (español) |
+| Confiar en que `LanguageSelector` “traduce el menú” | Solo DX/formatos; no captions del árbol |
+| `labelKey` solo en raíz | Submenús y procesos en español |
+| Título de proceso literal ES | No cambia con idioma |
+| Re-fetch menú al cambiar idioma esperando otro idioma en API | El menú no se traduce en BE; es FE con `labelKey` + `t` |
+
+## Checklist antes de merge (shell / menú)
+
+- [ ] `MenuSidebar` recibe `t`, `locale` y `labels` traducidos
+- [ ] `MenuAuthProvider` + `onItemsLoaded`
+- [ ] Seed/SQL: `labelKey` en **todo** el árbol de menú del producto
+- [ ] 5 JSON con claves de menú del producto
+- [ ] Procesos usan título desde menú localizado o `t()` de producto
+- [ ] Smoke manual: FR/EN → menú completo y título de al menos un proceso cambian sin re-login
