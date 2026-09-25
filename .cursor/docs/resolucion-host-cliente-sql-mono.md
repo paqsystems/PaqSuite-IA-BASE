@@ -10,11 +10,11 @@ Cada producto documenta en su OpenSpec solo constantes propias (`{proyecto}`, co
 
 ## Objetivo
 
-- **Deploys de plataforma por producto** (artefactos separados): frontend en **Vercel** y backend en **Forge**, ambos derivados del slug `{proyecto}` (prod + dev). SoT de nombres: [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
+- **Deploys de plataforma por producto**: un único proyecto **Vercel** y backend en **Forge/EC2**, ambos derivados del slug `{proyecto}` (producción + pre-producción). SoT de nombres: [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
 - Cada cliente final entra por **`{cliente}.{proyecto}.paqsystems.com`** (**sin cambio**).
 - Esa URL **redirige** al **frontend de producción** Vercel, conservando qué **`{cliente}`** originó la entrada.
 - La SPA llama al **backend de producción** Forge con el mismo `{cliente}`; el middleware resuelve la base SQL del tenant.
-- Desarrollo local fuerza un tenant acordado (habitualmente `demo`); deploys de **desarrollo** usan los hosts `*-dev` / `backenddev*` (ver tabla).
+- Desarrollo local fuerza un tenant acordado (habitualmente `demo`); la pre-producción usa la rama `develop`, el dominio `dev.{proyecto}.paqsystems.com` y el backend `{proyecto}paqsystems-dev.on-forge.com` (ver tabla).
 
 **No** hay un deploy distinto por cliente: solo redirect + contexto + fila en `EMPRESAS_CONEXION`.
 
@@ -25,10 +25,10 @@ Cada producto documenta en su OpenSpec solo constantes propias (`{proyecto}`, co
 | Rol | Patrón | Ejemplo (`{proyecto}` = `tango`) |
 |-----|--------|----------------------------------|
 | **Entrada del cliente** (sin cambio) | `https://{cliente}.{proyecto}.paqsystems.com` | `https://acme.tango.paqsystems.com` |
-| **Frontend producción** | `https://{proyecto}paqsystems.vercel.app/` | `https://tangopaqsystems.vercel.app/` |
-| **Frontend desarrollo** | `https://{proyecto}paqsystems-dev.vercel.app/` | `https://tangopaqsystems-dev.vercel.app/` |
-| **Backend producción** | `https://backend{proyecto}paqsystems.on-forge.com/` | `https://backendtangopaqsystems.on-forge.com/` |
-| **Backend desarrollo** | `https://backenddev{proyecto}paqsystems.on-forge.com/` | `https://backenddevtangopaqsystems.on-forge.com/` |
+| **Frontend producción** | `https://{proyecto}.paqsystems.com/` | `https://tango.paqsystems.com/` |
+| **Frontend pre-producción** | `https://dev.{proyecto}.paqsystems.com/` | `https://dev.tango.paqsystems.com/` |
+| **Backend producción** | `https://{proyecto}paqsystems.on-forge.com/` | `https://tangopaqsystems.on-forge.com/` |
+| **Backend pre-producción** | `https://{proyecto}paqsystems-dev.on-forge.com/` | `https://tangopaqsystems-dev.on-forge.com/` |
 
 - **`{proyecto}`** — slug del producto (minúsculas, sin puntos/guiones en el hostname de plataforma; ej. `tango`, `pedidosweb`). Se **persiste en scaffold** en `docs/06-operacion/urls-deploy.md` del producto.
 - **`{cliente}`** — slug estable del tenant final (ej. `acme`, `demo`). En documentación funcional de un producto puede llamarse «empresa»; en infraestructura es **`CODIGO_TENANT`** = `{cliente}`.
@@ -44,10 +44,10 @@ Usuario → https://{cliente}.{proyecto}.paqsystems.com
               ↓
     Redirect HTTP(S) (edge / proxy)
               ↓
-    https://{proyecto}paqsystems.vercel.app/
+    https://{proyecto}.paqsystems.com/
     (conservando {cliente})
               ↓
-    SPA persiste cliente; API → https://backend{proyecto}paqsystems.on-forge.com/
+    SPA persiste cliente; API → https://{proyecto}paqsystems.on-forge.com/
               ↓
     Middleware → SQL del cliente (EMPRESAS_CONEXION)
 ```
@@ -60,11 +60,11 @@ Usuario → https://{cliente}.{proyecto}.paqsystems.com
 
 ### Cómo transportar `{cliente}`
 
-Tras el 302 el browser queda en **`{proyecto}paqsystems.vercel.app`**. Ese hostname **no** contiene `{cliente}`. Una cookie seteada en `{cliente}.{proyecto}.paqsystems.com` **no** es visible en `*.vercel.app` (otro sitio). El proxy de entrada **no** puede inyectar `X-Paq-Cliente` en las llamadas posteriores de la SPA al backend Forge.
+Tras el 302 el browser queda en **`{proyecto}.paqsystems.com`**. Ese hostname **no** contiene `{cliente}`. Una cookie seteada en `{cliente}.{proyecto}.paqsystems.com` **no** es visible en el dominio Vercel (otro sitio). El proxy de entrada **no** puede inyectar `X-Paq-Cliente` en las llamadas posteriores de la SPA al backend Forge.
 
 | Mecanismo | Uso |
 |-----------|-----|
-| **Query en el 302** | **MUST.** `Location: https://{proyecto}paqsystems.vercel.app/?cliente={cliente}` (raíz, no `/login`). |
+| **Query en el 302** | **MUST.** `Location: https://{proyecto}.paqsystems.com/?cliente={cliente}` (raíz, no `/login`). |
 | **Cookie `paqCliente` + `sessionStorage`** | Persistencia **en el origen Vercel**, escrita por la SPA en el primer load. SameSite=Lax; no HttpOnly. |
 | **Header `X-Paq-Cliente`** | MUST en **todas** las llamadas API al Forge (lo arma la SPA tras persistir). |
 
@@ -148,7 +148,7 @@ El mismo **`{cliente}`** resuelve SQL y assets bajo `images/{cliente}/` (regla *
 
 ## Implementación (resumen)
 
-**Backend (Forge `backend{proyecto}paqsystems` / `backenddev…`):**
+**Backend (Forge/EC2 `{proyecto}paqsystems` / `{proyecto}paqsystems-dev`):**
 
 1. Middleware: `proyecto` desde config; `cliente` desde `X-Paq-Cliente` / cookie / dev.
 2. Validar en `EMPRESAS_CONEXION`; cache ~5 min.
@@ -177,7 +177,7 @@ Smoke: tenant **≠** `DB_DATABASE` → login 200 + `/auth/me` 200.
 - El 302 llega a `/?cliente={cliente}` (raíz). La SPA **persiste** `{cliente}` en `main.tsx` **antes** del Router.
 - Tras persistir, interceptor / `buildPlatformHeaders` envía `X-Paq-Cliente` a Forge.
 - Dev local: `localhost` → `demo`; opcional `VITE_TENANT_OVERRIDE` documentado.
-- Alias Vercel **sin** redirect al dominio `*.vercel.app`: el hostname `{cliente}.{proyecto}.…` puede parsearse, pero **no** sustituye el query si el proyecto “Redirect to production domain” está activo.
+- Alias Vercel **sin** redirect al dominio canónico: el hostname `{cliente}.{proyecto}.…` puede parsearse, pero **no** sustituye el query si el redirect está activo.
 
 ---
 
@@ -185,8 +185,8 @@ Smoke: tenant **≠** `DB_DATABASE` → login 200 + `/auth/me` 200.
 
 | Aspecto | Producción | Desarrollo (plataforma / local) |
 |---------|------------|----------------------------------|
-| Frontend | `{proyecto}paqsystems.vercel.app` | `{proyecto}paqsystems-dev.vercel.app` o Vite local |
-| Backend | `backend{proyecto}paqsystems.on-forge.com` | `backenddev{proyecto}paqsystems.on-forge.com` o API local / proxy |
+| Frontend | `{proyecto}.paqsystems.com` | `dev.{proyecto}.paqsystems.com` o Vite local |
+| Backend | `{proyecto}paqsystems.on-forge.com` | `{proyecto}paqsystems-dev.on-forge.com` o API local / proxy |
 | `{cliente}` | Redirect + header/cookie | Forzado `demo` (o acordado) |
 | Entrada | `{cliente}.{proyecto}` → redirect real | Simular con header |
 
@@ -208,7 +208,7 @@ Debe coincidir con `SQL_DATABASE` en la asociación.
 ## Criterios de aceptación (infra MONO)
 
 1. Frontend prod/dev en Vercel y backend prod/dev en Forge según [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md); nombres persistidos en `docs/06-operacion/urls-deploy.md` del producto.
-2. `{cliente}.{proyecto}.paqsystems.com` redirige a `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}` (raíz + query).
+2. `{cliente}.{proyecto}.paqsystems.com` redirige a `https://{proyecto}.paqsystems.com/?cliente={cliente}` (raíz + query).
 3. Toda llamada API al backend Forge incluye tenant válido (`X-Paq-Cliente` o convención única documentada).
 4. El backend conecta al SQL de ese `{cliente}`.
 5. Desarrollo usa tenant forzado acordado.

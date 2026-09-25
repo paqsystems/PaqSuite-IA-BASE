@@ -56,7 +56,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | GEN | Tema | Estado | Invocar (host) |
 |-----|------|--------|----------------|
 | 01 | Estética UI | listo (norma) | Controles **100 % DX**; layouts `AuthPageLayout` / `ShellLayout` / `ProcessPageLayout` |
-| 02 | i18n | listo | `LanguageSelector`; claves envelope + namespaces GEN; menú/títulos → `adopcion-menu-i18n.md` |
+| 02 | i18n | listo | `LanguageSelector`; envelope + namespaces GEN; **`registerGridI18nResources(i18n)`** (grillas); menú/títulos → `adopcion-menu-i18n.md` + regla **`43-host-sdk-i18n-sin-fork-gen`** |
 | 03 | Smart Capture | listo | `SmartCapturePanel` (prereq GEN-16 BD+SP) |
 | 04 | Login | listo | Flujo auth SDK; no rehacer login |
 | 05 | Selector empresas | listo | `EmpresaSelectorPage` (MULTI / N>1) |
@@ -65,7 +65,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 08 | Menú avatar | listo | `UserAvatarMenu` |
 | 09 | Dashboard inicio | listo | `DashboardContainer` + widgets **del producto** (no es BI) |
 | 10 | ABM Parámetros | listo | Pantalla parámetros GEN |
-| 11 | Grillas/layouts | listo | `ProcessDataGrid` / `DataGridDx` + `/grid-layouts*` |
+| 11 | Grillas/layouts | listo | `ProcessDataGrid` / `DataGridDx` + `/grid-layouts*`; i18n pie → **`registerGridI18nResources`** (regla **`43`**, regla **`29`**) |
 | 12 | Pivots | listo | `ConsultaGrillaPivotShell` / `PivotGridBlock` + `consultaId`; **excluido mobile** |
 | 13 | Tareas programadas | listo | `TaskProcessesPage` / Definitions / Executions; `TaskProcessRegistry` |
 | 14 | Import Excel | listo | `ExcelImportToolbar` (fila propia) + handler/seed host; **excluido mobile** |
@@ -99,5 +99,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | Emitir PDF/informe | GEN-15 (update) + GEN-30 si hay mail/WA/TG | SMTP o plantillas mail en el host |
 | CAE/CAEA ARCA (FE) | GEN-32 `/api/v1/arca` + JSON SoT | WSAA/WSFE/CAE en el host; menú smoke 70xxx |
 | Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
+| i18n pie grilla / menú contextual totalizadores | `registerGridI18nResources` + `ProcessDataGrid` SDK | `grid.summary.*` en JSON host, `summaryTypeLabels` masivo, copiar `gridI18n` al producto |
+| Bump `@paqsuite/react-core` | Diff template `create-app` + ritual bump producto (regla **`43`**) | Subir pin sin revisar exports ni reintroducir forks |
 
-Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`.
+Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`. i18n SDK sin forks: regla **`43-host-sdk-i18n-sin-fork-gen`** (`40-i18n`).

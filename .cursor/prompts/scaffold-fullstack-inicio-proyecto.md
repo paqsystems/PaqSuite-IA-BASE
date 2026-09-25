@@ -67,15 +67,35 @@ Al scaffoldear, el asistente **debe** crear **`docs/06-operacion/urls-deploy.md`
 
 | Rol | Patrón |
 |-----|--------|
-| Frontend producción | `https://{proyecto}paqsystems.vercel.app/` |
-| Frontend desarrollo | `https://{proyecto}paqsystems-dev.vercel.app/` |
-| Backend producción | `https://backend{proyecto}paqsystems.on-forge.com/` |
-| Backend desarrollo | `https://backenddev{proyecto}paqsystems.on-forge.com/` |
+| Frontend producción (`main`) | `https://{proyecto}.paqsystems.com/` |
+| Frontend pre-producción (`develop`) | `https://dev.{proyecto}.paqsystems.com/` |
+| Backend producción | `https://{proyecto}paqsystems.on-forge.com/` |
+| Backend pre-producción | `https://{proyecto}paqsystems-dev.on-forge.com/` |
 | Entrada cliente (sin cambio) | `https://{cliente}.{proyecto}.paqsystems.com` |
 
-Ejemplo (`{proyecto}` = `tango`): `https://tangopaqsystems.vercel.app/`, `https://backendtangopaqsystems.on-forge.com/`, etc.
+Ejemplo (`{proyecto}` = `tango`): `https://tango.paqsystems.com/`, `https://tangopaqsystems.on-forge.com/`, etc.
 
-**No** usar ya `frontend.{proyecto}.paqsystems.com` / `backend.{proyecto}.paqsystems.com` como hosts canónicos de deploy.
+**No** crear un proyecto Vercel por cliente ni usar `frontend.{proyecto}.paqsystems.com` / `backend.{proyecto}.paqsystems.com` como hosts canónicos de deploy.
+
+### Ejecución de la infraestructura de despliegue
+
+Una vez completado el scaffold, y después de confirmar `{proyecto}` y `{repositorio}`, ejecutar explícitamente la skill:
+
+```text
+vercel-github-deployment-standard
+```
+
+La skill debe recibir el nombre del proyecto y configurar/verificar:
+
+- el único proyecto Vercel;
+- `main` → Production y `develop` → Preview;
+- dominios Vercel y redirect de `{cliente}.{proyecto}.paqsystems.com`;
+- sitios Forge `{proyecto}paqsystems` y `{proyecto}paqsystems-dev`;
+- environments y variables por ambiente;
+- asociación Vercel ↔ Forge;
+- Route 53, ruleset de GitHub y check `only-develop`.
+
+El scaffold no debe crear ni modificar esos recursos externos automáticamente. Debe dejar preparada la documentación y detenerse antes de la mutación de infraestructura hasta que la skill sea invocada de forma explícita.
 
 ---
 

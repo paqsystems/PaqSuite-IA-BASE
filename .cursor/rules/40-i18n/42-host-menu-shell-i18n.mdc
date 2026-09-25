@@ -11,6 +11,8 @@ Complementa: `docs/02-producto/02-multilingual.md` · `docs/02-producto/07-menu-
 
 Adopción operativa: `docs/06-operacion/adopcion-menu-i18n.md`.
 
+Grillas / ritual bump / anti-fork GEN (`registerGridI18nResources`, sin duplicar `menu.*` GEN en `shellI18n`): regla **`43-host-sdk-i18n-sin-fork-gen`**.
+
 ---
 
 ## Problema que evita esta regla

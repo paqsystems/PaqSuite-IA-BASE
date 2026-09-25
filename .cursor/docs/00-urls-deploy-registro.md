@@ -21,10 +21,10 @@ Flujo cliente → redirect → API → SQL: [`resolucion-host-cliente-sql-mono.m
 
 | Rol | URL |
 |-----|-----|
-| Frontend producción | https://partesatencionpaqsystems.vercel.app/ |
-| Frontend desarrollo | https://partesatencionpaqsystems-dev.vercel.app/ |
-| Backend producción | https://backendpartesatencionpaqsystems.on-forge.com/ |
-| Backend desarrollo | https://backenddevpartesatencionpaqsystems.on-forge.com/ |
+| Frontend producción | https://partesatencion.paqsystems.com/ |
+| Frontend pre-producción | https://dev.partesatencion.paqsystems.com/ |
+| Backend producción | https://partesatencionpaqsystems.on-forge.com/ |
+| Backend pre-producción | https://partesatencionpaqsystems-dev.on-forge.com/ |
 | Entrada cliente | `https://{cliente}.partesatencion.paqsystems.com` |
 
 - **API tipica (prod):** `https://backendpartesatencionpaqsystems.on-forge.com/api/v1`
@@ -45,10 +45,10 @@ Flujo cliente → redirect → API → SQL: [`resolucion-host-cliente-sql-mono.m
 
 | Rol | URL |
 |-----|-----|
-| Frontend producción | https://tangopaqsystems.vercel.app/ |
-| Frontend desarrollo | https://tangopaqsystems-dev.vercel.app/ |
-| Backend producción | https://backendtangopaqsystems.on-forge.com/ |
-| Backend desarrollo | https://backenddevtangopaqsystems.on-forge.com/ |
+| Frontend producción | https://tango.paqsystems.com/ |
+| Frontend pre-producción | https://dev.tango.paqsystems.com/ |
+| Backend producción | https://tangopaqsystems.on-forge.com/ |
+| Backend pre-producción | https://tangopaqsystems-dev.on-forge.com/ |
 | Entrada cliente | `https://{cliente}.tango.paqsystems.com` |
 
 - **API tipica (prod):** `https://backendtangopaqsystems.on-forge.com/api/v1`
@@ -82,13 +82,13 @@ Copiar y completar (actualizar también el índice):
 
 | Rol | URL |
 |-----|-----|
-| Frontend producción | https://{proyecto}paqsystems.vercel.app/ |
-| Frontend desarrollo | https://{proyecto}paqsystems-dev.vercel.app/ |
-| Backend producción | https://backend{proyecto}paqsystems.on-forge.com/ |
-| Backend desarrollo | https://backenddev{proyecto}paqsystems.on-forge.com/ |
+| Frontend producción | https://{proyecto}.paqsystems.com/ |
+| Frontend pre-producción | https://dev.{proyecto}.paqsystems.com/ |
+| Backend producción | https://{proyecto}paqsystems.on-forge.com/ |
+| Backend pre-producción | https://{proyecto}paqsystems-dev.on-forge.com/ |
 | Entrada cliente | `https://{cliente}.{proyecto}.paqsystems.com` |
 
-- **API tipica (prod):** `https://backend{proyecto}paqsystems.on-forge.com/api/v1`
-- **API tipica (dev):** `https://backenddev{proyecto}paqsystems.on-forge.com/api/v1`
+- **API tipica (prod):** `https://{proyecto}paqsystems.on-forge.com/api/v1`
+- **API tipica (pre-prod):** `https://{proyecto}paqsystems-dev.on-forge.com/api/v1`
 - **Header tenant:** `X-Paq-Cliente: {cliente}`
 ```

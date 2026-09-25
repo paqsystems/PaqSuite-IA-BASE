@@ -1,8 +1,8 @@
-# URLs de deploy por `{proyecto}` (frontend Vercel + backend Forge)
+# URLs de deploy por `{proyecto}` (Vercel + backend Forge/EC2)
 
 Convención **obligatoria** de hosts de plataforma para productos PaqSuite. Complementa [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md) (flujo `{cliente}` → redirect → API → SQL) y se aplica en el **scaffold** de proyecto nuevo ([`00-inicio-arquitectura.md`](./00-inicio-arquitectura.md), prompt `scaffold-fullstack-inicio-proyecto.md`).
 
-Las URLs que **ven e invocan los usuarios finales** (`{cliente}.{proyecto}.paqsystems.com`) **no cambian**.
+Se utiliza un único proyecto Vercel por producto. Las URLs que ven e invocan los usuarios finales (`{cliente}.{proyecto}.paqsystems.com`) redirigen al dominio Vercel correspondiente conservando el cliente.
 
 **Nombres precisos ya asignados** (registro vivo): [`00-urls-deploy-registro.md`](./00-urls-deploy-registro.md) — hoy: `partesatencion`, `tango`.
 
@@ -11,7 +11,7 @@ Las URLs que **ven e invocan los usuarios finales** (`{cliente}.{proyecto}.paqsy
 ## 1. Slug `{proyecto}`
 
 - Identificador **corto, minúsculas, sin puntos ni guiones** usado en los hostnames de plataforma (ej. `partesatencion`, `tango`, `pedidosweb`).
-- Se concatena **sin separador** con el sufijo fijo `paqsystems` en Vercel y Forge.
+- En Vercel se usa el dominio `{proyecto}.paqsystems.com`; en Forge/EC2 se concatena sin separador con el sufijo fijo `paqsystems`.
 - Se declara al crear el producto (scaffold) y queda documentado en el repo (ver §4) **y** en el [registro BASE](./00-urls-deploy-registro.md).
 
 ---
@@ -20,10 +20,10 @@ Las URLs que **ven e invocan los usuarios finales** (`{cliente}.{proyecto}.paqsy
 
 | Rol | Patrón | Ejemplo (`{proyecto}` = `tango`) |
 |-----|--------|----------------------------------|
-| **Frontend producción** (Vercel) | `https://{proyecto}paqsystems.vercel.app/` | `https://tangopaqsystems.vercel.app/` |
-| **Frontend desarrollo** (Vercel) | `https://{proyecto}paqsystems-dev.vercel.app/` | `https://tangopaqsystems-dev.vercel.app/` |
-| **Backend producción** (Forge) | `https://backend{proyecto}paqsystems.on-forge.com/` | `https://backendtangopaqsystems.on-forge.com/` |
-| **Backend desarrollo** (Forge) | `https://backenddev{proyecto}paqsystems.on-forge.com/` | `https://backenddevtangopaqsystems.on-forge.com/` |
+| **Frontend producción** (Vercel, `main`) | `https://{proyecto}.paqsystems.com/` | `https://tango.paqsystems.com/` |
+| **Frontend pre-producción** (Vercel, `develop`) | `https://dev.{proyecto}.paqsystems.com/` | `https://dev.tango.paqsystems.com/` |
+| **Backend producción** (Forge/EC2) | `https://{proyecto}paqsystems.on-forge.com/` | `https://tangopaqsystems.on-forge.com/` |
+| **Backend pre-producción** (Forge/EC2) | `https://{proyecto}paqsystems-dev.on-forge.com/` | `https://tangopaqsystems-dev.on-forge.com/` |
 
 ### Obsoleto (no usar en consignas nuevas)
 
@@ -31,7 +31,7 @@ Las URLs que **ven e invocan los usuarios finales** (`{cliente}.{proyecto}.paqsy
 |-------|----------------|
 | `https://frontend.{proyecto}.paqsystems.com` | Frontend Vercel prod / dev (§2) |
 | `https://backend.{proyecto}.paqsystems.com` | Backend Forge prod / dev (§2) |
-| Alias libre `{proyecto}.paqsystems.com` como FE base | Frontend Vercel |
+| Alias libre `{proyecto}.paqsystems.com` como FE base | Dominio Vercel canónico de Production (§2) |
 
 ---
 
@@ -46,14 +46,14 @@ Flujo:
 ```text
 Usuario → https://{cliente}.{proyecto}.paqsystems.com
               ↓ redirect (edge / DNS / proxy)
-         https://{proyecto}paqsystems.vercel.app/?cliente={cliente}
+         https://{proyecto}.paqsystems.com/?cliente={cliente}
               ↓ SPA persiste en main.tsx (antes del Router) → API + X-Paq-Cliente
-         https://backend{proyecto}paqsystems.on-forge.com/
+         https://{proyecto}paqsystems.on-forge.com/
 ```
 
-El 302 **MUST** incluir `?cliente={cliente}` y apuntar a la **raíz** (no a `/login`: Vercel 404 sin rewrite SPA). Una cookie en el host de entrada **no** llega a `*.vercel.app`. Norma: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).
+El 302 **MUST** incluir `?cliente={cliente}` y apuntar a la **raíz** (no a `/login`: Vercel 404 sin rewrite SPA). Una cookie en el host de entrada **no** llega al dominio Vercel. Norma: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).
 
-En **desarrollo** de plataforma, el FE base es `https://{proyecto}paqsystems-dev.vercel.app/` y el API `https://backenddev{proyecto}paqsystems.on-forge.com/` (o localhost con proxy). El tenant sigue resolviéndose por header / login / `demo`.
+En **pre-producción** de plataforma, el FE base es `https://dev.{proyecto}.paqsystems.com/` y el API `https://{proyecto}paqsystems-dev.on-forge.com/` (o localhost con proxy). El tenant sigue resolviéndose por header / login / `demo`.
 
 ---
 
@@ -82,10 +82,10 @@ Slug `{proyecto}`: `{proyecto}`
 
 | Rol | URL |
 |-----|-----|
-| Frontend producción | https://{proyecto}paqsystems.vercel.app/ |
-| Frontend desarrollo | https://{proyecto}paqsystems-dev.vercel.app/ |
-| Backend producción | https://backend{proyecto}paqsystems.on-forge.com/ |
-| Backend desarrollo | https://backenddev{proyecto}paqsystems.on-forge.com/ |
+| Frontend producción | https://{proyecto}.paqsystems.com/ |
+| Frontend pre-producción | https://dev.{proyecto}.paqsystems.com/ |
+| Backend producción | https://{proyecto}paqsystems.on-forge.com/ |
+| Backend pre-producción | https://{proyecto}paqsystems-dev.on-forge.com/ |
 | Entrada cliente | https://{cliente}.{proyecto}.paqsystems.com |
 
 Fuente: `docs/_base/00-urls-deploy-proyecto.md`

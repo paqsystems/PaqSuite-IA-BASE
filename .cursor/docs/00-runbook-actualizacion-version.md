@@ -37,9 +37,9 @@ Semver orientativo:
 ```text
 Usuario → {cliente}.{proyecto}.paqsystems.com
               ↓ redirect
-         {proyecto}paqsystems.vercel.app
+         {proyecto}.paqsystems.com
               ↓ API + X-Paq-Cliente (o header tenant del producto)
-         backend{proyecto}paqsystems.on-forge.com (Forge / Laravel)
+         {proyecto}paqsystems.on-forge.com (Forge / Laravel)
               ↓ DB_CONNECTION
          SQL del tenant
 ```

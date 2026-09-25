@@ -1,10 +1,10 @@
 te comento cómo tengo pensada la instalación de un cliente nuevo.
 
 recordemos primero que vamos a tener deploys de plataforma por producto:
-- frontend producción: https://{proyecto}paqsystems.vercel.app/
-- frontend desarrollo: https://{proyecto}paqsystems-dev.vercel.app/
-- backend producción: https://backend{proyecto}paqsystems.on-forge.com/
-- backend desarrollo: https://backenddev{proyecto}paqsystems.on-forge.com/
+- frontend producción: https://{proyecto}.paqsystems.com/
+- frontend pre-producción: https://dev.{proyecto}.paqsystems.com/
+- backend producción: https://{proyecto}paqsystems.on-forge.com/
+- backend pre-producción: https://{proyecto}paqsystems-dev.on-forge.com/
 (SoT: docs/_base/00-urls-deploy-proyecto.md; persistir en docs/06-operacion/urls-deploy.md al scaffoldear)
 
 un cliente va invocar una url de la forma {cliente}.{proyecto}.paqsystems.com (sin cambio)

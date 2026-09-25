@@ -18,12 +18,12 @@ alwaysApply: false
 
 SoT: en el host `docs/_base/resolucion-host-cliente-sql-mono.md` · Framework override `06-contrato-api-headers.md` · SPEC-001-19 · `bootstrapClienteFromWindow` en `@paqsuite/react-core`.
 
-La SPA **no** infiere el tenant del hostname de Vercel (`{proyecto}paqsystems.vercel.app`). Tras el redirect, `{cliente}` solo vive en **query**, **cookie `paqCliente`** o **`sessionStorage`**. Sin orígenes → **`DEMO`**.
+La SPA **no** infiere el tenant del hostname Vercel (`{proyecto}.paqsystems.com`). Tras el redirect, `{cliente}` solo vive en **query**, **cookie `paqCliente`** o **`sessionStorage`**. Sin orígenes → **`DEMO`**.
 
 ## MUST
 
 1. El 302 de `{cliente}.{proyecto}.paqsystems.com` apunta a la **raíz** del FE con query:
-   `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}`
+   `https://{proyecto}.paqsystems.com/?cliente={cliente}`
    (no a `/login`: Vercel 404 si no hay rewrite SPA).
 2. En `main.tsx`, **antes** de `createRoot` / `BrowserRouter`, llamar `bootstrapClienteFromWindow` (o `resolvePlatformCliente` leyendo `location.search`). El `useEffect` del router **llega tarde**: `<Navigate to="/login">` ya tiró el query.
 3. Todo `<Navigate to="/login">` **conserva** `search` (`to={{ pathname: '/login', search: location.search }}`).

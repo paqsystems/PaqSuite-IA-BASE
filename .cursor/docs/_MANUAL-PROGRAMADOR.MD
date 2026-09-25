@@ -328,20 +328,49 @@ SoT: **`docs/_base/00-urls-deploy-proyecto.md`**.
 
 | Rol | Patrón |
 |-----|--------|
-| Frontend producción | `https://{proyecto}paqsystems.vercel.app/` |
-| Frontend desarrollo | `https://{proyecto}paqsystems-dev.vercel.app/` |
-| Backend producción | `https://backend{proyecto}paqsystems.on-forge.com/` |
-| Backend desarrollo | `https://backenddev{proyecto}paqsystems.on-forge.com/` |
+| Frontend producción | `https://{proyecto}.paqsystems.com/` |
+| Frontend pre-producción | `https://dev.{proyecto}.paqsystems.com/` |
+| Backend producción | `https://{proyecto}paqsystems.on-forge.com/` |
+| Backend pre-producción | `https://{proyecto}paqsystems-dev.on-forge.com/` |
 | Entrada cliente (sin cambio) | `https://{cliente}.{proyecto}.paqsystems.com` |
 
 Ejemplo Partes de Atención (`{proyecto}` = `tango`):
 
-- FE prod: `https://tangopaqsystems.vercel.app/`
-- FE dev: `https://tangopaqsystems-dev.vercel.app/`
-- BE prod: `https://backendtangopaqsystems.on-forge.com/`
-- BE dev: `https://backenddevtangopaqsystems.on-forge.com/`
+- FE prod: `https://tango.paqsystems.com/`
+- FE pre-producción: `https://dev.tango.paqsystems.com/`
+- BE prod: `https://tangopaqsystems.on-forge.com/`
+- BE pre-producción: `https://tangopaqsystems-dev.on-forge.com/`
 
 Los usuarios siguen entrando por `{cliente}.{proyecto}.paqsystems.com` (redirect al FE Vercel de producción). Detalle de tenant/SQL: `docs/_base/resolucion-host-cliente-sql-mono.md`.
+
+### 0.2 Configuración de infraestructura de despliegue
+
+Después de completar el scaffold y confirmar `{proyecto}` y `{repositorio}`, ejecutar la skill:
+
+```text
+vercel-github-deployment-standard
+```
+
+La invocación debe indicar, como mínimo:
+
+- `{proyecto}`;
+- `{repositorio}`;
+- ambiente de producción (`main`);
+- ambiente de pre-producción (`develop`);
+- cuenta/proyecto Vercel;
+- sitios Forge o servidores EC2 objetivo.
+
+La skill configura y verifica la asociación:
+
+```text
+develop / Preview    → dev.{proyecto}.paqsystems.com
+                      → {proyecto}paqsystems-dev.on-forge.com
+
+main / Production    → {proyecto}.paqsystems.com
+                      → {proyecto}paqsystems.on-forge.com
+```
+
+El scaffold solo prepara la documentación, los workflows y las variables esperadas. La creación o modificación de recursos externos en GitHub, Vercel, Route 53 y Forge/EC2 requiere ejecutar la skill explícitamente y verificar el resultado.
 
 ### 1. Configuración del entorno
 

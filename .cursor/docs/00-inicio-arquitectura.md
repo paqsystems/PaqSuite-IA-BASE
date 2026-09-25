@@ -31,12 +31,12 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 Resumen:
 
 - **Deploys por `{proyecto}`** (artefactos separados):
-  - Frontend prod: `https://{proyecto}paqsystems.vercel.app/`
-  - Frontend dev: `https://{proyecto}paqsystems-dev.vercel.app/`
-  - Backend prod: `https://backend{proyecto}paqsystems.on-forge.com/`
-  - Backend dev: `https://backenddev{proyecto}paqsystems.on-forge.com/`
-  - Ej. (`{proyecto}` = `tango`): `tangopaqsystems.vercel.app`, `backendtangopaqsystems.on-forge.com`, etc.
-- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`** (**sin cambio**), que **redirige** al **frontend Vercel de producción** con query **MUST** `?cliente={cliente}` (raíz: `https://{proyecto}paqsystems.vercel.app/?cliente={cliente}`). La SPA persiste ese código **antes** del React Router; si el 302 no lleva query, el SDK cae a **`DEMO`**. Detalle: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md) y regla `.cursor/rules/base/20-frontend/34-cliente-bridge-spa.mdc`.
+  - Frontend prod: `https://{proyecto}.paqsystems.com/` (Vercel, rama `main`)
+  - Frontend pre-producción: `https://dev.{proyecto}.paqsystems.com/` (Vercel, rama `develop`)
+  - Backend prod: `https://{proyecto}paqsystems.on-forge.com/`
+  - Backend pre-producción: `https://{proyecto}paqsystems-dev.on-forge.com/`
+  - Ej. (`{proyecto}` = `tango`): `tango.paqsystems.com`, `tangopaqsystems.on-forge.com`, etc.
+- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que redirige al dominio Vercel del ambiente correspondiente con query **MUST** `?cliente={cliente}` (raíz: `https://{proyecto}.paqsystems.com/?cliente={cliente}`). La SPA persiste ese código **antes** del React Router; si el 302 no lleva query, el SDK cae a **`DEMO`**. Detalle: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md), [`00-deploy-github-vercel-route53-forge.md`](./00-deploy-github-vercel-route53-forge.md) y regla `.cursor/rules/base/20-frontend/34-cliente-bridge-spa.mdc`.
 - **Asociación por `{cliente}`:** registro (tabla/config/secrets) con host o DNS SQL, instancia opcional, nombre de base y credenciales.
 - **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local); deploys de plataforma de desarrollo usan los hosts `*-dev` / `backenddev*`.
 - El **esquema de seguridad** (usuarios, roles, permisos, menú) vive en la base SQL del cliente resuelto; no hay selector de **empresa** en UI ni **`X-Company-Id`** (eso es **MULTI**).
@@ -207,6 +207,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 - [ ] **SDK Framework** en scaffold: `paqsuite/laravel-core` + `@paqsuite/react-core`; wire GEN día 0; checklist en regla **19** (`19-framework-gen-capacidades-adopcion.mdc`). Sin carpetas GEN copiadas al host.
 - [ ] **Modo MONO o MULTI declarado** y decisiones de BD / seguridad coherentes con ese modo.
 - [ ] **URLs de deploy** (MONO/producto): slug `{proyecto}` + `docs/06-operacion/urls-deploy.md` con FE Vercel (prod/dev) y BE Forge (prod/dev) según [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
+- [ ] Infraestructura externa configurada y verificada ejecutando la skill `vercel-github-deployment-standard` con `{proyecto}` y `{repositorio}`; asociación Vercel ↔ Forge, environments, DNS y ruleset documentados.
 - [ ] **`PAQSUITE_TENANCY` / `PAQSUITE_DB`** (y headers) en `.env.example` + `backend/config/paqsuite.php` (canónico: MONO → `single`/`unified`; MULTI → `multi`/`split`).
 - [ ] Flujo E2E documentado y reflejado en historias/tareas.
 - [ ] Backend en capas; **MULTI:** tenant y permisos por empresa; **MONO:** perfil single/unified (empresa única; `X-Company-Id` auto-inyectable).
@@ -226,6 +227,7 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Symlinks entre repos (BASE / MONO / MULTI) | `docs/_base/symlinks_paqsuite_ia.md` (`.cursor/docs/` en **PaqSuite-IA-BASE**) |
 | Checklist GEN / adoptar Framework | `.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc` (+ SoT en `PaqSuite-IA-FRAMEWORK`) |
 | URLs deploy FE/BE (Vercel / Forge) | [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md) |
+| Configuración de infraestructura de despliegue | [`00-deploy-github-vercel-route53-forge.md`](./00-deploy-github-vercel-route53-forge.md) + skill `vercel-github-deployment-standard` |
 | Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
 | CI GitHub Actions (monorepo) | [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |

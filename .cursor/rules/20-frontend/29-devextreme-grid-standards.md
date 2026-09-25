@@ -118,6 +118,19 @@ Helpers: `resolveAllowedGridSummaryTypes`, `toggleGridTotalItem`, `inferGridColu
 
 Import: `import { ProcessDataGrid } from '@paqsuite/react-core'`
 
+### i18n GEN de grilla en el host (MUST — regla `43`)
+
+Hosts con **`@paqsuite/react-core`**: tras `i18n.init`, registrar catálogos GEN de grilla y alinear locale DevExtreme:
+
+```ts
+import { registerGridI18nResources, syncDevExtremeLocale } from '@paqsuite/react-core';
+
+registerGridI18nResources(i18n);
+syncDevExtremeLocale(locale);
+```
+
+**Prohibido** duplicar en JSON del producto claves `grid.summary.*` / familias `grid.*` ya provistas por el SDK; **prohibido** cablear `summaryTypeLabels` en cada pantalla salvo override HU/TR. Formato de **dominio** (duración, moneda): `defaultTotalItems`, `columnSummaryFormatters` — regla **`43`**.
+
 **Orden toolbar integrado (MUST):** `toolbarLeading` (izq.) → **plantillas** → **column chooser** → **«+»** (der.).
 
 **No** remontar `GroupPanel` / `FilterRow` / `ColumnChooser` / `Summary` / toolbar de layouts / `plus` / toggle Pivot fuera del wrapper (usar `toolbarLeading` para extras izquierdos).
