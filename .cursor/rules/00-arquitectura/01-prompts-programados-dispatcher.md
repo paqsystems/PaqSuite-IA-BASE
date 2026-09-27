@@ -53,7 +53,7 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ## Índice alfabético (partes **A**–**Q**)
 
-El orden de las filas **es el alfabético A–Q** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–Q** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–R** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–R** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
@@ -80,6 +80,7 @@ El orden de las filas **es el alfabético A–Q** y coincide con el **orden de l
 | **O** | Entorno de desarrollo | "Iniciá el entorno de desarrollo" |
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
+| **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
 
 ---
 
@@ -775,6 +776,47 @@ El asistente debe:
 
 ---
 
+## PARTE R – Despliegue estándar GitHub/Vercel/Forge
+
+### Prompt simplificado
+
+```text
+Ejecutá la skill `.cursor/skills/Github-deployment-standard/SKILL.md`
+para el proyecto `[NOMBRE_PROYECTO]`.
+```
+
+También debe interpretarse como equivalente:
+
+```text
+Configurá el despliegue estándar de `[NOMBRE_PROYECTO]`.
+```
+
+El valor entre corchetes es obligatorio y debe reemplazarse por el nombre real
+del proyecto. El asistente debe:
+
+1. Leer y seguir la skill `.cursor/skills/Github-deployment-standard/SKILL.md`
+   y su documento SoT de despliegue.
+2. Usar `[NOMBRE_PROYECTO]` para resolver los nombres de Vercel, Forge,
+   dominios y backends definidos por el estándar.
+3. Verificar primero el estado actual de GitHub, Vercel, Forge/EC2 y Route 53
+   antes de modificar recursos.
+4. No solicitar ni copiar credenciales, tokens o códigos de verificación en el
+   chat; el usuario debe ingresarlos directamente cuando corresponda.
+5. Pedir confirmación explícita antes de eliminar o modificar recursos de forma
+   destructiva.
+6. Entregar la matriz final de ramas, ambientes, dominios, backends y cambios
+   realizados o pendientes.
+
+Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
+
+### Skill asociada
+
+```text
+.cursor/skills/Github-deployment-standard/SKILL.md
+```
+
+---
+
 ## Reglas generales (aplican a todos los comandos)
 - No inventar prompts fuera de los definidos.
 - No modificar HU ni TR sin dejar trazabilidad.
@@ -792,7 +834,7 @@ Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), modelo de datos vía **Parte J**.
+Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.

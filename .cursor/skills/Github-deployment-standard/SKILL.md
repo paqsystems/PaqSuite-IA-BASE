@@ -13,11 +13,12 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
 - Un único proyecto Vercel y un backend Preview/Production compartido por proyecto, salvo que exista una razón técnica explícita para separarlos.
 - Rama `develop` → ambiente Preview/pre-producción.
 - Rama `main` → ambiente Production/producción.
-- Dominio de Preview: `dev.{proyecto}.paqsystems.com`.
+- Dominio de Preview: `{proyecto}.paqsystems-dev.com`.
 - Dominio de producción: `{proyecto}.paqsystems.com`.
+- `dev.{proyecto}.paqsystems.com` pertenece a ISPConfig y no se asigna a Vercel.
 - Parámetro de cliente: solo en ISPConfig y en la URL de entrada a Vercel, como `?cliente={cliente}`.
-- Backend Preview: `{proyecto}paqsystems-dev.on-forge.com`.
-- Backend Production: `{proyecto}paqsystems.on-forge.com`.
+- Backend Preview: `{proyecto}-paqsystems-dev.on-forge.com`.
+- Backend Production: `{proyecto}-paqsystems.on-forge.com`.
 - GitHub obliga a llegar a `develop` mediante PR y no mediante push directo.
 - GitHub obliga a llegar a `main` mediante PR desde `develop`.
 - DNS se administra en Route 53, creando los CNAME que Vercel indique para cada dominio.
@@ -27,15 +28,15 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
 ## Procedimiento
 
 1. Relevar el repositorio GitHub, el único proyecto Vercel, la cuenta/equipo Vercel, Forge/EC2, la zona DNS de Route 53 y los nombres finales.
-2. En Vercel, configurar `main` como Production Branch. Asociar `{proyecto}.paqsystems.com` a Production y `dev.{proyecto}.paqsystems.com` a Preview con la rama `develop`.
+2. En Vercel, configurar `main` como Production Branch. Asociar `{proyecto}.paqsystems.com` a Production y `{proyecto}.paqsystems-dev.com` a Preview con la rama `develop`.
 3. Crear o verificar en Forge los sitios con esta nomenclatura exacta:
-   - producción: `{proyecto}paqsystems`;
-   - pre-producción: `{proyecto}paqsystems-dev`.
+   - producción: `{proyecto}-paqsystems`;
+   - pre-producción: `{proyecto}-paqsystems-dev`.
 4. Configurar los environments de Vercel y Forge según el SoT, especialmente `VITE_API_BASE_URL`, `APP_URL`, `FRONTEND_URL`, `DB_*`, mail y flags.
    En ISPConfig, configurar las URLs de entrada con el parámetro `?cliente={cliente}`. Este parámetro no se utiliza para nombrar dominios, proyectos Vercel, sitios Forge ni registros DNS.
 5. Verificar la asociación:
-   - `main` / Production → `{proyecto}paqsystems.on-forge.com`;
-   - `develop` / Preview → `{proyecto}paqsystems-dev.on-forge.com`.
+   - `main` / Production → `{proyecto}-paqsystems.on-forge.com`;
+   - `develop` / Preview → `{proyecto}-paqsystems-dev.on-forge.com`.
    Preview nunca debe apuntar a producción.
 6. En Route 53, crear o actualizar únicamente los registros necesarios, usando exactamente los valores entregados por Vercel. No crear registros DNS por cada valor de `{cliente}`.
 7. En GitHub, crear un ruleset activo para `main` y `develop` que exija PR, al menos una aprobación, descarte aprobaciones obsoletas, exija resolver conversaciones y bloquee eliminación y force-push.
