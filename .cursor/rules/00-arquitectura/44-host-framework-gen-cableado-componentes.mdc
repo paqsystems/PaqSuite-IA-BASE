@@ -1,0 +1,215 @@
+---
+description: >-
+  Hosts SDK — catálogo vivo de cableado por componente/capacidad GEN del Framework
+  (@paqsuite/react-core + laravel-core): i18n, props, tema, API/SP, checklist y
+  anti-patrones. Garantizar paridad entre create-app y productos existentes.
+alwaysApply: true
+---
+
+# Host — cableado de componentes Framework GEN (catálogo)
+
+Aplica a **todo host** que consuma `@paqsuite/react-core` + `paqsuite/laravel-core` (Partes, PedidosWeb, TANGO, `create-app`, smoke).
+
+Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla **42** (menú/shell i18n) · regla **43** (i18n grillas + ritual bump) · regla **36** (errores en modal).
+
+**SoT implementación:** repo `PaqSuite-IA-FRAMEWORK` (`packages/js/react-core`, `packages/php/laravel-core`, OpenSpec SPEC-001-xx).
+
+**SoT cableado host:** **esta regla** (índice + fichas por componente). Al agregar o cambiar un export GEN con contrato de host, **actualizar la ficha aquí** en el mismo PR/release del Framework.
+
+---
+
+## Cómo usar este catálogo
+
+| Rol | Acción |
+|-----|--------|
+| **Producto nuevo** | Tras `create-app`, recorrer índice §2; aplicar cada ficha **Estado = documentado** antes de merge. |
+| **Bump SDK** | Diff `create-app` de la oleada + releer fichas de componentes tocados en el changelog. |
+| **SPEC/HU/TR** | Si el alcance usa un GEN listo, citar ficha §3 (`GEN-xx`) además de regla 19. |
+
+### Plantilla para nuevas fichas (copiar en §3)
+
+```markdown
+### GEN-XX — [Nombre] (`ExportPrincipal`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | borrador \| documentado \| verificado create-app |
+| SDK mínimo | @paqsuite/react-core ≥ x.y.z |
+| Exports | … |
+| i18n host | register…(i18n, namespace) |
+| Wrapper host | props obligatorias / opcionales |
+| Backend | rutas, SP, validación |
+| Tema / shell | si aplica |
+| Anti-patrones | … |
+| Checklist merge | … |
+| Referencia | repo/path ejemplo |
+```
+
+---
+
+## Índice de fichas (§3)
+
+| GEN | Componente / pantalla | Estado ficha | SDK mínimo |
+|-----|------------------------|--------------|------------|
+| **06** | `EmpresasAdminPage` (ABM empresas + apariencia A1) | **documentado** | react-core **≥ 2.4.19** |
+| 06 | `SecurityRolesPage` / `RolAtributosPage` | pendiente | ≥ 2.4.17 (`registerSecurityRolesI18nResources`) |
+| 02+11 | Grillas `ProcessDataGrid` | ver regla **43** | ≥ 2.4.13 |
+| 07 | `MenuSidebar` | ver regla **42** | — |
+
+*(Ampliar la tabla al documentar cada capacidad; no duplicar aquí el índice completo de regla 19.)*
+
+---
+
+## Fichas de cableado
+
+### GEN-06 — ABM Empresas (`EmpresasAdminPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-10) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.19** |
+| OpenSpec / TR Framework | SPEC-001-06 / GEN-06 empresas; tema empresa SPEC-001-19 §5 |
+| Excluido mobile | Sí (admin seguridad) |
+
+#### Qué hace el SDK (no reimplementar en el host)
+
+- Listado + modal alta/edición: `EmpresasAdminPage`, `EmpresaFormPopup`.
+- Catálogo UI de apariencias: claves `paqsuite.*` + puente a stock DevExtreme (`paqsuiteDxStockBridge`).
+- **Lectura API:** `normalizeThemeFromApi(theme)` — convierte `generic.*` / `material.*` persistidos → clave `paqsuite.*` para el SelectBox.
+- **Escritura API:** `mapThemeForApiPersistence(theme)` — envía en PUT/POST el stock DX que valida el backend.
+- Vista previa en modal: `applyDxTheme` interno (**sin** reload de página).
+- i18n GEN: `admin.empresas.*` + `appearance.paqsuite.*` vía `registerEmpresasAdminI18nResources`.
+
+Exports útiles: `EmpresasAdminPage`, `registerEmpresasAdminI18nResources`, `normalizeThemeFromApi`, `mapThemeForApiPersistence`, `paqsuiteDxStockBridge`, `applyDxTheme` / `applyPaqsuiteTheme` (shell).
+
+#### MUST — Bootstrap i18n (host)
+
+Tras `i18n.init`, **mismo namespace** que usa el resto del shell (`common` o `translation`):
+
+```ts
+import {
+  registerEmpresasAdminI18nResources,
+  registerGridI18nResources,
+  syncDevExtremeLocale,
+} from '@paqsuite/react-core';
+
+registerGridI18nResources(i18n, namespace);
+registerEmpresasAdminI18nResources(i18n, namespace);
+syncDevExtremeLocale(initialLocale);
+```
+
+- **Prohibido** mantener un segundo catálogo host con las mismas claves `admin.empresas.*` / `appearance.paqsuite.*` “por las dudas”.
+- **Prohibido** mapeos tipo `securityEmpresasSdkI18n` que dupliquen claves ya registradas por el SDK.
+
+#### MUST — Página wrapper (host)
+
+Ruta fina: token, headers plataforma, `tenancyMode`, namespace i18n, callbacks de tema/sesión.
+
+```tsx
+import {
+  EmpresasAdminPage as EmpresasAdminPageSdk,
+  type EmpresaListItem,
+} from '@paqsuite/react-core';
+
+<EmpresasAdminPageSdk
+  accessToken={getAuthToken()}
+  platform={buildPlatformHeaders()}
+  i18nNamespace="common" // o "translation" — igual que defaultNS del host
+  tenancyMode="single"   // MONO: solo edición; "multi" si alta ERP aplica
+  onPreviewTheme={(dxTheme) =>
+    void applyShellTheme(dxTheme, { reloadOnGroupChange: false })
+  }
+  onRestoreCommittedTheme={(dxTheme) =>
+    void applyShellTheme(dxTheme, { reloadOnGroupChange: false })
+  }
+  onEmpresaSaved={(item) => {
+    patchSessionEmpresa(item);
+    void applyShellTheme(item.theme, { reloadOnGroupChange: true }); // opcional si cambió grupo DX
+  }}
+/>
+```
+
+| Prop | Obligatorio | Notas |
+|------|-------------|--------|
+| `accessToken` | Sí (autenticado) | Bearer admin seguridad |
+| `platform` | Sí | `X-Paq-Cliente`, `X-Company-Id` si MULTI |
+| `i18nNamespace` | **Sí** | Debe coincidir con `registerEmpresasAdminI18nResources` |
+| `tenancyMode` | Sí | `single` en MONO instalación una empresa |
+| `onPreviewTheme` | Recomendado | Recibe **stock DX**; shell sin reload |
+| `onRestoreCommittedTheme` | Recomendado | Cancelar modal tras “Aplicar” |
+| `onEmpresaSaved` | Recomendado | Actualizar `empresas[]` en sesión + tema shell |
+| `t` | No | Solo overrides puntuales de producto |
+
+`applyShellTheme` = función del host (`applyDevExtremeTheme`, `applyDxTheme`, o `applyEmpresaAppearance` según integración A1).
+
+#### MUST — Backend (host / laravel-core)
+
+- Rutas: `GET/PUT /api/v1/admin/empresas` (+ `POST`/candidatos solo MULTI).
+- Persistencia por **SP** (`pq_sp_admin_empresas_*`); regla **74**.
+- Campo `theme` en BD: **whitelist stock DevExtreme** alineada al bridge del SDK (mismos valores que `mapThemeForApiPersistence` produce).
+- Validación 422 tema inválido → clave envelope; el SDK muestra `admin.empresas.validation.themeInvalid` en el modal (regla **36**).
+
+MONO: prohibido alta/baja; solo consulta y edición (`empresas.alta.monoForbidden`).
+
+#### Modelo de datos de tema (obligatorio entender)
+
+| Capa | Formato de `theme` |
+|------|---------------------|
+| UI SelectBox (SDK) | `paqsuite.{palette}.{family}` |
+| API / BD / sesión auth | `generic.*`, `material.*`, … (stock DX) |
+| `data-theme` documento (A1) | `paqsuite.*` (lo setea `applyDxTheme` en SDK) |
+
+El host **no** debe enviar `paqsuite.*` en PUT; el SDK ya traduce. El host **no** debe asumir que la API devuelve `paqsuite.*` para bindear el combo sin normalizar.
+
+#### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| `onPreviewTheme` con `reloadOnGroupChange: true` | Cierra el modal / pierde edición |
+| Fork i18n `admin.empresas.form.save` solo en JSON host sin `registerEmpresasAdminI18nResources` | Mezcla EN/ES (“Save” / “Guardar”) |
+| `isEmpresaThemeKey` tratando DX como valor de SelectBox sin normalizar | Combo vacío con “Select…” |
+| PUT con `paqsuite.orange.material` | 422 apariencia no válida |
+| Copiar `EmpresaFormPopup` al producto | Drift; viola regla **19** |
+| Omitir `i18nNamespace` con `defaultNS: 'common'` | Claves sin traducir (muestra la key) |
+
+#### Checklist antes de merge (ABM empresas en host)
+
+- [ ] Pin `@paqsuite/react-core` ≥ **2.4.19**
+- [ ] `registerEmpresasAdminI18nResources(i18n, <namespace>)` en bootstrap
+- [ ] Wrapper con `i18nNamespace` alineado
+- [ ] `tenancyMode` coherente con instalación (MONO → `single`)
+- [ ] Preview/restore shell **sin** reload; guardar actualiza sesión
+- [ ] Whitelist PHP/SQL de `theme` = valores del bridge DX
+- [ ] Menú `pq_menus` + permisos admin; ruta `/admin/empresas`
+- [ ] Smoke: editar → tema visible → Aplicar (modal abierto) → Guardar sin 422
+- [ ] Sin forks i18n duplicados del SDK
+
+#### Referencia verificada
+
+- Partes (MONO): `frontend/src/i18n/i18n.ts`, `frontend/src/features/admin/security/EmpresasAdminPage.tsx`
+- Framework: `packages/js/react-core/src/features/empresas/*`, `src/i18n/empresasAdminI18n.ts`, `src/i18n/registerEmpresasAdminI18nResources.ts`
+
+#### Pendiente scaffold
+
+- `@paqsuite/create-app`: incluir registro i18n + wrapper ejemplo en la oleada que pinnee ≥ 2.4.19 (diff obligatorio en ritual bump, regla **43**).
+
+---
+
+## Relación con otras reglas
+
+| Tema | Regla |
+|------|--------|
+| ¿Existe el GEN? ¿Export? | **19** |
+| Menú / títulos proceso | **42** |
+| Grillas / bump SDK | **43** |
+| Errores guardado en Popup | **36** |
+| SP / gateway | **74** |
+| Mobile exclusiones admin | **80** / **00-mobile** |
+
+---
+
+## Mantenimiento (editores Framework / BASE)
+
+1. Nuevo componente GEN con contrato de host → añadir fila al índice §2 + ficha §3 con plantilla.
+2. Cambio breaking en props o i18n → subir **SDK mínimo** en la ficha y anotar en changelog react-core.
+3. Cuando `create-app` incorpore la ficha → marcar **Estado ficha** = `verificado create-app`.

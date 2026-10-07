@@ -22,6 +22,7 @@ Aplica a productos que consumen el SDK (`paqsuite/laravel-core` + `@paqsuite/rea
 | Qué necesitás | Dónde |
 |---------------|--------|
 | **Checklist operativo en el host** (GEN, estado listo/diferido, export a invocar) | **Esta regla** — índice abajo. Es la referencia diaria en el producto (symlink `rules/base`). |
+| **Cableado concreto por componente** (i18n, props, tema, API, anti-patrones, checklist merge) | Regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`). Catálogo vivo; empezar por GEN-06 `EmpresasAdminPage`. |
 | **Detalle de producto / adopción / guías** | Repo **`PaqSuite-IA-FRAMEWORK`**: `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1). |
 
 Antes de inventar UI/login/shell/grilla/pivot/excel/etc.: **abrir esta regla** (y el SoT Framework si hace falta profundidad). No adivinar.
@@ -60,7 +61,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 03 | Smart Capture | listo | `SmartCapturePanel` (prereq GEN-16 BD+SP) |
 | 04 | Login | listo | Flujo auth SDK; no rehacer login |
 | 05 | Selector empresas | listo | `EmpresaSelectorPage` (MULTI / N>1) |
-| 06 | Seguridad admin | listo | ABM roles/permisos GEN; **excluido mobile** |
+| 06 | Seguridad admin | listo | ABM roles/permisos/empresas GEN (`SecurityRolesPage`, `EmpresasAdminPage`, …); cableado host → regla **`44`**; **excluido mobile** |
 | 07 | Menú | listo | `MenuSidebar` + API menú; `id` jerárquico `pq_menus`; **Must** `t`+`locale` + `labelKey` (regla `42-host-menu-shell-i18n`) |
 | 08 | Menú avatar | listo | `UserAvatarMenu` |
 | 09 | Dashboard inicio | listo | `DashboardContainer` + widgets **del producto** (no es BI) |
@@ -101,5 +102,6 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
 | i18n pie grilla / menú contextual totalizadores | `registerGridI18nResources` + `ProcessDataGrid` SDK | `grid.summary.*` en JSON host, `summaryTypeLabels` masivo, copiar `gridI18n` al producto |
 | Bump `@paqsuite/react-core` | Diff template `create-app` + ritual bump producto (regla **`43`**) | Subir pin sin revisar exports ni reintroducir forks |
+| ABM empresas + tema A1 | `EmpresasAdminPage` + `registerEmpresasAdminI18nResources` (regla **`44`**, SDK ≥ 2.4.19) | Fork i18n/mapper host, `paqsuite.*` en PUT, reload en “Aplicar” |
 
-Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`. i18n SDK sin forks: regla **`43-host-sdk-i18n-sin-fork-gen`** (`40-i18n`).
+Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`. i18n SDK sin forks: regla **`43-host-sdk-i18n-sin-fork-gen`** (`40-i18n`). Cableado por componente: regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`).
