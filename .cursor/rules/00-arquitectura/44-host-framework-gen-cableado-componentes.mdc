@@ -10,7 +10,7 @@ alwaysApply: true
 
 Aplica a **todo host** que consuma `@paqsuite/react-core` + `paqsuite/laravel-core` (Partes, PedidosWeb, TANGO, `create-app`, smoke).
 
-Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla **42** (menú/shell i18n) · regla **43** (i18n grillas + ritual bump) · regla **36** (errores en modal).
+Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla **42** (menú/shell i18n) · regla **43** (i18n grillas + ritual bump) · regla **36** (errores en modal) · regla **`44-host-shell-process-surface-grid-pivot`** (superficie grilla/pivot A1).
 
 **SoT implementación:** repo `PaqSuite-IA-FRAMEWORK` (`packages/js/react-core`, `packages/php/laravel-core`, OpenSpec SPEC-001-xx).
 
@@ -51,6 +51,7 @@ Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla 
 
 | GEN | Componente / pantalla | Estado ficha | SDK mínimo |
 |-----|------------------------|--------------|------------|
+| **19** | Shell A1 + superficie proceso (grilla/pivot) | **documentado** | react-core **≥ 2.4.20**, themes-paqsuite **≥ 1.1.0** |
 | **06** | `EmpresasAdminPage` (ABM empresas + apariencia A1) | **documentado** | react-core **≥ 2.4.19** |
 | 06 | `SecurityRolesPage` / `RolAtributosPage` | pendiente | ≥ 2.4.17 (`registerSecurityRolesI18nResources`) |
 | 02+11 | Grillas `ProcessDataGrid` | ver regla **43** | ≥ 2.4.13 |
@@ -61,6 +62,42 @@ Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla 
 ---
 
 ## Fichas de cableado
+
+### GEN-19 — Shell, tenancy y superficie proceso A1
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-10) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.20**, `@paqsuite/themes-paqsuite` **≥ 1.1.0** |
+| OpenSpec | SPEC-001-19 catálogo 24 § Superficie proceso; update superficie **Finalizado** |
+| Exports / runtime | `applyEmpresaAppearance`, `applyShellTokens`, `resolveEmpresaAppearance`; import `shell.css` |
+
+#### MUST — Host
+
+- Puente instalación: `bootstrapClienteFromWindow` / `?cliente=` en `main.tsx` **antes** del Router (regla `34-cliente-bridge-spa`).
+- Headers: `buildPlatformHeaders` — `X-Paq-Cliente` + `X-Company-Id` (MULTI).
+- Tokens en `:root`: `--pq-shell-*`, `--pq-menu-*`, **`--pq-process-*`** (14 claves por apariencia vía `applyShellTokens`).
+- Grillas/pivot: `ProcessDataGrid`, `ConsultaGrillaPivotShell` / `PivotGridBlock` — **sin** CSS host en `.dx-datagrid` / `.dx-pivotgrid` para fondo de datos.
+- Popup ABM con `.pqShell` montado: superficie proceso vía SDK (`body:has(.pqShell) .dx-popup-content`).
+
+#### Prohibido
+
+- `shellAppearanceBridge.css` u overrides locales que “arreglen” isla blanca/negra en grilla (subir pin SDK).
+- Copiar bloques de `shellLayout.css` al producto.
+
+#### Checklist merge (oleada superficie proceso)
+
+- [ ] Pin react-core + themes-paqsuite de la oleada
+- [ ] `registerGridI18nResources` + `syncDevExtremeLocale` (regla **43**)
+- [ ] Smoke naranja + bordó: grilla/pivot main + grilla en popup si aplica
+- [ ] Sin nuevos `background` fijos en `.dx-datagrid-rowsview` en el host
+
+#### Referencia
+
+- Regla detalle: `20-frontend/44-host-shell-process-surface-grid-pivot.mdc`
+- Ops: `docs/06-operacion/adopcion-shell-ui.md` (repo Framework)
+
+---
 
 ### GEN-06 — ABM Empresas (`EmpresasAdminPage`)
 
@@ -203,6 +240,7 @@ El host **no** debe enviar `paqsuite.*` en PUT; el SDK ya traduce. El host **no*
 | Menú / títulos proceso | **42** |
 | Grillas / bump SDK | **43** |
 | Errores guardado en Popup | **36** |
+| Superficie grilla/pivot A1 | **`44-host-shell-process-surface-grid-pivot`** |
 | SP / gateway | **74** |
 | Mobile exclusiones admin | **80** / **00-mobile** |
 

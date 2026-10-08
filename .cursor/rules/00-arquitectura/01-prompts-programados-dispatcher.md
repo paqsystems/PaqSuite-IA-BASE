@@ -3,7 +3,7 @@
 ## Objetivo
 Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad.
 
-Las partes **A–F** son el **núcleo** en orden **alfabético igual al cronológico** de ejecución. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–Q** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
+Las partes **A–F** son el **núcleo** en orden **alfabético igual al cronológico** de ejecución. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–S** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
 
 ---
 
@@ -51,9 +51,9 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ---
 
-## Índice alfabético (partes **A**–**Q**)
+## Índice alfabético (partes **A**–**S**)
 
-El orden de las filas **es el alfabético A–R** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–R** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–S** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–S** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
@@ -81,6 +81,7 @@ El orden de las filas **es el alfabético A–R** y coincide con el **orden de l
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
 | **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
+| **S** | Cableado consumo SDK Framework (host) | "Adaptá el proyecto a consumir el SDK por labo repo" / "… por deploy" |
 
 ---
 
@@ -817,6 +818,113 @@ Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
 
 ---
 
+## PARTE S — Adaptar host al modo de consumo del SDK Framework
+
+### Comando (variantes)
+
+Cuando el usuario escriba algo equivalente a:
+
+```text
+Adaptá el proyecto a consumir el SDK por labo repo
+```
+
+```text
+Adaptá el proyecto a consumir el SDK por deploy
+```
+
+**También** debe interpretarse como equivalente (sinónimos del modo):
+
+| Modo | Variantes aceptadas en el mensaje |
+|------|-----------------------------------|
+| **Labo repo** (checkout local) | `labo repo`, `repo-lab`, `modo repo-lab`, `lab local`, `path local`, `file:` |
+| **Deploy** (artefactos empaquetados) | `deploy`, `registry`, `Satis`, `Verdaccio`, `producción`, `release empaquetado` |
+
+Si el mensaje no indica el modo, **pedir** explícitamente: *labo repo* o *deploy* (una sola opción por ejecución).
+
+### Alcance — solo proyectos **host**
+
+Esta parte aplica **únicamente** a repositorios **producto host** que consumen el SDK PaqSuite Framework (`paqsuite/laravel-core` + `@paqsuite/react-core`), no al monorepo Framework ni a repos sin esas dependencias.
+
+**Criterio de host (comprobar en el workspace actual):**
+
+1. Existe carpeta `backend/` con `composer.json` que declara `paqsuite/laravel-core` en `require`, **o**
+2. Existe carpeta `frontend/` con `package.json` que declara `@paqsuite/react-core` en `dependencies` / `devDependencies`.
+
+Si **ninguna** condición se cumple, responder de forma clara y **no** modificar archivos:
+
+```text
+La Parte S no corresponde a este repositorio: no es un host del SDK Framework
+(paqsuite/laravel-core / @paqsuite/react-core). Usá esta parte solo en productos
+que adopten GEN vía laravel-core y react-core.
+```
+
+### Ruta del Framework en disco (modo labo repo)
+
+Por defecto el checkout hermano del host vive en la misma carpeta padre que el producto, con nombre de carpeta **`PaqSuite-IA-FRAMEWORK`** (convención PaqSuite; el usuario puede decir «programacion-ia-framework» u otro alias verbal — resolver la ruta real en disco antes de cablear).
+
+Rutas relativas típicas **desde la raíz del host** (ajustar si el sibling tiene otro nombre pero existe):
+
+| Capa | Ruta relativa al host |
+|------|------------------------|
+| Frontend (`react-core`) | `../PaqSuite-IA-FRAMEWORK/packages/js/react-core` |
+| Backend (`laravel-core`) | `../PaqSuite-IA-FRAMEWORK/packages/php/laravel-core` |
+
+Si el directorio no existe, **informar** y no inventar paths en `composer.json` / `package.json` hasta que el usuario confirme la ubicación del monorepo Framework.
+
+### Documentación SoT (leer antes de tocar pins)
+
+| Documento | Uso |
+|-----------|-----|
+| `docs/01-arquitectura/deploy-sdk-package-repos.md` | Contrato deploy vs repo-lab |
+| `docs/01-arquitectura/ritual-bump-sdk.md` | Pins, locks, smoke tras cambio de modo |
+| `frontend/MODO-REPO-LAB.md` (si existe en el host) | Resumen FE/BE lab |
+| Framework `docs/06-operacion/adopcion-sdk-registry.md` | Registries y `sdk-link` |
+
+**Deploy hoy:** Satis (PHP) + Verdaccio (npm). **Próximo:** CloudSmith u otro registry corporativo — cuando esté operativo, actualizar URLs en esta parte y en `deploy-sdk-package-repos.md`; hasta entonces, cablear **deploy** = Satis + Verdaccio según el host.
+
+### Comportamiento — modo **labo repo**
+
+Objetivo: desarrollo local contra el **código fuente** del Framework en disco, sin depender de Satis/Verdaccio en el install diario.
+
+1. **Verificar** que el sibling Framework existe y contiene `packages/js/react-core` y `packages/php/laravel-core`.
+2. **Frontend** (si el host tiene `frontend/`):
+   - En `package.json`, pin `"@paqsuite/react-core": "file:../PaqSuite-IA-FRAMEWORK/packages/js/react-core"` (o ruta relativa correcta desde `frontend/` → suele ser `file:../../PaqSuite-IA-FRAMEWORK/packages/js/react-core`).
+   - En `vite.config.ts`, alias de desarrollo hacia el **source** del paquete (`src/index.ts`, `auth.css`, `shell.css`) apuntando al mismo checkout — patrón de referencia: `frontend/MODO-REPO-LAB.md` y el host Partes.
+   - Ejecutar `npm install` en `frontend/` y dejar constancia en el resumen (no commitear salvo autorización del usuario).
+3. **Backend** (si el host tiene `backend/`):
+   - **Preferido:** mantener `composer.json` con repositorio **Satis** (sin repo `path` commiteado) y enlazar vendor local con el script del Framework `tools/sdk/sdk-link.ps1` (o equivalente documentado en adopción SDK) apuntando al checkout sibling.
+   - **Alternativa solo lab** (si la TR del producto lo permite): repositorio Composer `type: path` temporal — **advertir** que no debe mezclarse con deploy Forge/Vercel; revertir antes de PR a `develop`.
+   - Ejecutar `composer install` / link según el script y verificar `composer show paqsuite/laravel-core`.
+4. **Documentar** en el mensaje final: modo activo, rutas usadas, comandos ejecutados, y recordatorio de volver a **deploy** antes de release (ver checklist en `deploy-sdk-package-repos.md` § «Modo repo-lab local»).
+5. **No** hacer commit ni push salvo autorización explícita del usuario.
+
+### Comportamiento — modo **deploy**
+
+Objetivo: consumir **versiones publicadas** (locks commiteables, builders Forge/Vercel/CI sin checkout Framework).
+
+1. **Frontend** (si aplica):
+   - Quitar alias `vite.config.ts` que apunten al monorepo Framework (resolver solo vía `node_modules` / paquete instalado).
+   - En `package.json`, reemplazar `file:` por versión semver pinneada acorde al host (ej. la ya usada en `ritual-bump-sdk.md` o la última acordada en Verdaccio).
+   - Asegurar `frontend/.npmrc` con scope `@paqsuite` al registry Verdaccio (HTTPS Funnel en CI/Vercel según `docs/06-operacion/verdaccio-vercel-conectividad.md`).
+   - `npm install` en `frontend/`; opcional `frontend/scripts/refresh-react-core-lock.ps1` si el repo lo define para regenerar lock desde Verdaccio.
+2. **Backend** (si aplica):
+   - En `composer.json`, **solo** repositorio Satis (`http://100.110.69.93/satis` o URL vigente en el host); **eliminar** repos `path` al Framework si estuvieran commiteados.
+   - Desvincular link local (`sdk-link` inverso o `composer install` limpio) y `composer update paqsuite/laravel-core` con red al builder/Satis.
+   - Verificar que `composer.lock` no referencia rutas locales al monorepo (scripts Forge del host suelen validarlo).
+3. **Smoke mínimo** sugerido al cerrar: `composer show paqsuite/laravel-core`, `npm list @paqsuite/react-core`, health/login si el entorno está disponible.
+4. **No** hacer commit ni push salvo autorización explícita del usuario.
+
+### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| Aplicar Parte S en `PaqSuite-IA-FRAMEWORK` | No es host; confunde origen del SDK |
+| Dejar `file:` + alias Vite al repo Framework en rama de deploy | Build Vercel/CI falla o depende de paths inexistentes |
+| Commitear repo Composer `path` al Framework «por comodidad» | Forge deploy rompe; viola contrato empaquetado |
+| Cambiar modo sin regenerar lock | Drift entre dev y CI |
+
+---
+
 ## Reglas generales (aplican a todos los comandos)
 - No inventar prompts fuera de los definidos.
 - No modificar HU ni TR sin dejar trazabilidad.
@@ -834,7 +942,7 @@ Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), modelo de datos vía **Parte J**.
+Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.

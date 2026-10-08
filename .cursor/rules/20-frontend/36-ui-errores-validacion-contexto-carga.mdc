@@ -1,0 +1,58 @@
+---
+description: >-
+  Errores de validación y guardado en formularios modal: deben mostrarse dentro
+  del Popup o en diálogo modal, nunca solo en la página de fondo con el modal abierto.
+globs:
+  - "**/features/**/*.tsx"
+  - "**/shared/ui/**/*.tsx"
+alwaysApply: true
+---
+
+# 36 — Errores de validación en contexto de carga (modal) (MUST)
+
+Complementa: **24** (ABM en Popup) · **27** (captions formulario) · **41** (i18n + testid).
+
+OpenSpec: `docs/05-open-spec/updates/001-Generalidades/SPEC-001-ui-errores-validacion-contexto-carga-update.md`.
+
+## Objetivo
+
+Cuando el usuario **guarda** desde un **Popup** de alta/edición (o equivalente modal sobre grilla/detalle), los errores de validación o rechazo del servidor deben ser **visibles en el mismo contexto** que el formulario. No deben quedar únicamente como texto en el layout de la página **detrás** del overlay.
+
+## MUST
+
+1. **Separar contextos de error** (recomendado: `listError` + `formError`) o **condicionar el render**:
+   - Errores de **carga del listado** / acciones **sin** modal abierto → banner en la página (o patrón de proceso §30).
+   - Errores de **Guardar** (o validar) con modal **abierto** → **dentro** del contenido del Popup, o `confirm` / diálogo modal DX con el mensaje traducido.
+2. Ante error de guardado: **no** cerrar el Popup; mantener datos ingresados.
+3. Al cerrar/cancelar el Popup: **limpiar** el error del formulario.
+4. Mensajes vía `resolveAuthMessage` / `t()` (clave envelope); sin literales ES en el JSX.
+5. `data-testid` en la alerta del formulario: `{prefijo}FormError` (ej. `adminUsuariosFormError`, `partesMaestrosAsistentesFormError`).
+
+## Patrón de referencia (host)
+
+`CargaDiariaPage`: alerta de formulario renderizada **dentro** del `Popup` cuando está abierto; alerta de listado solo cuando el modal está cerrado.
+
+```tsx
+// Dentro del Popup, antes de los campos:
+{formError ? (
+  <div role="alert" data-testid="miProcesoFormError">{formError}</div>
+) : null}
+```
+
+## Prohibido
+
+- Un único `error` en `{error && <div role="alert">…</div>}` bajo el título de página usado tanto por `load()` como por `handleSave()` mientras `formOpen === true`.
+- Cerrar el Popup en `handleSave` antes de conocer el resultado del API.
+
+## Excepciones
+
+- Formulario a **pantalla completa** (sin Popup): banner en página o inline por campo (HU/TR).
+- **Login** y flujos auth GEN-04: reglas propias del SDK.
+
+## Checklist antes de merge (formularios modal)
+
+- [ ] Guardado fallido muestra error **en** el Popup (o diálogo modal)
+- [ ] `listError` y `formError` separados o render condicionado a `formOpen`
+- [ ] Popup Permisos / DX `contentRender`: alerta en el mismo árbol visible
+- [ ] i18n + `data-testid` `*FormError`
+- [ ] Test (unit o E2E) al menos en un proceso representativo

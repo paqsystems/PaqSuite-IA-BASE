@@ -74,7 +74,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 16 | Provider IA BYOK | listo | `LlmPreferencesPanel`; migrate+SP `adopcion-gen-16-byok.md` |
 | 17 | Auditoría / bandeja | listo | `AuditEventsPage` + `NotificationsBell`. Mail/canales dirigidos → GEN-30 |
 | 18 | Install/update | listo (ops) | Runbook Framework; no redefinir ciclo |
-| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa. **Puente `{cliente}`:** `bootstrapClienteFromWindow` en `main.tsx` **antes** del Router; 302 con `?cliente=`. Regla `20-frontend/34-cliente-bridge-spa.mdc` |
+| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa + **tokens proceso** (`--pq-process-*`) en grillas/pivot vía SDK. **Puente `{cliente}`:** `bootstrapClienteFromWindow` en `main.tsx` **antes** del Router; 302 con `?cliente=`. Reglas `34-cliente-bridge-spa`, `44-host-shell-process-surface-grid-pivot`, cableado **`44-host-framework-gen-cableado-componentes`** |
 | 20 | Envelope API | listo | `{ error, respuesta, resultado }` |
 | 21 | Chat / ayuda | listo | `ChatAssistantPage` / `openExternalHelp` (prereq 16) |
 | 22 | Mobile Capacitor | listo | `isNativeApp()`; kardex; sin pivot/excel/admin/`openInNewTab` |
