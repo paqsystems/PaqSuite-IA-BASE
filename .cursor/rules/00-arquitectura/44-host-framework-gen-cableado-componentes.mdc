@@ -104,7 +104,7 @@ Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla 
 | Campo | Valor |
 |-------|--------|
 | Estado ficha | **documentado** (2026-10) |
-| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.19** |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.23** (IAT-79 puente + preview canónico; ≥ 2.4.19 cableado base) |
 | OpenSpec / TR Framework | SPEC-001-06 / GEN-06 empresas; tema empresa SPEC-001-19 §5 |
 | Excluido mobile | Sí (admin seguridad) |
 
@@ -112,12 +112,13 @@ Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla 
 
 - Listado + modal alta/edición: `EmpresasAdminPage`, `EmpresaFormPopup`.
 - Catálogo UI de apariencias: claves `paqsuite.*` + puente a stock DevExtreme (`paqsuiteDxStockBridge`).
-- **Lectura API:** `normalizeThemeFromApi(theme)` — convierte `generic.*` / `material.*` persistidos → clave `paqsuite.*` para el SelectBox.
-- **Escritura API:** `mapThemeForApiPersistence(theme)` — envía en PUT/POST el stock DX que valida el backend.
-- Vista previa en modal: `applyDxTheme` interno (**sin** reload de página).
+- **Lectura API:** `normalizeThemeFromApi(theme)` — `paqsuite.*` tal cual; stock legacy → `paqsuite.*` para el SelectBox.
+- **Escritura API:** `mapThemeForApiPersistence(theme)` — persiste clave canónica **`paqsuite.*`** (SPEC-001-19 / IAT-79). Stock DX **no** se guarda.
+- **Runtime DX:** `mapThemeForDxRuntime` / `paqsuiteDxStockBridge` solo para CSS / `themes.current`.
+- Vista previa en modal: `applyDxTheme` interno (**sin** reload de página); callbacks con `paqsuite.*`.
 - i18n GEN: `admin.empresas.*` + `appearance.paqsuite.*` vía `registerEmpresasAdminI18nResources`.
 
-Exports útiles: `EmpresasAdminPage`, `registerEmpresasAdminI18nResources`, `normalizeThemeFromApi`, `mapThemeForApiPersistence`, `paqsuiteDxStockBridge`, `applyDxTheme` / `applyPaqsuiteTheme` (shell).
+Exports útiles: `EmpresasAdminPage`, `registerEmpresasAdminI18nResources`, `normalizeThemeFromApi`, `mapThemeForApiPersistence`, `mapThemeForDxRuntime`, `paqsuiteDxStockBridge`, `applyDxTheme` / `applyPaqsuiteTheme` (shell).
 
 #### MUST — Bootstrap i18n (host)
 
@@ -153,11 +154,11 @@ import {
   platform={buildPlatformHeaders()}
   i18nNamespace="common" // o "translation" — igual que defaultNS del host
   tenancyMode="single"   // MONO: solo edición; "multi" si alta ERP aplica
-  onPreviewTheme={(dxTheme) =>
-    void applyShellTheme(dxTheme, { reloadOnGroupChange: false })
+  onPreviewTheme={(paqsuiteTheme) =>
+    void applyShellTheme(paqsuiteTheme, { reloadOnGroupChange: false })
   }
-  onRestoreCommittedTheme={(dxTheme) =>
-    void applyShellTheme(dxTheme, { reloadOnGroupChange: false })
+  onRestoreCommittedTheme={(paqsuiteTheme) =>
+    void applyShellTheme(paqsuiteTheme, { reloadOnGroupChange: false })
   }
   onEmpresaSaved={(item) => {
     patchSessionEmpresa(item);
@@ -172,8 +173,8 @@ import {
 | `platform` | Sí | `X-Paq-Cliente`, `X-Company-Id` si MULTI |
 | `i18nNamespace` | **Sí** | Debe coincidir con `registerEmpresasAdminI18nResources` |
 | `tenancyMode` | Sí | `single` en MONO instalación una empresa |
-| `onPreviewTheme` | Recomendado | Recibe **stock DX**; shell sin reload |
-| `onRestoreCommittedTheme` | Recomendado | Cancelar modal tras “Aplicar” |
+| `onPreviewTheme` | Recomendado | Recibe **`paqsuite.*`** (IAT-79; no stock DX); shell sin reload |
+| `onRestoreCommittedTheme` | Recomendado | Cancelar modal tras “Aplicar”; misma clave `paqsuite.*` |
 | `onEmpresaSaved` | Recomendado | Actualizar `empresas[]` en sesión + tema shell |
 | `t` | No | Solo overrides puntuales de producto |
 
@@ -183,7 +184,7 @@ import {
 
 - Rutas: `GET/PUT /api/v1/admin/empresas` (+ `POST`/candidatos solo MULTI).
 - Persistencia por **SP** (`pq_sp_admin_empresas_*`); regla **74**.
-- Campo `theme` en BD: **whitelist stock DevExtreme** alineada al bridge del SDK (mismos valores que `mapThemeForApiPersistence` produce).
+- Campo `theme` en BD/API: **whitelist `paqsuite.*`** (`EmpresaThemeCatalog::isAllowed` / `toPersistedTheme`). Stock legacy se normaliza al leer.
 - Validación 422 tema inválido → clave envelope; el SDK muestra `admin.empresas.validation.themeInvalid` en el modal (regla **36**).
 
 MONO: prohibido alta/baja; solo consulta y edición (`empresas.alta.monoForbidden`).
@@ -193,30 +194,33 @@ MONO: prohibido alta/baja; solo consulta y edición (`empresas.alta.monoForbidde
 | Capa | Formato de `theme` |
 |------|---------------------|
 | UI SelectBox (SDK) | `paqsuite.{palette}.{family}` |
-| API / BD / sesión auth | `generic.*`, `material.*`, … (stock DX) |
+| API / BD / sesión auth | **`paqsuite.*`** (canónico; IAT-79) |
+| Runtime CSS DX | stock vía `paqsuiteDxStockBridge` / `mapThemeForDxRuntime` |
 | `data-theme` documento (A1) | `paqsuite.*` (lo setea `applyDxTheme` en SDK) |
 
-El host **no** debe enviar `paqsuite.*` en PUT; el SDK ya traduce. El host **no** debe asumir que la API devuelve `paqsuite.*` para bindear el combo sin normalizar.
+El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la API aún devolviera stock legacy, normalizar con `normalizeThemeFromApi` antes del combo.
 
 #### Anti-patrones
 
 | Anti-patrón | Efecto |
 |-------------|--------|
 | `onPreviewTheme` con `reloadOnGroupChange: true` | Cierra el modal / pierde edición |
+| Parchear mapa stock↔paqsuite en el host | Drift; IAT-79 se corrige en SDK |
+| Persistir stock DX “porque el bridge lo usa” | Pierde identidad de las 24 (stocks compartidos D1) |
 | Fork i18n `admin.empresas.form.save` solo en JSON host sin `registerEmpresasAdminI18nResources` | Mezcla EN/ES (“Save” / “Guardar”) |
 | `isEmpresaThemeKey` tratando DX como valor de SelectBox sin normalizar | Combo vacío con “Select…” |
-| PUT con `paqsuite.orange.material` | 422 apariencia no válida |
+| PUT con stock DX (`material.*` / `generic.*`) | 422 o normalización incorrecta |
 | Copiar `EmpresaFormPopup` al producto | Drift; viola regla **19** |
 | Omitir `i18nNamespace` con `defaultNS: 'common'` | Claves sin traducir (muestra la key) |
 
 #### Checklist antes de merge (ABM empresas en host)
 
-- [ ] Pin `@paqsuite/react-core` ≥ **2.4.19**
+- [ ] Pin `@paqsuite/react-core` ≥ **2.4.23** (IAT-79)
 - [ ] `registerEmpresasAdminI18nResources(i18n, <namespace>)` en bootstrap
 - [ ] Wrapper con `i18nNamespace` alineado
 - [ ] `tenancyMode` coherente con instalación (MONO → `single`)
 - [ ] Preview/restore shell **sin** reload; guardar actualiza sesión
-- [ ] Whitelist PHP/SQL de `theme` = valores del bridge DX
+- [ ] Whitelist PHP/SQL de `theme` = **24 `paqsuite.*`**
 - [ ] Menú `pq_menus` + permisos admin; ruta `/admin/empresas`
 - [ ] Smoke: editar → tema visible → Aplicar (modal abierto) → Guardar sin 422
 - [ ] Sin forks i18n duplicados del SDK
