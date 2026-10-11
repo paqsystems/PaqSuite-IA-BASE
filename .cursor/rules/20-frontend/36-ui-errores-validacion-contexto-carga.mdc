@@ -12,7 +12,7 @@ alwaysApply: true
 
 Complementa: **24** (ABM en Popup) · **27** (captions formulario) · **41** (i18n + testid).
 
-OpenSpec: `docs/05-open-spec/updates/001-Generalidades/SPEC-001-ui-errores-validacion-contexto-carga-update.md`.
+OpenSpec: `docs/05-open-spec/001-Generalidades/SPEC-001-ui-errores-validacion-contexto-carga.md`.
 
 ## Objetivo
 

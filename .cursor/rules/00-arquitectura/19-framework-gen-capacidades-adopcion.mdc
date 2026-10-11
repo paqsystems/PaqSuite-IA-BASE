@@ -88,6 +88,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 30 | Notification Service | **diferido** | Definición funcional en `docs/02-producto/30-…`. Sin exports SDK. No reinventar mail/WA/TG en el host |
 | 31 | Integración bancaria | **diferido** | Definición en `docs/02-producto/31-…`. Sin exports SDK. No reinventar conectores bancarios en el host |
 | 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...`; UI smoke `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host arma JSON + persiste CAE. migrate+SP `adopcion-gen-32-arca.md`. **excluido mobile** |
+| 35 | Distribución SDK Cloudsmith | **ops (prerelease)** | No hay UI. Cloudsmith `paqsystems/paqsuite-sdk`. SoT [`adopcion-sdk-registry.md`](../../../docs/06-operacion/adopcion-sdk-registry.md). Hosts: SPEC de **adopción**. Satis/Verdaccio = rollback hasta Fase 7. |
 
 ## Fronteras frecuentes
 
@@ -103,5 +104,6 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | i18n pie grilla / menú contextual totalizadores | `registerGridI18nResources` + `ProcessDataGrid` SDK | `grid.summary.*` en JSON host, `summaryTypeLabels` masivo, copiar `gridI18n` al producto |
 | Bump `@paqsuite/react-core` | Diff template `create-app` + ritual bump producto (regla **`43`**) | Subir pin sin revisar exports ni reintroducir forks |
 | ABM empresas + tema A1 | `EmpresasAdminPage` + `registerEmpresasAdminI18nResources` (regla **`44`**, SDK ≥ 2.4.19) | Fork i18n/mapper host, `paqsuite.*` en PUT, reload en “Aplicar” |
+| Registry privado SDK (npm/Composer) | GEN-35 Cloudsmith (SPEC-001-35); adopción en Host | Satis/Verdaccio nuevos; path al monorepo Framework en CI/prod |
 
 Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`. i18n SDK sin forks: regla **`43-host-sdk-i18n-sin-fork-gen`** (`40-i18n`). Cableado por componente: regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`).

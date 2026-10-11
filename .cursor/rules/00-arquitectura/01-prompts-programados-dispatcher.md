@@ -76,7 +76,7 @@ El orden de las filas **es el alfabético A–S** y coincide con el **orden de l
 | **L** | SPEC-update solo redacción / alcance (sin volcado CC) | Ver **PARTE L** |
 | **M** | Solo unificar SPEC-update | Ver **PARTE M** |
 | **N1** | Reporte PR | `/write-pr-report` / "Generá el reporte de PR" |
-| **N** | Commit / PR | "Commiteá" … |
+| **N** | Commit / push / PR a `develop` | "Commiteá" … / "Hacé PR a develop" |
 | **O** | Entorno de desarrollo | "Iniciá el entorno de desarrollo" |
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
@@ -686,6 +686,38 @@ el asistente debe:
 2. consultar al usuario si quiere hacer el push. en caso afirmativo, proceder a hacerlo.
 3. Generar el texto para el PR en el archivo `_PR-prompt.md`, borrando el contenido anterior
 
+### Comando: "Hacé PR a develop"
+
+Cuando el usuario escriba algo equivalente a:
+
+```text
+Hacé PR a develop
+Hacé el PR a develop
+Creá el PR a develop
+Abrí PR a develop
+```
+
+el asistente debe **en este orden** (no abrir el PR hasta completar los pasos previos):
+
+1. **Política de ramas** (regla **18**): el destino del PR es **`develop`**, desde la **rama de trabajo actual**. **Prohibido** PR a `main` con este comando, push directo a `develop`/`main`, o PR a `develop` si la rama actual ya **es** `develop` o `main` (en ese caso informar y no continuar).
+2. **¿Es un host del SDK?** Aplicar el **criterio de host** de la **PARTE S**. Si **no** es host, saltar al punto **5** (commit/push/PR sin adaptar SDK).
+3. **¿Ya consume el SDK por deploy?** Comprobar en el workspace actual (sin asumir el modo por el nombre de la rama):
+   - `frontend/package.json`: `@paqsuite/react-core` (y otros `@paqsuite/*` del Framework) **no** usan `file:`; pin **semver**.
+   - `frontend/vite.config.ts` (u homólogo): **sin** alias al checkout `PaqSuite-IA-FRAMEWORK` / `packages/js/react-core`.
+   - `frontend/.npmrc` versionado: registry **Cloudsmith** (`@paqsuite:registry=https://npm.cloudsmith.io/paqsystems/paqsuite-sdk/`) **sin** token.
+   - `backend/composer.json`: `paqsuite/laravel-core` por **semver**; repositorio Composer **Cloudsmith**; **sin** `type: path` al monorepo Framework.
+   - Locks (`package-lock.json` / `composer.lock`): **sin** rutas locales al Framework.
+   Si **todas** las comprobaciones aplicables al host pasan, el modo ya es **deploy** → saltar al punto **5**.
+4. **Adaptar a deploy (obligatorio si el punto 3 falla):** ejecutar la **PARTE S — modo deploy** (Cloudsmith; no dejar Satis/Verdaccio/`file:` para el SDK). Esta frase **autoriza** commit y push de esa adaptación. Tras adaptar:
+   - hacer **commit** de los archivos de pins/locks/config tocados (mensaje que explique el porqué: el PR a `develop` debe instalar el SDK empaquetado);
+   - **push** de la rama de trabajo (`-u` si aún no trackea remoto).
+   Si la adaptación no se puede completar (token Cloudsmith ausente, pin no publicado, path Framework inventado), **no** abrir el PR; informar el bloqueo.
+5. **Commit y push del trabajo restante:** si hay cambios sin commitear (feature + adaptación, o solo feature), **commit** y **push** de la rama de trabajo. Este comando **autoriza** commit y push (a diferencia de «Commiteá» a secas, que pide confirmación del push).
+6. **Recién entonces** crear el **Pull Request hacia `develop`** (`gh pr create`, base `develop`). Cuerpo del PR alineado a **N1** / `_PR-prompt.md` si existe o si conviene generarlo. Devolver la **URL** del PR.
+7. En la respuesta final, declarar **modo SDK** comprobado o aplicado (`deploy` / `no aplica: no es host`) y la URL del PR.
+
+**Must:** `develop` (Preview/Forge-dev) **nunca** debe recibir un PR cuyo `package.json` / `composer.json` / Vite apunten al labo repo. El modo **labo repo** queda solo en ramas de trabajo locales hasta este comando (o hasta **PARTE S** explícita «por deploy»).
+
 ---
 
 ## PARTE O – Inicialización del entorno de desarrollo
@@ -701,7 +733,9 @@ El asistente debe:
    - `backend/` (Laravel)
    - `frontend/` (Vite / React)
 
-2. Indicar la ejecución de los siguientes comandos,
+2. **SDK Cloudsmith (GEN-35):** si el host consume `paqsuite/laravel-core` / `@paqsuite/react-core` desde Cloudsmith, comprobar (sin imprimir el valor) que exista `CLOUDSMITH_READ_TOKEN` en el entorno. Si falta, **no** arrancar `npm install` / `composer install` a ciegas: indicar la regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** (variable de usuario Windows + `auth.json` Composer). Composer no lee `backend/.env` para el registry.
+
+3. Indicar la ejecución de los siguientes comandos,
    **en terminales separadas**:
 
 1) Si el backend es mysql, abrir el túnel SSH
@@ -880,7 +914,7 @@ Si el directorio no existe, **informar** y no inventar paths en `composer.json` 
 | `frontend/MODO-REPO-LAB.md` (si existe en el host) | Resumen FE/BE lab |
 | Framework `docs/06-operacion/adopcion-sdk-registry.md` | Registries y `sdk-link` |
 
-**Deploy hoy:** Satis (PHP) + Verdaccio (npm). **Próximo:** CloudSmith u otro registry corporativo — cuando esté operativo, actualizar URLs en esta parte y en `deploy-sdk-package-repos.md`; hasta entonces, cablear **deploy** = Satis + Verdaccio según el host.
+**Deploy (MUST para PR a `develop` / Forge / Vercel):** Cloudsmith (`paqsystems/paqsuite-sdk`). Satis, Verdaccio, Tailscale y rutas `file:` **no** son modo deploy. Detalle de tokens y `.npmrc`/Composer: regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** y skill de despliegue (**PARTE R**).
 
 ### Comportamiento — modo **labo repo**
 
@@ -893,7 +927,7 @@ Objetivo: desarrollo local contra el **código fuente** del Framework en disco, 
    - Ejecutar `npm install` en `frontend/` y dejar constancia en el resumen (no commitear salvo autorización del usuario).
 3. **Backend** (si el host tiene `backend/`):
    - **Preferido:** mantener `composer.json` con repositorio **Satis** (sin repo `path` commiteado) y enlazar vendor local con el script del Framework `tools/sdk/sdk-link.ps1` (o equivalente documentado en adopción SDK) apuntando al checkout sibling.
-   - **Alternativa solo lab** (si la TR del producto lo permite): repositorio Composer `type: path` temporal — **advertir** que no debe mezclarse con deploy Forge/Vercel; revertir antes de PR a `develop`.
+   - **Alternativa solo lab** (si la TR del producto lo permite): repositorio Composer `type: path` temporal — **advertir** que no debe mezclarse con deploy Forge/Vercel; revertir **antes** de «Hacé PR a develop» (**PARTE N**).
    - Ejecutar `composer install` / link según el script y verificar `composer show paqsuite/laravel-core`.
 4. **Documentar** en el mensaje final: modo activo, rutas usadas, comandos ejecutados, y recordatorio de volver a **deploy** antes de release (ver checklist en `deploy-sdk-package-repos.md` § «Modo repo-lab local»).
 5. **No** hacer commit ni push salvo autorización explícita del usuario.
@@ -904,22 +938,22 @@ Objetivo: consumir **versiones publicadas** (locks commiteables, builders Forge/
 
 1. **Frontend** (si aplica):
    - Quitar alias `vite.config.ts` que apunten al monorepo Framework (resolver solo vía `node_modules` / paquete instalado).
-   - En `package.json`, reemplazar `file:` por versión semver pinneada acorde al host (ej. la ya usada en `ritual-bump-sdk.md` o la última acordada en Verdaccio).
-   - Asegurar `frontend/.npmrc` con scope `@paqsuite` al registry Verdaccio (HTTPS Funnel en CI/Vercel según `docs/06-operacion/verdaccio-vercel-conectividad.md`).
-   - `npm install` en `frontend/`; opcional `frontend/scripts/refresh-react-core-lock.ps1` si el repo lo define para regenerar lock desde Verdaccio.
+   - En `package.json`, reemplazar `file:` por versión **semver** pinneada acorde al host (`ritual-bump-sdk.md` o el pin ya publicado en Cloudsmith).
+   - Asegurar `frontend/.npmrc` versionado **solo** con `@paqsuite:registry=https://npm.cloudsmith.io/paqsystems/paqsuite-sdk/` y `always-auth=true` (**sin** token).
+   - `npm install` en `frontend/` con `CLOUDSMITH_READ_TOKEN` en el entorno (no imprimir el valor); regenerar lock si hace falta.
 2. **Backend** (si aplica):
-   - En `composer.json`, **solo** repositorio Satis (`http://100.110.69.93/satis` o URL vigente en el host); **eliminar** repos `path` al Framework si estuvieran commiteados.
-   - Desvincular link local (`sdk-link` inverso o `composer install` limpio) y `composer update paqsuite/laravel-core` con red al builder/Satis.
-   - Verificar que `composer.lock` no referencia rutas locales al monorepo (scripts Forge del host suelen validarlo).
+   - En `composer.json`, repositorio Composer Cloudsmith (`https://composer.cloudsmith.io/basic/paqsystems/paqsuite-sdk/`); **eliminar** repos `path` al Framework y URLs Satis si estuvieran commiteados.
+   - Desvincular link local (`sdk-link` inverso o `composer install` limpio) y actualizar `paqsuite/laravel-core` con autenticación runtime (`COMPOSER_AUTH`), sin escribir el token en el repo.
+   - Verificar que `composer.lock` no referencia rutas locales al monorepo.
 3. **Smoke mínimo** sugerido al cerrar: `composer show paqsuite/laravel-core`, `npm list @paqsuite/react-core`, health/login si el entorno está disponible.
-4. **No** hacer commit ni push salvo autorización explícita del usuario.
+4. **Commit / push:** no, salvo autorización explícita — **excepción:** el comando **«Hacé PR a develop»** (**PARTE N**) **sí** autoriza adaptar a deploy, commitear, pushear y abrir el PR.
 
 ### Anti-patrones
 
 | Anti-patrón | Efecto |
 |-------------|--------|
 | Aplicar Parte S en `PaqSuite-IA-FRAMEWORK` | No es host; confunde origen del SDK |
-| Dejar `file:` + alias Vite al repo Framework en rama de deploy | Build Vercel/CI falla o depende de paths inexistentes |
+| Abrir PR a `develop` con `file:` / alias Vite / Composer `path` | Preview y Forge no tienen el checkout Framework; el build falla |
 | Commitear repo Composer `path` al Framework «por comodidad» | Forge deploy rompe; viola contrato empaquetado |
 | Cambiar modo sin regenerar lock | Drift entre dev y CI |
 
@@ -942,7 +976,7 @@ Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), modelo de datos vía **Parte J**.
+Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.

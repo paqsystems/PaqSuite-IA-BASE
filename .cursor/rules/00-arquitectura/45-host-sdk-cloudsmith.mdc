@@ -1,0 +1,99 @@
+---
+description: >-
+  Hosts MUST consumir paqsuite/laravel-core y @paqsuite/react-core (y create-app)
+  desde Cloudsmith. Token read en cada PC y en Forge/Vercel. No Satis/Verdaccio
+  como camino feliz. No path al monorepo en CI/prod.
+alwaysApply: true
+---
+
+# Host — SDK vía Cloudsmith (GEN-35)
+
+Aplica a **todo host** (`paqsuite/laravel-core` + `@paqsuite/react-core`) y a proyectos salidos de `@paqsuite/create-app`.
+
+SoT Framework: `docs/06-operacion/adopcion-sdk-registry.md` · `docs/06-operacion/PRIMEROS-PASOS.md` · SPEC-001-35.  
+Piloto Partes: `docs/06-operacion/adopcion-gen-35-cloudsmith.md`.
+
+## MUST (registry)
+
+1. Cloudsmith workspace `paqsystems`, repo `paqsuite-sdk`, HTTPS.
+2. Composer: `https://composer.cloudsmith.io/paqsystems/paqsuite-sdk/` (**sin** `/basic/`). Auth: header `X-API-KEY` y/o `auth.json` bearer con token **read**.
+3. npm: `@paqsuite:registry=https://npm.cloudsmith.io/paqsystems/paqsuite-sdk/` y `_authToken=${CLOUDSMITH_READ_TOKEN}` (el `.npmrc` **no** lleva el valor).
+4. Nombre único del secreto: **`CLOUDSMITH_READ_TOKEN`**. Nunca en Git. Nunca el write **`CLOUDSMITH_API_KEY`** del Framework. En GitHub: **Secret**, no Variable.
+5. Path/`file:` al monorepo: solo lab local **no commiteado**.
+6. Sin token, el install **falla** (no hay fallback silencioso a Satis/Verdaccio).
+
+## PC nueva (desarrollador)
+
+El token **no** va en `backend/.env` (Laravel no lo usa para Composer/npm). Va en el **entorno del SO** de quien instala.
+
+1. Usar el token Cloudsmith **read** del repo `paqsystems/paqsuite-sdk` llamado `paqsuite-PC-read`.
+2. **Windows — variable de usuario** (persiste entre sesiones):
+   - Configuración → Sistema → Acerca de → Configuración avanzada del sistema → Variables de entorno → *Variables de usuario* → Nueva.
+   - Nombre: `CLOUDSMITH_READ_TOKEN`
+   - Valor: el token
+   - **Cerrar y reabrir** terminal, Cursor e IDE. Las apps ya abiertas no ven la variable nueva.
+3. Comprobar (no imprimir el valor):
+
+```powershell
+if ($env:CLOUDSMITH_READ_TOKEN) { 'CLOUDSMITH_READ_TOKEN=definido' } else { 'CLOUDSMITH_READ_TOKEN=FALTA' }
+```
+
+Sesión puntual (no persiste): `$env:CLOUDSMITH_READ_TOKEN = '<token>'`.
+
+4. **npm / Vite:** con la variable definida, `cd frontend` → `npm ci` o `npm install`. El `.npmrc` del host expande `${CLOUDSMITH_READ_TOKEN}`.
+5. **Composer:** la variable sola no alcanza. En `backend/` (archivo **`auth.json` gitignored**). Si el token es *entitlement* (el mismo que npm), Composer nativo `composer.cloudsmith.io` + `X-API-KEY` puede dar 401; usar URL temporal `https://dl.cloudsmith.io/<token>/paqsystems/paqsuite-sdk/composer/` solo para el `update`, restaurar `composer.json` sin token, y en el **lock** dejar dist `https://dl.cloudsmith.io/basic/paqsystems/...` (**nunca** el slug del entitlement en git). `auth.json`:
+
+```json
+{
+  "http-basic": {
+    "dl.cloudsmith.io": { "username": "token", "password": "<CLOUDSMITH_READ_TOKEN>" }
+  }
+}
+```
+
+```powershell
+cd backend
+# auth.json no se commitea
+php -r '$k=getenv("CLOUDSMITH_READ_TOKEN"); if(!$k){fwrite(STDERR,"Falta CLOUDSMITH_READ_TOKEN\n"); exit(1);} file_put_contents("auth.json", json_encode(["http-basic"=>["dl.cloudsmith.io"=>["username"=>"token","password"=>$k]]], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT));'
+composer install --no-interaction --prefer-dist
+```
+
+6. Regenerar **locks** (`composer.lock` / `package-lock.json`) solo en una máquina **con** token; esos archivos sí van a git. El resto del equipo instala con el mismo nombre de variable.
+
+## Forge / Vercel / CI (no es la PC)
+
+| Dónde | Dónde se define |
+|-------|-----------------|
+| Cada PC de desarrollo | Variable de **usuario** Windows (arriba) |
+| Vercel | Settings → Environment Variables → `CLOUDSMITH_READ_TOKEN` (Production + Preview + Development) |
+| Forge | Environment del sitio → `CLOUDSMITH_READ_TOKEN` |
+| GitHub Actions | Repository **secret** (si hay job de `composer install` / `npm ci`) |
+| Git / `.env` Laravel | **Prohibido** |
+
+## Errores típicos (falta o no llega el token)
+
+Si el agente o el programador ve alguno de estos, **no** reintroducir Satis/Verdaccio. Pedir o definir `CLOUDSMITH_READ_TOKEN` y reabrir la terminal.
+
+| Síntoma | Causa habitual | Qué hacer |
+|---------|----------------|-----------|
+| `vercel-install: falta CLOUDSMITH_READ_TOKEN` | Vercel o script local sin env | Cargar el secret en Vercel **o** la variable de usuario; reabrir terminal |
+| `refresh-react-core-lock: define CLOUDSMITH_READ_TOKEN` | Script de lock sin env | Igual que arriba |
+| `ERROR: falta CLOUDSMITH_READ_TOKEN (Forge Environment)` | Deploy Forge | Forge → Environment del sitio |
+| npm `401` / `ENEEDAUTH` / `Unable to authenticate` a `npm.cloudsmith.io` | Variable no visible (Cursor abierto antes del alta) o `.npmrc` con token vacío | Reabrir Cursor; comprobar `if ($env:CLOUDSMITH_READ_TOKEN)` |
+| Composer `401` / `Could not authenticate` a `composer.cloudsmith.io` | No hay `auth.json` ni header `X-API-KEY` | Generar `backend/auth.json` (gitignore) como en § PC nueva |
+| `composer.lock no resuelve laravel-core desde Cloudsmith` | Lock todavía Satis | Regenerar lock **con** token; no bajar el pin |
+| `Unable to locate package @paqsuite/react-core` / 404 Cloudsmith | Pin no publicado o token de otro repo | Verificar pin y que el token sea **read** de `paqsuite-sdk` |
+| Agente: “faltan los locks porque no hay CLOUDSMITH_READ_TOKEN” | La sesión del agente no tiene la env | Definir variable de usuario, **reiniciar Cursor**, repetir `composer update` / `refresh-react-core-lock` |
+
+## Prohibido (camino feliz)
+
+- Satis `http://100.110.69.93/satis` o Verdaccio/Funnel como registry de producto nuevo o de CI/prod migrado.
+- Token write de Cloudsmith en un Host.
+- Variables de GitHub (no Secrets) para el token.
+- Pegar `_authToken=` con valor en `.npmrc` o commitear `auth.json`.
+
+Hasta Fase 7 Framework, Satis/Verdaccio son **rollback** de hosts aún no migrados, no el default.
+
+## Agente (Cursor)
+
+Antes de `composer update` / `npm ci` / regenerar locks: comprobar si existe `$env:CLOUDSMITH_READ_TOKEN` **sin imprimir el valor**. Si falta: no inventar token, no usar `CLOUDSMITH_API_KEY`, explicar esta regla y esperar al humano.

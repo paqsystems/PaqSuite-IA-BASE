@@ -11,6 +11,7 @@
 17-commit-push-revision-version.mdc
 18-git-flujo-main-desde-develop.mdc
 19-framework-gen-capacidades-adopcion.mdc
+45-host-sdk-cloudsmith.mdc
 31-estado-hu-tr.md
 Carpeta sugerida
 BASE
