@@ -37,7 +37,7 @@ El MCP **no** crea proyectos (hace falta admin). El agente opera issues.
 
 ## Tablero: 9 columnas
 
-Renombrar / agregar columnas 1:1 con el status (simplifica `transitionJiraIssue`):
+Configurado **2026-10-12** en los 7 proyectos de la tabla (flujo + columnas del board, 1:1 con el status):
 
 1. Backlog  
 2. SPEC  
@@ -51,15 +51,15 @@ Renombrar / agregar columnas 1:1 con el status (simplifica `transitionJiraIssue`
 
 **Desplegado** = el trabajo **entró a `develop` vía PR**, no producción `main`.
 
-Hasta que el board no tenga las 9, el agente usa **fallback** y deja en el ledger la columna SDD lógica:
+Transiciones MCP: usar el **nombre de columna/status** de esa lista (no el Kanban stock To Do / In Progress / In Review / Done).
 
-| Columna SDD | Status por defecto (Kanban stock ES, 2026-10) |
-|-------------|-----------------------------------------------|
-| Backlog, SPEC, HU / TR, Especificado | Tareas por hacer (`Por hacer`) |
-| Implementando, Verificando, Control calidad | En curso / En revisión |
-| Finalizado, Desplegado | Finalizada (`Listo`) |
+Si un board nuevo aún tuviera solo 4 columnas stock, fallback temporal:
 
-Smoke MCP (2026-10-12): create Epic + comment + transition `En curso` OK en `PIABASE`; el dummy se eliminó.
+| Columna SDD | Status stock |
+|-------------|--------------|
+| Backlog, SPEC, HU / TR, Especificado | To Do / Tareas por hacer |
+| Implementando, Verificando, Control calidad | In Progress / In Review |
+| Finalizado, Desplegado | Done / Finalizada |
 
 ## Parte A0 (humano)
 

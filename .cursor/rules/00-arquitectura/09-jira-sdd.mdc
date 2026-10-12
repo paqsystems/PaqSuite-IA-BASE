@@ -60,7 +60,7 @@ Labels: `SDD`, `GEN-xx`, `update`, `deuda-openspec`, `host`, `framework`.
 
 **Pendiente de revisión humana** vive **dentro de Verificando**. **Finalizado** no lo decide el agente salvo pedido explícito o metadato ya `Finalizado`. **Desplegado** solo desde **Finalizado**.
 
-Si el tablero aún tiene solo To Do / In Progress / Done: usar el **mapa de fallback** del runbook y dejar en el ledger la columna SDD **lógica**. Completar las 9 columnas es setup humano.
+Los 7 proyectos de la tabla tienen las **9 columnas** (2026-10-12). Transicionar por **nombre** de columna. Si un board nuevo aún tuviera To Do / In Progress / Done: mapa de fallback del runbook y ledger con la columna SDD **lógica**.
 
 ## Ledger en descripción (MUST)
 
