@@ -1,0 +1,39 @@
+---
+description: >-
+  Botones de diálogo GEN (Cancelar/Guardar/Aceptar/Cerrar y equivalentes i18n)
+  deben usar DialogActionButton: Alt+letra + subrayado según caption traducido.
+globs:
+  - "**/*Popup*.tsx"
+  - "**/*Dialog*.tsx"
+  - "**/*Modal*.tsx"
+  - "**/features/**/*.tsx"
+alwaysApply: false
+---
+
+# 46 — Atajos Alt en botones de diálogo (MUST)
+
+Complementa: SPEC-001-01 §15 · helper `DialogActionButton` en `@paqsuite/react-core`.
+
+## Norma
+
+Todo botón **con caption** en pie de `Popup` / modal / pantalla de carga GEN (Cancelar, Guardar, Aceptar, Cerrar y equivalentes traducidos) **MUST** usar `DialogActionButton`. No usar `devextreme-react/button` suelto en ese pie.
+
+La letra es la **primera letra** del caption ya traducido; se subraya; `accessKey` ASCII (`á` → `a`). Sin segunda letra ante colisión. Caption de espera («Guardando…») usa `accessCaption` del texto estable.
+
+El atajo **MUST** ejecutarse con listener `Alt+letra` en captura (`useDialogAccessKey`). No alcanzar con el `accessKey` HTML/DX: solo enfoca y el Popup lo traga. No usar Ctrl.
+
+## Prohibido
+
+- Pie de Popup con `<Button text={t('….cancel')} />` / `….save`.
+- Inventar atajos distintos por pantalla.
+- Aplicar esto a iconos de toolbar (refresh, edit, trash, menú): esos siguen `Button` con `icon`.
+
+## Host
+
+No reimplementar el subrayado. Importar `DialogActionButton` del SDK.
+
+## Checklist
+
+- [ ] Pie Cancelar/Guardar (o equivalente) = `DialogActionButton`
+- [ ] i18n del caption (no literal ES)
+- [ ] `data-testid` existente se conserva en `elementAttr`

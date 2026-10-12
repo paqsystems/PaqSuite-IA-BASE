@@ -2,6 +2,7 @@
 
 En el método **Open-Spec completo** los prompts se ejecutan en este orden:
 
+0. **`openspec-00-A0-backlog-jira.md`** — Epic en Backlog (si aún no hay `Jira:`); **A0 embebido** si se pidió este paso sin A0
 1. **`openspec-01-SPEC-desde-contexto.md`** (este archivo) — definir alcance en SPEC  
 2. **`openspec-02-HU-desde-SPEC.md`** — HU solo desde SPEC  
 3. **`openspec-03-TR-desde-SPEC-y-HU.md`** — TR solo desde SPEC + HU  
@@ -69,3 +70,9 @@ O explícito:
 ```
 
 Tras este paso sigue **`openspec-02-HU-desde-SPEC.md`** con la ruta del SPEC creado.
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Si no hay `Jira:` en el origen: **A0 embebido** (Epic Backlog + clave en el md + comentario). Luego transicionar Epic a **SPEC**, summary `[SPEC-…]`, ledger, labels `SDD` / `GEN-xx`. MCP fail → no abortar.

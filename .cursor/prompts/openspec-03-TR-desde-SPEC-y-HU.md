@@ -50,3 +50,9 @@ Tabla de metadatos del TR:
 ```
 
 Actualizá metadatos del **SPEC** y de la **HU** con enlace al TR.
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Una **Task** por TR: summary `[TR-…]`, parent Story (o Epic + enlace HU), `Jira:` en el TR. Epic sigue **HU / TR** hasta C1. MCP fail → no abortar.

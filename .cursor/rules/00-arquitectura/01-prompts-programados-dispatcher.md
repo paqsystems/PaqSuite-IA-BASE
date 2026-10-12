@@ -1,9 +1,9 @@
 # Regla: Dispatcher de Prompts — **Open-Spec completo** + ejecución HU/TR
 
 ## Objetivo
-Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad.
+Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (**A0** backlog Jira → SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad. Jira: regla **`09-jira-sdd.mdc`** (proyecto = **mismo nombre que el repo**).
 
-Las partes **A–F** son el **núcleo** en orden **alfabético igual al cronológico** de ejecución. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–S** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
+Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–S** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
 
 ---
 
@@ -15,6 +15,7 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 | Paso | Parte | Acción |
 |------|-------|--------|
+| 0 | **A0** | **Backlog Jira:** `openspec-00-A0-backlog-jira.md` — Epic en columna Backlog desde markdown; clave `Jira:` en el origen. Si se pide **A** sin A0: **A0 embebido**. |
 | 1 | **A** | **SPEC** desde contexto: `openspec-01` — `docs/02-producto/…`, ticket o notas. **Forma corta** (*Creá el SPEC … según …*): ver **PARTE A**. |
 | 2 | **A1** | Revisar ambigüedad del SPEC antes de pasar a HU. |
 | 3 | **B** | **HU** **solo** desde SPEC: `prompts/openspec-02-HU-desde-SPEC.md`. |
@@ -53,10 +54,11 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ## Índice alfabético (partes **A**–**S**)
 
-El orden de las filas **es el alfabético A–S** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–S** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–S** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–S** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
+| **A0** | Backlog Jira (Epic, sin SPEC) | Ver **PARTE A0** · `openspec-00-A0-backlog-jira.md` |
 | **A** | SPEC desde contexto (**openspec-01**) | Ver **PARTE A** |
 | **A1** | Revisión de ambigüedad del SPEC | `/spec-ambiguity-review` |
 | **B** | HU desde SPEC (**openspec-02**) | Ver **PARTE B** |
@@ -85,6 +87,31 @@ El orden de las filas **es el alfabético A–S** y coincide con el **orden de l
 
 ---
 
+## PARTE A0 — Backlog Jira (sin SPEC)
+
+**Jira:** proyecto = **mismo nombre que el repo** (regla **09**, runbook `.cursor/docs/00-jira-sdd.md`). Markdown sigue siendo SoT.
+
+### Comando
+
+```text
+Registrá en el backlog de Jira [ruta markdown]
+```
+
+o *Paso A0 del Open-Spec con …*
+
+### Comportamiento
+
+1. Ejecutar **`prompts/openspec-00-A0-backlog-jira.md`**.
+2. Crear Epic en **Backlog** (o reutilizar si ya hay `Jira:`). Grabar `Jira: KEY-n` en el origen.
+3. **No** crear SPEC. Si el origen es un CC sobre HU/SPEC existente → **PARTE G**, no A0.
+4. MCP fail → informar; no abortar.
+
+### Cierre Jira (MUST)
+
+Regla **09**: ledger Backlog, labels `SDD`, resumen 3–8 líneas (no copiar el md).
+
+---
+
 ## PARTE A — SPEC desde contexto (**openspec-01**)
 
 ### Rutas base por defecto (este repo)
@@ -110,7 +137,8 @@ Siguen siendo válidas las **rutas completas** u otros orígenes (ticket, HU, ar
 
 1. Ejecutar el prompt **`prompts/openspec-01-SPEC-desde-contexto.md`** (o ruta equivalente bajo `docs/prompts/`). Si el mensaje usa la **forma corta**, expandir **`docs/05-open-spec/`** y **`docs/02-producto/`** según la tabla de rutas base.
 2. Cumplir **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`** y **`docs/05-open-spec/_template-spec.md`** si existe.
-3. **A** es siempre el **primer** artefacto de alcance de un trabajo nuevo; no crear HU/TR con alcance nuevo antes de **A**.
+3. **A** es el **primer** artefacto de **alcance** (SPEC) de un trabajo nuevo; no crear HU/TR con alcance nuevo antes de **A**. El **tablero** nace en **A0** (o A0 embebido en este paso si falta `Jira:`).
+4. **Cierre Jira (MUST, regla 09):** si no hay clave → A0 embebido (Epic Backlog + `Jira:` + comentario); luego Epic → **SPEC**, summary `[SPEC-…]`. MCP fail → no abortar.
 
 ---
 
@@ -151,6 +179,10 @@ Verificar que el SPEC sea suficientemente claro antes de generar HU.
 
 Si dos programadores podrían implementar cosas distintas, no generar HU todavía.
 
+### Cierre Jira (MUST)
+
+Comentario en la Epic con el veredicto. **No apto:** no crear Stories. Columna **SPEC**. Regla **09**.
+
 ---
 
 ## PARTE B — HU desde SPEC (**openspec-02**)
@@ -163,6 +195,7 @@ Si dos programadores podrían implementar cosas distintas, no generar HU todaví
 
 1. Ejecutar **`prompts/openspec-02-HU-desde-SPEC.md`**.
 2. La HU debe reflejar **solo** el SPEC; actualizar metadatos del SPEC con enlace a la HU.
+3. **Cierre Jira (MUST, regla 09):** Epic → **HU / TR**; Story `[HU-…]` por HU; `Jira:` en el md. MCP fail → no abortar.
 
 ---
 
@@ -198,6 +231,10 @@ Optimizar la HU para que sea más clara, verificable y menos ambigua antes de ge
 - Lo no definido debe quedar como duda, supuesto o decisión pendiente.
 - No modificar implementación.
 
+### Cierre Jira (MUST)
+
+Comentario en la Story: enriquecida / dudas abiertas. Sin cambio de columna. Regla **09**.
+
 ---
 
 ## PARTE C — TR desde SPEC + HU (**openspec-03**)
@@ -211,6 +248,7 @@ Optimizar la HU para que sea más clara, verificable y menos ambigua antes de ge
 1. Ejecutar **`prompts/openspec-03-TR-desde-SPEC-y-HU.md`**.
 2. Exigir **SPEC relacionada** en metadatos del TR (regla **04**).
 3. Posible **`Estado: Especificado`** en HU/TR al cerrar alcance (`07-estado-hu-tr.md` §2).
+4. **Cierre Jira (MUST, regla 09):** Task `[TR-…]` por TR; Epic sigue **HU / TR**. MCP fail → no abortar.
 
 ---
 
@@ -248,6 +286,10 @@ Confirmar que la TR es **implementable sin interpretar** (contratos API, envelop
 ### Salida mínima
 
 Informe con veredicto **Apto / Apto con observaciones / No apto** y **Puede pasar a D1/D: Sí/No** (plantilla en regla 16).
+
+### Cierre Jira (MUST)
+
+Si **Apto**: Stories + Tasks + Epic → **Especificado**. No apto: no transicionar. Comentario veredicto. Regla **09**.
 
 ---
 
@@ -304,6 +346,10 @@ SPEC
 ## Confirmación de alcance
 ```
 
+### Cierre Jira (MUST)
+
+Epic + Task TR → **Implementando**. Comentario: plan (impacto, orden, riesgos). Regla **09**.
+
 ---
 
 ## PARTE D – Ejecución de una TR
@@ -327,6 +373,7 @@ El asistente debe:
 6. Ejecutar el prompt resultante como si hubiera sido pegado explícitamente por el usuario.
 7. Tratar la TR como **FUENTE DE VERDAD del alcance**.
 8. Al **finalizar** la implementación y la trazabilidad en el archivo TR (secciones de cierre), actualizar el campo **Estado** de ese TR a **`Pendiente de Revisión`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+9. **Cierre Jira (MUST, regla 09):** comentario archivos tocados; TR → **Verificando**; Epic por agregación. MCP fail → no abortar.
 
 ---
 
@@ -360,6 +407,10 @@ npm run test:run
 En otra terminal:
 cd frontend
 npm run test:e2e
+
+### Cierre Jira (MUST)
+
+Comentario en la Task: resultado pass/fail + comando. Fail **no** retrocede columna. Regla **09**.
 
 ---
 
@@ -396,6 +447,10 @@ Verificar evidencia antes de afirmar que algo está terminado.
 | Aprobado con observaciones | Evaluar pendientes |
 | No aprobado | Corregir antes de cerrar |
 
+### Cierre Jira (MUST)
+
+Comentario veredicto F1. Sigue **Verificando**. Regla **09**.
+
 ---
 
 ## PARTE F — Verificación implementación (**openspec-05**)
@@ -410,6 +465,7 @@ Verificar evidencia antes de afirmar que algo está terminado.
 1. Ejecutar **`prompts/openspec-05-verificar-implementacion.md`** con la ruta del **TR** (obligatoria); SPEC/HU desde enlaces del TR si existen.
 2. **No** reemplaza la **Parte E**; se usa después de **D** y idealmente después de **E** en el ciclo de entrega.
 3. En el ciclo de **correcciones**, ejecutar **F** sobre el TR o TR-update afectado antes de cerrar revisión o tras cambios sustanciales.
+4. **Cierre Jira (MUST, regla 09):** comentario cierre documental + gaps. **No** pasar a Finalizado. MCP fail → no abortar.
 
 ---
 
@@ -450,6 +506,7 @@ el asistente debe:
    - **Caso C - HU ya existentes con el mismo nombre** si bajo la subcarpeta "update" ya existen versiones de la historia a generar, generar una nueva con el número siguiente (ej: ya existe la HU-001-layouts-grilla-update.md , generar una nueva como HU-001-layouts-grilla-update-01.md)
 7. **Actualizar estado de gestión del bloque:** Al terminar de recorrer todas las tareas de los controles con esa fecha: si **todas** las entradas de errores de esos controles están marcadas como `*Procesado*` (es decir, no queda ninguna entrada pendiente ni solo con sugerencias sin HU asociable), cambiar el estado de gestión del bloque a **"A Programar"** cuando la plantilla lo prevea. Si queda al menos una entrada donde solo fue posible dejar una sugerencia sin generar HU (por no poder determinar la HU asociada), mantener o establecer el estado en **"Con Sugerencias"**. Esto **no** sustituye el **Estado** bajo *Referencia del control* (véase punto **8**).
 8. **Cierre del bloque de control (handoff a especificaciones):** Para cada `Control de Calidad #N` de esa **fecha + sigla** cuyo volcado esté completo (ítems volcados con *Procesado* o *Sugerencia* explícita donde no hubo HU; aceptar CC “hueco” bien organizado), localizar **Referencia del control** y actualizar la línea de estado para que quede `- **Estado:** Especificado`. **Especificado** aquí significa: *volcado a SPEC-update / HU-update / TR-update según corresponda; triage documental cerrado; cola activa en `updates/`* — **no** implica código implementado ni **`Finalizado`** en metadatos de HU/TR (ese valor es **manual** en `07-estado-hu-tr.md`). No modificar listas de errores ni marcas `*Procesado*` / `*Sugerencia*`. Si no se encuentra ningún bloque con esa fecha, informar y no aplicar el punto 8.
+9. **Cierre Jira (MUST, regla 09):** Epic + originales → **Control calidad**; comentario CC (fecha, sigla, ítems); label `update` en issues de update; Bug si ítem técnico. MCP fail → no abortar.
 
 ---
 
@@ -470,6 +527,7 @@ Cuando el usuario escriba algo como:
    - `- **Estado:** Especificado`
 4. No modificar las listas de errores ni las marcas `*Procesado*` / `*Sugerencia*`; solo cambiar el estado bajo *Referencia del control*.
 5. Si no se encuentra ningún control con esa fecha, informar al usuario y no realizar cambios.
+6. **Jira:** no mueve columna. Comentario opcional “bloque CC Especificado”. Regla **09**.
 
 ---
 
@@ -538,13 +596,15 @@ Cuando el usuario escriba algo como:
 
 7. **Sin coincidencias:** Si no hay ningún bloque con esa fecha en `00-ControlCalidad-{XX}.md`, informar y **no** modificar documentación.
 
+8. **Cierre Jira (MUST, regla 09):** transicionar a **Finalizado** **solo** si el usuario pidió cierre o el metadato ya es `Finalizado` y no quedan updates abiertos. Comentario de unificación. MCP fail → no abortar.
+
 ---
 
 ## PARTE J – Desde carpeta de producto (**Open-Spec completo obligatorio**)
 
 ### Comando: "Genera las historias de \"xxxxxxxxxx\" (zzzzzzzzzz)"
 
-Cuando el usuario use el comando histórico de **Parte J**, el asistente **no** debe volcar HU primero sin SPEC. Debe ejecutar la cadena **A → B** (y dejar indicado **C**):
+Cuando el usuario use el comando histórico de **Parte J**, el asistente **no** debe volcar HU primero sin SPEC. Debe ejecutar la cadena **A0 → A → B** (y dejar indicado **C**): si falta `Jira:` en el origen, **A0** primero.
 
 **a) SPEC (Parte A / openspec-01)**
 
@@ -599,6 +659,7 @@ El asistente debe:
 8. Generar el archivo TR según las reglas del prompt; en la tabla de metadatos incluir **`Estado: Pendiente`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
 9. Si existe ambigüedad en la clasificación, solicitar confirmación explícita antes de continuar.
 10. **Deuda Open-Spec:** En la respuesta, indicar que es **obligatorio** ejecutar después **Parte A** (`openspec-01`) para crear el SPEC que cubra la HU/TR, enlazar metadatos (**SPEC relacionada** en el TR cuando se actualice) y alinear con **Parte B** si la HU debe rederivarse del SPEC.
+11. **Cierre Jira (MUST, regla 09):** Task + label `deuda-openspec`. MCP fail → no abortar.
 
 
 ---
@@ -718,6 +779,8 @@ el asistente debe **en este orden** (no abrir el PR hasta completar los pasos pr
 
 **Must:** `develop` (Preview/Forge-dev) **nunca** debe recibir un PR cuyo `package.json` / `composer.json` / Vite apunten al labo repo. El modo **labo repo** queda solo en ramas de trabajo locales hasta este comando (o hasta **PARTE S** explícita «por deploy»).
 
+8. **Cierre Jira (MUST, regla 09 — Parte N):** `git diff develop...HEAD`; recolectar `Jira:` / SPEC-HU-TR / commits; issues **Finalizado** → **Desplegado** + URL del PR; el resto solo comentario. Epic a Desplegado solo si no quedan hijas Finalizado pendientes. MCP fail → no abortar.
+
 ---
 
 ## PARTE O – Inicialización del entorno de desarrollo
@@ -808,6 +871,7 @@ El asistente debe:
 2. Tomar del mensaje del usuario el valor de **[TEMA]** (y, si el usuario lo indicó, **[NOMBRE_ARCHIVO]**; si no lo indicó, aplicar la convención de nomenclatura que defina **`.cursor/rules/90-documentacion/90-manual-usuario.md`** para el nombre del archivo).
 3. **Ejecutar** el flujo descrito en esa regla: investigar en código y UI lo necesario, redactar en el tono y estructura allí definidos, y crear o actualizar el documento resultante en la ruta que **`.cursor/rules/90-documentacion/90-manual-usuario.md`** indique (p. ej. carpeta bajo `docs/99-manual-usuario/`), usando **[TEMA]** como foco del contenido y **[NOMBRE_ARCHIVO]** cuando corresponda al nombre del archivo.
 4. Si faltara **[TEMA]** o hubiera ambigüedad sobre el alcance, **pedir aclaración** antes de generar el manual.
+5. **Jira (regla 09):** comentario “manual actualizado” + ruta. **Sin** cambio de columna. MCP fail → no abortar.
 
 ---
 

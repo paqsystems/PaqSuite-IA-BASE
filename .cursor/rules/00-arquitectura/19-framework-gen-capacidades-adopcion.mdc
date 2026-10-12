@@ -22,7 +22,7 @@ Aplica a productos que consumen el SDK (`paqsuite/laravel-core` + `@paqsuite/rea
 | Qué necesitás | Dónde |
 |---------------|--------|
 | **Checklist operativo en el host** (GEN, estado listo/diferido, export a invocar) | **Esta regla** — índice abajo. Es la referencia diaria en el producto (symlink `rules/base`). |
-| **Cableado concreto por componente** (i18n, props, tema, API, anti-patrones, checklist merge) | Regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`). Catálogo vivo; empezar por GEN-06 `EmpresasAdminPage`. |
+| **Cableado concreto por componente** (i18n, props, tema, API, anti-patrones, checklist merge) | Regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`). Catálogo vivo: índice §2 + ficha §3 por GEN listo (2026-10-11). |
 | **Detalle de producto / adopción / guías** | Repo **`PaqSuite-IA-FRAMEWORK`**: `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1). |
 
 Antes de inventar UI/login/shell/grilla/pivot/excel/etc.: **abrir esta regla** (y el SoT Framework si hace falta profundidad). No adivinar.
@@ -88,7 +88,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 30 | Notification Service | **diferido** | Definición funcional en `docs/02-producto/30-…`. Sin exports SDK. No reinventar mail/WA/TG en el host |
 | 31 | Integración bancaria | **diferido** | Definición en `docs/02-producto/31-…`. Sin exports SDK. No reinventar conectores bancarios en el host |
 | 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...`; UI smoke `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host arma JSON + persiste CAE. migrate+SP `adopcion-gen-32-arca.md`. **excluido mobile** |
-| 35 | Distribución SDK Cloudsmith | **ops (prerelease)** | No hay UI. Cloudsmith `paqsystems/paqsuite-sdk`. SoT [`adopcion-sdk-registry.md`](../../../docs/06-operacion/adopcion-sdk-registry.md). Hosts: SPEC de **adopción**. Satis/Verdaccio = rollback hasta Fase 7. |
+| 35 | Distribución SDK Cloudsmith | **ops (prerelease)** · piloto Partes **adoptado** | No hay UI. Cloudsmith `paqsystems/paqsuite-sdk`. SoT [`adopcion-sdk-registry.md`](../../../docs/06-operacion/adopcion-sdk-registry.md). Partes FE+BE Cloudsmith (2026-10-11). TANGO y corte Fase 7 pendientes. Satis/Verdaccio = rollback hasta Fase 7. |
 
 ## Fronteras frecuentes
 

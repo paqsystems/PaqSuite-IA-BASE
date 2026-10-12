@@ -34,3 +34,9 @@ Leé el SPEC completo. Si enlaza una HU existente, preguntá si **crear nueva HU
 ```
 
 Actualizá el **SPEC** con enlace a la HU creada en sus metadatos.
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Epic → **HU / TR**. Una **Story** por HU: summary `[HU-…]`, parent Epic, `Jira:` en la HU, AC cortos (no volcar el archivo). MCP fail → no abortar.

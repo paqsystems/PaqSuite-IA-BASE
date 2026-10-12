@@ -1,0 +1,164 @@
+---
+description: >-
+  Jira alineado al SDD: un proyecto por repo (mismo nombre), Parte A0,
+  jerarquía Epic/Story/Task, columnas Kanban y sync MCP al cierre de cada parte.
+alwaysApply: true
+---
+
+# 09 — Jira SDD (MUST)
+
+Complementa: dispatcher **`01-prompts-programados-dispatcher.md`** (Parte **A0** y cierres A–N) · runbook **`.cursor/docs/00-jira-sdd.md`** (en hosts: `docs/_base/00-jira-sdd.md`) · estados markdown **`07-estado-hu-tr.md`**.
+
+Sitio: `https://paqsystems.atlassian.net` · `cloudId`: `c315b902-0257-4b45-bc13-6a52605a0c58`.  
+MCP: namespace `user-atlassian` (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, `searchJiraIssuesUsingJql`, `getTransitionsForJiraIssue`).
+
+## Principios
+
+1. **SoT = markdown** (`docs/02-producto/`, `docs/00-ControlCalidad/`, SPEC/HU/TR). Jira es tablero de seguimiento. **No** iniciar el circuito en Jira ni copiar el documento entero.
+2. **Un proyecto Jira por repo**, con el **mismo nombre** que el repositorio Git. La **key** es un código corto (máx. ~10 caracteres). Resolver key con la tabla del runbook; nunca adivinar.
+3. Escritura = **modo B**: al **terminar cada parte** del dispatcher (**A0**, A–I, J, K, N), el agente crea / comenta / transiciona. Si MCP falla: **no abortar** el prompt SDD; informar y seguir con markdown.
+4. Timezone ledger: **`America/Argentina/Buenos_Aires`** (ART, 24 h).
+
+## Mapa repo → proyecto (nombre = repo)
+
+| Nombre Jira (= repo) | Key |
+|----------------------|-----|
+| PaqSuite-IA-BASE | `PIABASE` |
+| PaqSuite-IA-Framework | `PIAFRAME` |
+| PaqSuite-IA-Tango | `PIATANGO` |
+| PaqSuite-IA-Partes-Atencion | `PIAPARTES` |
+| PaqSuite-IA-PedidosWeb | `PIAPEDWEB` |
+| Paqsuite-IA-InventarioMobile | `PIAINVMOB` |
+| Paqsuite-IA-ERP | `PIAERP` |
+
+Si el repo no está en la tabla: **no** crear issues; avisar que falta el proyecto (runbook).
+
+## Jerarquía
+
+| Tipo Jira | Artefacto | Summary |
+|-----------|-----------|---------|
+| **Epic** | SPEC (GEN-xx = label, no tipo extra) | `[SPEC-…] …` + label `GEN-xx` si aplica |
+| **Story** | HU | `[HU-…] …` parent = Epic |
+| **Task** | TR | `[TR-…] …` parent = Story; si Cloud no admite Task→Story: parent Epic + enlace a HU |
+| **Bug** (opcional, G) | Ítem CC técnico sin cambio de alcance | `[CC-{sigla}-{fecha}] …` ligado a TR/HU |
+
+Labels: `SDD`, `GEN-xx`, `update`, `deuda-openspec`, `host`, `framework`.
+
+## Columnas (tablero Kanban, 9)
+
+| Columna | Parte típica |
+|---------|----------------|
+| Backlog | A0 |
+| SPEC | A, A1 |
+| HU / TR | B, B1, C |
+| Especificado | C1 OK (todas las TR) |
+| Implementando | D1, D |
+| Verificando | D cierre (`Pendiente de Revisión`), E, F1, F |
+| Control calidad | G |
+| Finalizado | I + usuario / metadato `Finalizado` (**manual** para el cierre humano; el agente solo mueve si el usuario lo pidió o el md ya dice Finalizado) |
+| Desplegado | N: PR a `develop` (no prod `main`) |
+
+**Pendiente de revisión humana** vive **dentro de Verificando**. **Finalizado** no lo decide el agente salvo pedido explícito o metadato ya `Finalizado`. **Desplegado** solo desde **Finalizado**.
+
+Si el tablero aún tiene solo To Do / In Progress / Done: usar el **mapa de fallback** del runbook y dejar en el ledger la columna SDD **lógica**. Completar las 9 columnas es setup humano.
+
+## Ledger en descripción (MUST)
+
+```markdown
+## Tablero SDD
+| Columna | Entrada | Salida |
+| Backlog | 2026-10-12 17:24 | 2026-10-12 18:01 |
+| SPEC | 2026-10-12 18:01 | |
+```
+
+1. Al crear: fila Backlog, Entrada = ahora, Salida vacía.
+2. Al transicionar: Salida de la fila abierta + nueva fila con Entrada = ahora.
+3. Revisita (p. ej. CC → Implementando): **append** fila, no pisar.
+4. Comentario: `SDD {columnaAnterior} → {columnaNueva} @ YYYY-MM-DD HH:mm ART`.
+5. **Prohibido** custom fields de fechas por columna.
+
+Descripción además (corta): ruta md, label GEN/SDD, paso SDD (`A0`, `A`, …), veredicto A1/C1/F1, enlaces hijas, URL PR tras N.
+
+## Agregación Epic
+
+- **HU/TR** cuando existe ≥1 HU (B).
+- **Especificado** cuando **todas** las TR de la Epic están `Especificado`.
+- **Implementando** si **alguna** TR está en D1/D.
+- **Verificando** cuando **todas** las TR activas están `Pendiente de Revisión` (ninguna en D).
+- **Control calidad** si **alguna** HU/TR original está `En Control Calidad` (G).
+- **Finalizado** solo si el usuario lo indicó **y** no quedan updates ≠ Finalizado.
+- **Desplegado** en N si **todas** las hijas relevantes del alcance del PR están Desplegado.
+
+## Transiciones
+
+1. `getTransitionsForJiraIssue` y elegir por **nombre** igual (o contiene) a la columna destino.
+2. Fallback runbook si el board no está customizado.
+3. Cachear ids observados en el chat; no hardcodear ids en esta regla (varían por proyecto team-managed).
+
+## Parte A0
+
+Prompt: `.cursor/prompts/openspec-00-A0-backlog-jira.md`.  
+Comando: `Registrá en el backlog de Jira [ruta markdown]`.
+
+1. Leer **solo** el origen (carpeta `02-producto/…` o bloque CC fecha+sigla+ítem). No inventar alcance.
+2. Si ya hay `Jira:` en el archivo → no duplicar; informar.
+3. Crear Epic en **Backlog**: summary `[BACKLOG] {título}`; descripción = puntero md + 3–8 líneas + ledger; labels `SDD`.
+4. Escribir `Jira: {KEY-n}` en el markdown origen.
+5. MCP fail → no abortar.
+
+**A0 vs G:** A0 = trabajo **nuevo** (aún no hay SPEC). Ítem CC sobre HU/SPEC existente = **G**.
+
+**A sin A0:** no bloquear. **A0 embebido**: crear Epic en Backlog, grabar clave, comentario `A0 embebido`, luego SPEC y transicionar a **SPEC** (renombrar `[SPEC-…]`).
+
+**J:** A0 (si falta clave) → A → B.
+
+## Acciones por parte (cierre MUST)
+
+| Parte | Jira |
+|-------|------|
+| **A0** | Crear Epic → Backlog; clave en md |
+| **A** | A0 embebido si falta clave; Epic → SPEC; summary `[SPEC-…]` |
+| **A1** | Comentario veredicto; No apto: no crear hijas |
+| **B** | Epic → HU/TR; Story por HU |
+| **B1** | Comentario en Story |
+| **C** | Task por TR; Epic sigue HU/TR |
+| **C1** | Apto → Stories+Tasks+Epic **Especificado** |
+| **D1** | Epic + TR → Implementando; comentario plan |
+| **D** | Comentario archivos; TR → **Verificando**; Epic agrega |
+| **E** | Comentario tests; fail no retrocede |
+| **F1** | Comentario veredicto evidencia |
+| **F** | Comentario gaps; **no** Finalizado |
+| **G** | Epic+originales → Control calidad; label `update`; Bug si técnico |
+| **H** | No mueve; comentario opcional |
+| **I** | Finalizado **solo** si usuario/metadato Finalizado |
+| **K** | Task + `deuda-openspec` |
+| **N** | Finalizado → Desplegado (algoritmo abajo) |
+| **Q** | Comentario manual; sin cambio de columna |
+
+## Parte N — Desplegado
+
+Al **abrir** PR a `develop` (no esperar merge; no revertir si se cierra):
+
+1. `git diff develop...HEAD`.
+2. Recolectar claves: campo `Jira:` en md tocados; IDs SPEC/HU/TR ligados; claves en commits.
+3. Issue en **Finalizado** → **Desplegado** + comentario URL PR.
+4. Si no está Finalizado → no mover; comentar “incluido en PR, columna X”.
+5. Diff sin rastro → informe “sin ticket”; no inventar issues.
+6. Epic a Desplegado solo si no quedan hijas Finalizado sin desplegar.
+
+## JQL útil
+
+```
+project = {KEY} AND labels = SDD AND summary ~ "SPEC-001-19"
+project = {KEY} AND parent = {EPIC-KEY}
+```
+
+Buscar antes de crear para no duplicar.
+
+## Checklist cierre de parte
+
+- [ ] Proyecto = nombre del repo (tabla keys)
+- [ ] Issue existente reutilizado (JQL / `Jira:` en md)
+- [ ] Ledger actualizado
+- [ ] Comentario `SDD … → … @ … ART` si hubo transición
+- [ ] MCP fail no abortó el SDD

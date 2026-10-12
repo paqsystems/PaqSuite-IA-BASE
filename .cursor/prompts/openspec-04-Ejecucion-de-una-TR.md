@@ -44,3 +44,5 @@ Cierre obligatorio (trazabilidad):
 
 Restricción:
 - No ejecutar tareas fuera del alcance de esta TR.
+
+Cierre Jira (MUST, regla **09**): comentario con archivos tocados; transicionar TR a **Verificando**; Epic por agregación. MCP fail → no abortar.

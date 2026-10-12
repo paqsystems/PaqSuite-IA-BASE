@@ -54,3 +54,9 @@ Si no hay SPEC: aclarar **“Verificación sin SPEC”**.
 [HU]: [opcional]
 [SPEC]: [opcional]
 ```
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Comentario de cierre documental + gaps. **No** pasar a Finalizado. MCP fail → no abortar.
