@@ -302,22 +302,25 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 
 | Campo | Valor |
 |-------|--------|
-| Estado ficha | **documentado** |
-| Exports | Layouts GEN-01 + `apiRequest` / `setApiUnauthorizedHandler`. **No** existe `LoginPage` export: el formulario es del host sobre layout SDK |
-| Backend | Sanctum (excepción regla **74**); envelope **GEN-20** (`error: 0`) también en login |
-| Anti-patrones | Envelope propio `error: null`; forgot/reset sin `AuthCardLayout`; cambio de clave con literales ES |
-| Referencia | `adopcion-auth-ui.md`; template `create-app` |
+| Estado ficha | **documentado** (idle runtime 2026-10-15) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.29-beta.1** (idle export) |
+| Exports | Layouts GEN-01 + `apiRequest` / `setApiUnauthorizedHandler`. Idle: `startIdleSession`, `stopIdleSession`, `resetIdleSession`, `resolveIdleMinutes`, `shouldStartIdleSession`. **No** existe `LoginPage` export: el formulario es del host sobre layout SDK |
+| Backend | Sanctum (excepción regla **74**); envelope **GEN-20** (`error: 0`) también en login; `minutosWeb` en login/`me` |
+| Wrapper host | Valor Auth desde login/`me`. Arrancar idle en el **shell** si `shouldStartIdleSession(firstLogin)`. No en login, selector ni firstLogin. No `resetIdleSession` al cambiar empresa. Logout/401: `stopIdleSession`. |
+| Anti-patrones | Envelope propio `error: null`; forgot/reset sin `AuthCardLayout`; cambio de clave con literales ES; `idleSessionService` copiado en el host; `startIdleSession` en `LoginPage` |
+| Referencia | `adopcion-auth-ui.md`; template `create-app`; SPEC-001-04-update-runtime-params-auth-post-login |
 
 ### GEN-05 — Selector de empresas (`EmpresaSelectorPage`)
 
 | Campo | Valor |
 |-------|--------|
 | Estado ficha | **documentado** |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.28-beta.1** (tiles Button CC PQ #7) |
 | Cuándo | MULTI o N>1 empresas; MONO puede montarlo igual (smoke) |
 | Exports | `EmpresaSelectorPage`, `resolveEmpresaGate`, `notifyCompanyChange` |
 | Backend | Query empresas del usuario vía contrato core (`UserEmpresasQueryRepository` / SP). Pin **≥ 1.3.14-beta.1** para adapter SP (CC PQ 11/10) |
-| Anti-patrones | Página propia que solo llama `changeActiveEmpresa`; fallback tenant `demo` |
-| Referencia | smoke `EmpresaSelector`; SPEC-001-05 |
+| Anti-patrones | Página propia que solo llama `changeActiveEmpresa`; fallback tenant `demo`; `List` a ancho de pantalla; outlined blanco sobre blanco |
+| Referencia | smoke `/select-empresa`; SPEC-001-05 + update CC 15/10/2026 |
 
 ### GEN-06 — Roles y atributos (`SecurityRolesPage`, `RolAtributosPage`)
 
