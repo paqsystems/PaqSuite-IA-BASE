@@ -62,6 +62,18 @@ Cada sitio Forge debe tener su propio Environment y configuración:
 - Pre-producción debe utilizar bases espejo o bases de prueba, nunca la base productiva.
 - Producción debe utilizar únicamente secrets del environment Production.
 
+Hosts con GEN-13 (`BACKUP_DATABASE` / RDS → S3) deben incluir en el Environment de **ambos** sitios (Preview y Production):
+
+```env
+PAQSUITE_CLIENTE={cliente}
+PAQSUITE_TASKS_BACKUP_BACKEND=rds
+TASKS_BACKUP_S3_ARN_PREFIX=arn:aws:s3:::sql-amazon-basico/backups
+TASKS_BACKUP_POLL_SECONDS=5
+TASKS_BACKUP_LOCK_LEASE_SECONDS=900
+```
+
+`PAQSUITE_CLIENTE` es el código de `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`). Obligatorio para `tasks:run-due` porque el CLI no envía header HTTP. Debe mapearse en `config/paqsuite.php` (`clienteCodigo`) para sobrevivir a `config:cache`. El destino S3 es compartido: bucket `sql-amazon-basico`, carpeta `backups/`, para **todos** los proyectos. RDS escribe con su rol IAM; no usar `AWS_ACCESS_KEY_ID` / `AWS_BUCKET` de Laravel para este flujo. El bucket debe coincidir en región con el RDS.
+
 La configuración se verifica antes del primer deploy y después de cada cambio de variables mediante `config:clear`/`config:cache` según corresponda.
 
 El dominio particular de entrada de cada cliente es:

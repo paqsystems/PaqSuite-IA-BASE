@@ -1,6 +1,6 @@
 ---
 name: vercel-github-deployment-standard
-description: "Estandariza despliegues de proyectos web con GitHub, Vercel, Route 53 y Forge/EC2; úsala cuando se solicite configurar producción, pre-producción/Preview y sus reglas de promoción."
+description: "Estandariza despliegues de proyectos web con GitHub, Vercel, Route 53 y Forge/EC2; úsala cuando se solicite configurar producción, pre-producción/Preview, Environment de Forge (incl. backups GEN-13 a S3) y reglas de promoción."
 ---
 
 # Estándar de despliegue Vercel + GitHub + Forge/EC2
@@ -45,6 +45,18 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
    - `PAQSUITE_INSTALACION_RESOLVER=sql` y una conexión central `paqsuite_central` al mismo RDS, con `PAQSUITE_CENTRAL_DATABASE=PAQSYSTEMS`, `PAQSUITE_CENTRAL_USERNAME` y su contraseña segura.
    - Mantener `PAQSUITE_MONO_EMPRESA_ID` con el valor definido por el proyecto (por ejemplo, `1`); no inventarlo ni sustituirlo por el de otro proyecto.
    - La base operativa inicial (`DB_DATABASE`) debe ser la indicada por el repositorio/SoT; la selección final por empresa debe realizarse mediante `EMPRESAS_CONEXION`, sin hardcodear una base por cliente.
+
+   En el Environment de **cada** sitio Forge (Preview y Production) de un host con GEN-13 / `BACKUP_DATABASE`, cargar estas variables. El destino S3 es **compartido por todos los proyectos**; no crear un bucket ni un prefijo por producto:
+
+   ```env
+   PAQSUITE_CLIENTE={cliente}
+   PAQSUITE_TASKS_BACKUP_BACKEND=rds
+   TASKS_BACKUP_S3_ARN_PREFIX=arn:aws:s3:::sql-amazon-basico/backups
+   TASKS_BACKUP_POLL_SECONDS=5
+   TASKS_BACKUP_LOCK_LEASE_SECONDS=900
+   ```
+
+   `PAQSUITE_CLIENTE` es el código de instalación en `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`, por ejemplo `DEMO`). Es obligatorio para GEN-13 en CLI (`tasks:run-due`): el artisan no envía header HTTP. Debe mapearse en `config/paqsuite.php` (`clienteCodigo`) para sobrevivir a `config:cache`. `TASKS_BACKUP_S3_ARN_PREFIX` apunta al bucket `sql-amazon-basico`, carpeta `backups/`. RDS escribe el `.bak` con su rol IAM; **no** usar `AWS_ACCESS_KEY_ID` ni `AWS_BUCKET` de Laravel para este flujo. El bucket debe estar en la **misma región** que el RDS. Tras guardar el Environment: `php artisan config:clear && php artisan config:cache` en ambos sitios.
 
    Las credenciales se solicitan o copian únicamente con autorización explícita y nunca se muestran en el chat, en salidas de diagnóstico ni en logs innecesarios. Antes de guardar el entorno, eliminar o reemplazar todas las claves duplicadas: una clave repetida al final del `.env` puede anular silenciosamente la configuración correcta. Después de cualquier cambio, ejecutar `php artisan config:clear && php artisan config:cache` en ambos sitios y comprobar que `config('database.default')`, host y usuario activos coinciden con el SoT, sin imprimir contraseñas.
 
@@ -207,6 +219,11 @@ Al generar un nuevo proyecto PaqSuite, completar esta matriz antes del primer de
 | GitHub Host | `CLOUDSMITH_READ_TOKEN` | Secret de Actions | Entitlement token de lectura del Host |
 | Vercel | `CLOUDSMITH_READ_TOKEN` | `Production`, `Preview` y `Development` si se usa | Entitlement token de lectura del Host |
 | Forge Preview y Production | `CLOUDSMITH_READ_TOKEN` | Variable protegida del sitio | Entitlement token de lectura del Host |
+| Forge Preview y Production | `PAQSUITE_CLIENTE` | Environment del sitio | Código de `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`) |
+| Forge Preview y Production | `PAQSUITE_TASKS_BACKUP_BACKEND` | Environment del sitio | `rds` |
+| Forge Preview y Production | `TASKS_BACKUP_S3_ARN_PREFIX` | Environment del sitio | `arn:aws:s3:::sql-amazon-basico/backups` (carpeta compartida de todos los proyectos) |
+| Forge Preview y Production | `TASKS_BACKUP_POLL_SECONDS` | Environment del sitio | `5` |
+| Forge Preview y Production | `TASKS_BACKUP_LOCK_LEASE_SECONDS` | Environment del sitio | `900` |
 | GitHub Framework | `CLOUDSMITH_API_KEY` | Secret de Actions | API key de `{proyecto}-github-actions` |
 
 `CLOUDSMITH_API_KEY` solo publica el Framework desde GitHub Actions. `CLOUDSMITH_READ_TOKEN` solo permite consumir paquetes desde los Hosts. No intercambiar estas credenciales ni mostrar sus valores.
