@@ -36,6 +36,7 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
    - producción: `https://{proyecto}-paqsystems.on-forge.com/api/v1/health`;
    - pre-producción: `https://{proyecto}-paqsystems-dev.on-forge.com/api/v1/health`.
    No dejar el health check en la URL predeterminada `/up` si la aplicación expone su endpoint de salud bajo `/api/v1/health`.
+   Activar en **cada** sitio backend la integración **Laravel Scheduler** de Forge (Site → Integrations → Laravel Scheduler → Enable). Debe quedar un Scheduled Job **Minutely** con usuario `forge` que ejecute `php artisan schedule:run` sobre el release activo. En hosts PaqSuite con zero-downtime y Laravel en `current/backend`, el comando debe apuntar a `…/current/backend/artisan` (Forge lo genera así al habilitar la integración). Es obligatorio para GEN-13 (`tasks:run-due` cada minuto en `app/Console/Kernel.php`) y para cualquier otro comando agendado en Laravel. Verificar que el job exista **por sitio**; un cron a nivel servidor de otro proyecto no alcanza.
 4. Configurar los environments de Vercel y Forge según el SoT, especialmente `VITE_API_BASE_URL`, `APP_URL`, `FRONTEND_URL`, `DB_*`, mail y flags.
 
    Para proyectos PaqSuite que usan el esquema multiempresa de PAQSYSTEMS, si el repositorio o su `.env.example` indica `sqlsrv`, `PAQSUITE_DB_DRIVER_REFERENCE=sqlsrv` o `SqlInstalacionResolver`, configurar explícitamente la misma topología en producción y Preview:
@@ -90,7 +91,7 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
    ```
 
    El check `only-develop` debe ser obligatorio en el ruleset. El workflow debe ejecutarse para ambas ramas, pasar normalmente en PRs hacia `develop` y fallar si un PR hacia `main` no proviene de `develop`.
-9. Verificar con una prueba de lectura: `develop` genera Preview y `main` genera Production; comprobar ambos dominios por HTTPS, que los health checks de Forge/EC2 estén activos y apunten a `/api/v1/health`, la configuración de environments y el branch/environment mostrado por Vercel.
+9. Verificar con una prueba de lectura: `develop` genera Preview y `main` genera Production; comprobar ambos dominios por HTTPS, que los health checks de Forge/EC2 estén activos y apunten a `/api/v1/health`, que la integración Laravel Scheduler esté **enabled** y el Scheduled Job minutely esté **installed** en prod y dev, la configuración de environments y el branch/environment mostrado por Vercel.
 10. No eliminar proyectos Vercel antiguos, sitios Forge/EC2 ni registros DNS sin confirmación explícita posterior a la verificación.
 
 ## Cloudsmith — distribución privada del Framework
@@ -279,4 +280,4 @@ Antes de dar por terminado el alta, verificar que las cuatro plataformas tengan 
 
 ## Entregable
 
-Informar siempre la matriz final `{rama → ambiente → dominio Vercel → backend}`, el proyecto Vercel utilizado, los cambios DNS, el ruleset de GitHub, el workflow/check requerido y cualquier recurso antiguo que haya quedado pendiente de eliminar.
+Informar siempre la matriz final `{rama → ambiente → dominio Vercel → backend}`, el proyecto Vercel utilizado, los cambios DNS, el ruleset de GitHub, el workflow/check requerido, el estado de Laravel Scheduler (enabled + job minutely installed) en cada sitio Forge backend, y cualquier recurso antiguo que haya quedado pendiente de eliminar.

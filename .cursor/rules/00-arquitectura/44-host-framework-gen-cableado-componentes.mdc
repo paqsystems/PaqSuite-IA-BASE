@@ -412,7 +412,10 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 |-------|--------|
 | Estado ficha | **documentado** |
 | Exports | `TaskProcessesPage`, Definitions, Executions; `TaskProcessRegistry` en BE |
-| MUST | Títulos i18n (no `<h1>Tareas programadas</h1>`); chrome `ProcessPageLayout` |
+| MUST | Títulos i18n (no `<h1>Tareas programadas</h1>`); chrome `ProcessPageLayout`; adoptar el proceso único `BACKUP_DATABASE` para Windows/RDS |
+| Backup | MONO sin picker; MULTI incluye empresas y diccionario con seleccionar/deseleccionar todas; Windows `INIT`/`NOINIT`; RDS sobreescribe siempre y usa polling `rds_task_status`; lock RDS global por instalación |
+| UI host | Usar la pantalla genérica de definiciones; no copiar formulario ni handler de backup al host |
+| Referencia backup | [SPEC-001-13-update — Backups Windows y RDS](../../../../docs/05-open-spec/updates/001-Generalidades/SPEC-001-13-update-backups-windows-rds.md) |
 | Gap | Host puede no montarlo (Partes hoy: gap aceptable si el producto no lo ofrece) |
 | Referencia | smoke tareas |
 
