@@ -13,7 +13,7 @@ Extensiones por producto (opcional): `docs/06-operacion/runbook-*.md` en el repo
 
 ## Cuándo actuar
 
-Cuando el usuario pida **commit**, **push**, o **commit y push** (autorización explícita).
+Cuando el usuario pida **commit**, **push**, o **commit y push** (autorización explícita). El comando **PARTE T** («Desplegá la versión preview/productiva») también **autoriza** commit y push de la rama de trabajo en modo Preview; el merge sigue siendo solo vía PR (regla **18**).
 
 **Antes** de `git add` / `git commit` / `git push`, revisar el diff y **avisar** si el release en servidor requiere pasos extra.
 

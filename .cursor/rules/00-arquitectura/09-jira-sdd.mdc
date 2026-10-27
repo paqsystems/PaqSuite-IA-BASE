@@ -7,7 +7,7 @@ alwaysApply: true
 
 # 09 — Jira SDD (MUST)
 
-Complementa: dispatcher **`01-prompts-programados-dispatcher.md`** (Parte **A0** y cierres A–N) · runbook **`.cursor/docs/00-jira-sdd.md`** (en hosts: `docs/_base/00-jira-sdd.md`) · estados markdown **`07-estado-hu-tr.md`**.
+Complementa: dispatcher **`01-prompts-programados-dispatcher.md`** (Parte **A0** y cierres A–T) · runbook **`.cursor/docs/00-jira-sdd.md`** (en hosts: `docs/_base/00-jira-sdd.md`) · estados markdown **`07-estado-hu-tr.md`**.
 
 Sitio: `https://paqsystems.atlassian.net` · `cloudId`: `c315b902-0257-4b45-bc13-6a52605a0c58`.  
 MCP: namespace `user-atlassian` (`createJiraIssue`, `editJiraIssue`, `transitionJiraIssue`, `addCommentToJiraIssue`, `searchJiraIssuesUsingJql`, `getTransitionsForJiraIssue`).
@@ -133,6 +133,7 @@ Comando: `Registrá en el backlog de Jira [ruta markdown]`.
 | **I** | Finalizado **solo** si usuario/metadato Finalizado |
 | **K** | Task + `deuda-openspec` |
 | **N** | Finalizado → Desplegado (algoritmo abajo) |
+| **T** | Preview: mismo algoritmo **N** al abrir PR a `develop`; comentario posterior con veredicto Vercel/Forge. Productiva: comentario URL PR `develop` → `main` + veredicto; **no** reaplicar Desplegado |
 | **Q** | Comentario manual; sin cambio de columna |
 
 ## Parte N — Desplegado

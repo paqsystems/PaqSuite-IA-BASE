@@ -24,6 +24,7 @@ Cuando el usuario pida **push**, **commit y push**, o publicar una rama:
 3. Si pide abrir/crear un PR hacia **`main`** desde una rama distinta de **`develop`**: **no crearlo**.
 4. Si pide abrir/crear un PR hacia **`develop`** desde una rama de trabajo, ese es el flujo permitido.
 5. Si pide merge local a `main` + push: **no hacerlo**. El camino es PR `develop` → `main` en GitHub.
+6. Si invoca la **PARTE T** del dispatcher («Desplegá la versión preview/develop» o «… productiva»): el **merge vía Pull Request en GitHub** está autorizado por ese comando (feature → `develop`, o `develop` → `main`). Sigue **prohibido** push directo, `--force` y `--admin`.
 
 ## Flujo correcto
 

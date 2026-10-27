@@ -3,7 +3,7 @@
 ## Objetivo
 Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (**A0** backlog Jira → SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad. Jira: regla **`09-jira-sdd.mdc`** (proyecto = **mismo nombre que el repo**).
 
-Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–S** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
+Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–T** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
 
 ---
 
@@ -52,9 +52,9 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ---
 
-## Índice alfabético (partes **A**–**S**)
+## Índice alfabético (partes **A**–**T**)
 
-El orden de las filas **es el alfabético A–S** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–S** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–T** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–T** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
@@ -84,6 +84,7 @@ El orden de las filas **es el alfabético A–S** y coincide con el **orden de l
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
 | **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
 | **S** | Cableado consumo SDK Framework (host) | "Adaptá el proyecto a consumir el SDK por labo repo" / "… por deploy" |
+| **T** | Desplegar preview (`develop`) o productiva (`main`) | "Desplegá la versión preview" / "… develop" / "… productiva" |
 
 ---
 
@@ -781,6 +782,8 @@ el asistente debe **en este orden** (no abrir el PR hasta completar los pasos pr
 
 8. **Cierre Jira (MUST, regla 09 — Parte N):** `git diff develop...HEAD`; recolectar `Jira:` / SPEC-HU-TR / commits; issues **Finalizado** → **Desplegado** + URL del PR; el resto solo comentario. Epic a Desplegado solo si no quedan hijas Finalizado pendientes. MCP fail → no abortar.
 
+**N vs T:** esta parte **abre** el PR a `develop` y **no** lo fusiona ni espera Vercel/Forge. Para merge + verificación de Preview usar **PARTE T**.
+
 ---
 
 ## PARTE O – Inicialización del entorno de desarrollo
@@ -908,6 +911,8 @@ del proyecto. El asistente debe:
 
 Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
 
+**R vs T:** esta parte **configura** la plataforma (proyecto Vercel, sitios Forge, DNS, ruleset). Para **publicar una versión** (commit/PR/merge y comprobar el deploy) usar **PARTE T**.
+
 ### Skill asociada
 
 ```text
@@ -1023,6 +1028,143 @@ Objetivo: consumir **versiones publicadas** (locks commiteables, builders Forge/
 
 ---
 
+## PARTE T — Desplegar versión preview (`develop`) o productiva (`main`)
+
+Publica una versión: GitHub (commit/push/PR/**merge**) y después comprueba **Vercel** (frontend) y **Forge** (backend). **No** sustituye la **PARTE R** (alta/configuración de la plataforma) ni la **PARTE N** (solo abrir PR a `develop` sin merge).
+
+SoT de ambientes: `.cursor/docs/00-deploy-github-vercel-route53-forge.md` y `.cursor/docs/00-urls-deploy-proyecto.md`. Política de ramas: regla **18**. Aviso de versión/BD: regla **17**. Hosts SDK: **PARTE S** modo **deploy** antes de mergear a `develop`.
+
+Este comando **autoriza** commit, push de la rama de trabajo, abrir PR y **fusionar el PR en GitHub**. **Prohibido:** push directo a `develop`/`main`, `--force`, `--admin`, merge local + push a protegidas.
+
+### Comandos
+
+Cuando el usuario escriba algo equivalente a cualquiera de estas formas, elegir el **modo** y ejecutar esa rama (no mezclar preview y productiva en la misma corrida salvo que pida las dos en orden **preview → productiva**):
+
+**Modo Preview / develop** (pre-producción):
+
+```text
+Desplegá la versión preview
+Desplegá la versión develop
+Desplegá preview
+Desplegá develop
+Publicá en preview
+Publicá en develop
+```
+
+**Modo Productiva / main** (producción):
+
+```text
+Desplegá la versión productiva
+Desplegá la versión de producción
+Desplegá producción
+Desplegá productiva
+Publicá en producción
+Publicá en main
+```
+
+También debe interpretarse como equivalente cualquier instrucción que pida **publicar/desplegar** esa versión y **confirmar** el resultado en Vercel y Forge.
+
+### Matriz de ambientes (MUST)
+
+Resolver `{proyecto}` desde `docs/06-operacion/urls-deploy.md` del workspace; si no existe, desde el registro BASE `.cursor/docs/00-urls-deploy-registro.md` o los nombres reales de Vercel/Forge. No inventar el slug.
+
+| Modo | Rama GitHub | Frontend Vercel | Backend Forge | Health |
+|------|-------------|-----------------|---------------|--------|
+| **Preview** | `develop` | `https://dev.{proyecto}.paqsystems.com/` | sitio `{proyecto}paqsystems-dev` → `https://{proyecto}paqsystems-dev.on-forge.com/` | `GET /api/v1/health` |
+| **Productiva** | `main` | `https://{proyecto}.paqsystems.com/` | sitio `{proyecto}paqsystems` → `https://{proyecto}paqsystems.on-forge.com/` | `GET /api/v1/health` |
+
+Preview **nunca** debe apuntar al backend de producción ni al revés.
+
+Si el repo **no** tiene Vercel/Forge (p. ej. este BASE), completar GitHub y declarar esas capas **no aplica** — no simular un deploy.
+
+### Herramientas
+
+| Capa | Cómo |
+|------|------|
+| Git / PR / merge | `gh` (`pr create`, `pr view`, `pr checks`, `pr merge`) + git local. User rule de PRs. |
+| Vercel | MCP `user-vercel`: `list_projects`, `list_deployments` (`branch`, `sha`, `target`), `get_deployment`, `get_deployment_events`, `get_runtime_errors`. CLI `vercel` solo si MCP falla. |
+| Forge | MCP `user-laravel-forge-mcp`: `list-sites` / `list-organization-sites`, `list-deployments`, `get-deployment-status`, `get-deployment`, `get-deployment-log`, `get-site-healthcheck`; `create-deployment` **solo** si el merge no disparó deploy (ver **Verificación post-merge**). |
+| Health HTTP | `GET` del health y del dominio Vercel (código, no secretos). |
+
+**No** imprimir tokens, `.env`, logs con credenciales ni cuerpos de environment.
+
+### Comportamiento — modo Preview (`develop`)
+
+1. **Rama actual:** `git status` / `git branch --show-current`. Si es `develop`, `main` o `master`: **no** push ni PR hacia sí misma. Informar la política **18**. Si hay cambios sin commitear en `develop`/`main`, **no** crear una rama por iniciativa propia: pedir que pasen a una rama de trabajo o que usen productiva si `develop` ya tiene lo deseado. Si el árbol está limpio y `origin/develop` ya contiene el trabajo, saltar a **verificación** (punto 7) e informar que no hubo PR nuevo.
+2. **Host SDK:** mismos puntos **2–4** de la **PARTE N** (criterio de host + modo **deploy** Cloudsmith). Si el host aún apunta a labo repo (`file:`, alias Vite, Composer `path`), adaptar, commitear y pushear **antes** del PR. Bloqueo de token Cloudsmith → **no** mergear.
+3. **Aviso regla 17:** antes del commit, avisar migrate/seed/`.env` si el diff lo exige.
+4. **Commit y push:** si hay cambios, commit + push de la rama de trabajo (`-u` si no trackea). Si no hay cambios locales pero la rama está ahead, solo push. No commitear secretos. Este comando **autoriza** commit y push (a diferencia de «Commiteá» a secas).
+5. **PR a `develop`:** reutilizar el PR abierto de esta rama si existe; si no, `gh pr create --base develop` (cuerpo **N1** / `_PR-prompt.md` si aplica). Destino **solo** `develop`. **Cierre Jira Parte N** al abrir el PR (regla **09**).
+6. **Esperar checks y merge:** `gh pr checks` / `gh pr view --json mergeable,mergeStateStatus,statusCheckRollup`. Cuando el PR sea mergeable y los checks requeridos pasen: `gh pr merge <n>` con un método **permitido** por el repo (`--squash` típico en feature → `develop`). **`--delete-branch`** solo para la rama de trabajo (nunca borrar `develop`/`main`). **Prohibido** `--admin`, `--force` y merge local + push a `develop`.
+7. **Verificar Preview** (punto común **Verificación post-merge** más abajo) sobre `develop` / target preview / sitio `{proyecto}paqsystems-dev`. SHA = merge commit en `origin/develop`.
+8. **Respuesta final** con la plantilla de veredicto.
+
+Si el merge está bloqueado (reviews, conversaciones, check `only-develop`, conflicto): **no** bypassear; informar el bloqueo y el veredicto **ERROR** / no fusionado.
+
+### Comportamiento — modo Productiva (`main`)
+
+1. **Alcance:** promover **`origin/develop` → `main`**. **No** commitear ni pushear la rama de trabajo actual. **No** abrir PR de una feature a `main`.
+2. **Trabajo local no promovido:** `git fetch`. Si la rama actual tiene commits que **no** están en `origin/develop`, listarlos y **detener**: primero Preview (**este mismo comando** en modo develop). Cambios sin commitear: avisar que **no** entran en producción.
+3. **SDK en `origin/develop`:** mismas comprobaciones de modo **deploy** que la **PARTE N** punto 3 sobre el árbol de `develop` (no sobre un labo repo local). Si `develop` tiene `file:` / path Framework, **no** abrir PR a `main`.
+4. **PR `develop` → `main`:** reutilizar PR abierto con `base=main` y `head=develop` si existe; si no, `gh pr create --base main --head develop`. Si GitHub rechaza porque `head` no es `develop`, **no** continuar (check `only-develop`).
+5. **Merge:** esperar checks; `gh pr merge <n>` con método permitido (**no** `--admin`; **no** borrar `develop`). Conflicto o reviews pendientes → informar y no bypassear.
+6. **Verificar Production** sobre `main` / target production / sitio `{proyecto}paqsystems`. SHA = merge commit en `origin/main`.
+7. **Jira:** comentario con URL del PR a `main` y resultado Vercel/Forge. **No** aplicar de nuevo el algoritmo Desplegado de **N** (ese es al abrir PR a `develop`). MCP fail → no abortar el informe de deploy.
+8. **Respuesta final** con la plantilla de veredicto.
+
+### Verificación post-merge (Vercel + Forge)
+
+Tras el merge, **poll** (no un único wait largo). Tope orientativo **10–15 min**. Si al tope sigue `BUILDING`/`QUEUED`/`deploying`: veredicto **EN CURSO** (no afirmar OK).
+
+1. **GitHub:** PR `MERGED`; SHA en la rama destino (`origin/develop` o `origin/main`).
+2. **Vercel:** localizar el proyecto del `{proyecto}`; `list_deployments` filtrando `branch` + `sha` (o el más reciente de ese `target`). Éxito = `READY` en el `target` correcto (`preview` vs `production`). `ERROR`/`CANCELED`/`BLOCKED` = fallo: leer eventos/errores de runtime **sin** volcar secretos. Comprobar que la URL canónica del SoT corresponde a ese deploy.
+3. **Forge:** localizar el sitio por nomenclatura (`{proyecto}paqsystems-dev` o `{proyecto}paqsystems`). Si push-to-deploy no dispara un deploy nuevo en ~2 min, **una** vez `create-deployment` y volver a poll. Éxito = deploy finished/successful del SHA (o del latest coherente) + health check Forge apuntando a `/api/v1/health` o `GET` HTTP 2xx de ese endpoint.
+4. **Cruce de ambiente:** Preview no debe haber desplegado el sitio de producción, ni Production el de `-dev`.
+5. Si MCP Vercel o Forge no está autenticado: intentarlo por CLI documentado; si no, declarar esa capa **no verificada** y el veredicto no puede ser OK global.
+
+### Plantilla de respuesta (MUST)
+
+```text
+# Resultado del despliegue
+
+- Modo: Preview (develop) | Productiva (main)
+- Repo / rama origen → destino / PR URL / SHA
+
+| Capa | Recurso | Estado | Evidencia |
+|------|---------|--------|-----------|
+| GitHub | PR #… mergeado | OK / ERROR / BLOQUEADO | URL |
+| Vercel | proyecto / target / URL | READY / ERROR / EN CURSO / NO APLICA / NO VERIFICADO | SHA + estado |
+| Forge | sitio / URL API | OK / ERROR / EN CURSO / NO APLICA / NO VERIFICADO | deploy + health |
+
+Veredicto: OK | OK con observaciones | EN CURSO | ERROR
+```
+
+- **OK:** merge hecho y Vercel + Forge (aplicables) en éxito.
+- **OK con observaciones:** deploy OK pero health lento, aviso regla 17 (migrate/seed pendiente en servidor), o una capa no aplica.
+- **EN CURSO:** merge OK, builders aún no terminaron al tope de espera.
+- **ERROR:** no se mergeó, o Vercel/Forge falló, o el ambiente cruzado está mal.
+
+Incluir el aviso de **regla 17** si hay migrate/seed/`.env` que Forge **no** aplica solo con el deploy.
+
+### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| Push directo a `develop`/`main` | Viola regla **18** |
+| PR feature → `main` en modo productiva | El check `only-develop` debe fallar; no es el flujo |
+| Merge `--admin` o local + push | Saltea protección |
+| Afirmar OK con un screenshot o un `READY` de otra rama | Falso positivo |
+| Disparar `create-deployment` en el sitio de prod durante Preview | Cruce de ambiente |
+| Commitear la feature en el modo productiva | Producción recibiría trabajo no promovido vía `develop` |
+
+### Cierre Jira (MUST)
+
+- **Preview:** al abrir el PR a `develop`, algoritmo **Parte N** (Finalizado → Desplegado). Tras verificar: comentario con veredicto Vercel/Forge.
+- **Productiva:** comentario en los issues del alcance (URL PR `develop` → `main` + veredicto). Sin nueva transición de columna salvo pedido explícito.
+- MCP fail → no abortar el despliegue ni el informe.
+
+---
+
 ## Reglas generales (aplican a todos los comandos)
 - No inventar prompts fuera de los definidos.
 - No modificar HU ni TR sin dejar trazabilidad.
@@ -1040,7 +1182,7 @@ Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), modelo de datos vía **Parte J**.
+Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), publicar versión Preview/Productiva con merge + Vercel/Forge (**T**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.
