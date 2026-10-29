@@ -61,6 +61,7 @@ También puede ejecutarse como skill:
 
 - ¿Migraciones/seed/rollback existen si correspondía?
 - ¿Se afectaron tablas correctas?
+- ¿Se actualizó **`docs/modelo-datos/`** (función, campos, significado, índices) en el mismo cambio que migraciones/SQL/SP de negocio? (Framework: coherencia con **`docs/06-modelo-datos/`** si aplica install/GEN.)
 
 ### 4. Backend
 
@@ -83,6 +84,7 @@ También puede ejecutarse como skill:
 
 - ¿Se actualizó Swagger/OpenAPI si había endpoints? (**MUST:** toda API documentada; GET con schema/example de `resultado`; POST/PUT con `RequestBody` + example del Body — ver `10-backend/10-openapi-documentacion.md`)
 - ¿Se actualizó documentación funcional si cambió comportamiento?
+- ¿El modelado en **`docs/modelo-datos/`** refleja el esquema entregado (sin depender solo de migraciones como única fuente legible)?
 
 ### 8. Trazabilidad
 

@@ -24,6 +24,7 @@ No impedir el commit salvo pedido del usuario; el aviso es informativo.
 ## Qué revisar en el diff
 
 - `database/migrations/**` — esquema
+- `docs/modelo-datos/**` — documentación de tablas/SP (debe ir al día si hubo cambio de esquema en el mismo commit)
 - `database/seeders/**`, `backend/scripts/sql/**` — datos fijos
 - `config/*.php` de producto (menú, flags), `.env.example` — config deploy
 - `docs/backend/seed/**` — parámetros / seeds documentados
