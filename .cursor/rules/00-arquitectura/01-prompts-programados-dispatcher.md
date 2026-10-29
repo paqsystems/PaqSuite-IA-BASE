@@ -325,6 +325,8 @@ El asistente debe:
 6. Ejecutar el prompt resultante como si hubiera sido pegado explícitamente por el usuario.
 7. Tratar la TR como **FUENTE DE VERDAD del alcance**.
 8. Al **finalizar** la implementación y la trazabilidad en el archivo TR (secciones de cierre), actualizar el campo **Estado** de ese TR a **`Pendiente de Revisión`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+9. **Modelo de datos (MUST si la TR toca persistencia):** migraciones Laravel, scripts `CREATE/ALTER`, tablas/SP de negocio o catálogo operativo → actualizar **`docs/modelo-datos/`** en el mismo cambio (ver § **d)** de **PARTE J** y `prompts/openspec-04-Ejecucion-de-una-TR.md`). En el repo **PaqSuite-IA-FRAMEWORK** además alinear **`docs/06-modelo-datos/`** (install/GEN-34) y el índice **`docs/modelo-datos/README.md`** cuando aplique.
+10. **Cierre Jira (MUST, regla 09):** comentario archivos tocados; TR → **Verificando**; Epic por agregación. MCP fail → no abortar.
 
 ---
 
@@ -561,10 +563,27 @@ Cuando el usuario use el comando histórico de **Parte J**, el asistente **no** 
 
 **d) Modelo de datos**
 
-1. Si en **xxxxxxxxxx** hay **modelo-datos.md** (o equivalente):
-   - Generar el modelado en `docs/modelo-datos/` (subcarpeta **md-diccionario** / **md-empresas** según acuerdo con el usuario).
-   - Nombre por defecto **md-zzzzzzzzzz.md** si no se indica otro.
-2. Incongruencias: documentarlas en el archivo generado en un tópico explícito.
+Ruta canónica de **consulta** en todo repo (hosts y Framework): **`docs/modelo-datos/`** — un archivo por tema, módulo o componente GEN. Plantilla: **`docs/modelo-datos/_plantilla-componente.md`** (Framework) o equivalente en el host.
+
+| Repo | Rol |
+|------|-----|
+| Hosts producto | Dominio del producto: p. ej. **`docs/modelo-datos/md-diccionario/`**, **`docs/modelo-datos/md-empresas/`** (convención acordada por instalación). |
+| **PaqSuite-IA-FRAMEWORK** | Tablas GEN + PAQSYSTEMS: **`docs/modelo-datos/gen/`**, **`docs/modelo-datos/md-paqsystems/`**. Anexo install/GEN-34 sigue en **`docs/06-modelo-datos/`** (enlazado desde el README de `docs/modelo-datos/`). |
+
+**Contenido obligatorio por tabla** (orden sugerido en cada doc):
+
+1. Función de la tabla en el producto/GEN.
+2. Estructura: campo, tipo, nulos, default.
+3. Significado de cada campo.
+4. Índices y constraints relevantes.
+
+**Cuándo actualizar**
+
+- **Parte J:** al derivar SPEC/HU desde `docs/02-producto/xxxxxxxxxx/`, si hay diseño de datos (incl. `modelo-datos.md` o equivalente en la carpeta de producto), generar o completar los `.md` bajo `docs/modelo-datos/`.
+- **Parte D:** toda TR que altere esquema, SP de negocio desplegables o catálogo persistido → **MUST** actualizar el doc correspondiente en el mismo PR (punto 9 de **PARTE D**).
+- **Parte F / F1:** verificar alineación migración/SQL ↔ `docs/modelo-datos/` (regla **`14-agent-verification-guide`**, eje Datos y Documentación).
+
+Incongruencias diseño vs migración: documentarlas en el archivo bajo un tópico **«Incongruencias / pendientes»**.
 
 ---
 
@@ -792,7 +811,7 @@ Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), modelo de datos vía **Parte J**.
+Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), modelo de datos en **`docs/modelo-datos/`** vía **Parte J** (diseño) y **Parte D** (implementación).
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.
