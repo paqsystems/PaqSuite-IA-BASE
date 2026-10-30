@@ -1,0 +1,39 @@
+---
+description: Prohibido crear ramas Git locales o remotas sin consentimiento explícito del usuario
+alwaysApply: true
+---
+
+# Git — ramas solo con consentimiento del usuario (MUST)
+
+Contrato **transversal** (Framework, MONO, MULTI y productos PaqSuite IA).
+
+Complementa: `.cursor/rules/base/00-arquitectura/18-git-flujo-main-desde-develop.mdc` (push a `main` / PR desde `develop`).
+
+## Política
+
+1. **Prohibido** crear una **rama Git nueva** (local o en el remoto) **sin consentimiento explícito** del usuario en el chat de la sesión.
+2. **Consentimiento explícito** = el usuario pide crear/publicar/usar una rama concreta, autoriza un nombre de rama, o indica literalmente que el agente cree una rama (ej. «creá la rama `feature/…`», «abrí rama para esto»).
+3. **No cuenta** como consentimiento: inferir una rama por convención, comodidad del agente, flujo de PR, o «asumir» que hace falta una feature branch si el usuario solo pidió commit, push, merge o PR **sobre la rama actual**.
+
+## Obligaciones del agente
+
+Antes de `git checkout -b`, `git branch`, `git push -u origin <rama-nueva>`, `gh`/`origin` que cree rama, o scripts que publiquen una rama nueva:
+
+1. **Parar** si el usuario no autorizó crear esa rama en el mismo hilo (o en una regla de usuario explícita para ese caso).
+2. **Trabajar en la rama actual** o proponer al usuario: nombre de rama sugerido y pedir confirmación antes de crearla.
+3. Si el usuario pidió **PR a `develop`** sin nombrar rama: usar la rama actual **si ya existe**; si hace falta una rama nueva, **preguntar** nombre o si debe crearse.
+
+## Permitido sin pedir «crear rama»
+
+- `git checkout` / `git switch` a ramas **ya existentes** (local o `origin/`), cuando el usuario pide cambiar de rama, merge, o trabajar en una rama nombrada.
+- Commit y push **en la rama actual** cuando el usuario lo autorice (sin implicar `-b`).
+- Merge entre ramas **existentes** cuando el usuario lo pida (respetando regla **18** para `main`).
+
+## Prohibido
+
+- Crear ramas «por las dudas», para aislar un fix, o para abrir PR, **sin** que el usuario haya consentido la creación de rama.
+- Renombrar o recrear ramas en remoto como sustituto de crear rama sin aviso.
+
+## Excepciones
+
+Ninguna por defecto. Solo si el usuario autoriza **de forma literal** en el chat (ej. «podés crear ramas cuando hagan falta para PRs») — entonces acotar en la respuesta qué ramas creó y por qué.
