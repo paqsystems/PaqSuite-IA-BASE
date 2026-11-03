@@ -79,7 +79,7 @@ El orden de las filas **es el alfabético A–T** y coincide con el **orden de l
 | **M** | Solo unificar SPEC-update | Ver **PARTE M** |
 | **N1** | Reporte PR | `/write-pr-report` / "Generá el reporte de PR" |
 | **N** | Commit / push / PR a `develop` | "Commiteá" … / "Hacé PR a develop" |
-| **O** | Entorno de desarrollo | "Iniciá el entorno de desarrollo" |
+| **O** | Entorno de desarrollo (+ sync GEN-34 local) | "Iniciá el entorno de desarrollo" · "… sin tocar la BD" · "… con BD descartable" |
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
 | **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
@@ -793,6 +793,16 @@ el asistente debe **en este orden** (no abrir el PR hasta completar los pasos pr
 Cuando el usuario escriba:
 > Iniciá el entorno de desarrollo
 
+Variantes (misma PARTE O):
+
+| Frase del usuario | Sync GEN-34 |
+|-------------------|-------------|
+| (solo el comando base) | **Sí** — escenario §5.5 producto GEN-34 «conservar datos» (§O.4) |
+| «… **sin tocar la BD**» / «solo levantá la app» | **No** — solo túnel (si aplica) + `serve` + `dev` |
+| «… **BD descartable**» / «con migrate fresh» | **Sí** — escenario descartable (§O.4); **confirmar** si la conexión apunta a RDS/Forge compartido |
+
+**Contrato GEN-34:** «Iniciar entorno de desarrollo» = **aplicación en marcha + instalación alineada al código** cuando la fila de prueba es **modo directo** (SQL local/RDS alcanzable desde el PC). No es solo `npm run dev`. SoT: Framework `docs/02-producto/34-instalacion-actualizacion-proyecto.md` §5.5 · `docs/06-operacion/guia-humana-instalacion-actualizacion-operativa.md` §3.
+
 El asistente debe:
 
 1. Asumir que el proyecto sigue la siguiente estructura:
@@ -801,34 +811,54 @@ El asistente debe:
 
 2. **SDK Cloudsmith (GEN-35):** si el host consume `paqsuite/laravel-core` / `@paqsuite/react-core` desde Cloudsmith, comprobar (sin imprimir el valor) que exista `CLOUDSMITH_READ_TOKEN` en el entorno. Si falta, **no** arrancar `npm install` / `composer install` a ciegas: indicar la regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** (variable de usuario Windows + `auth.json` Composer). Composer no lee `backend/.env` para el registry.
 
-3. Indicar la ejecución de los siguientes comandos,
-   **en terminales separadas**:
+3. **Túnel / conectividad SQL (si aplica):** si el backend usa MySQL remoto vía túnel, abrirlo **antes** del sync y del `serve`, en terminal aparte (mantener abierta). Ejemplo documentado ERP:
 
-1) Si el backend es mysql, abrir el túnel SSH
-En una terminal (mantener abierta):
 ```powershell
 cd "C:\Programacion\PaqSuite-IA-ERP"
 .\scripts\ssh-tunnel-mysql.ps1
 ```
-O directamente:
-```bash
-ssh -i "C:\Users\PabloQ\pablo-notebook" -o StrictHostKeyChecking=no -L 3306:127.0.0.1:3306 -N forge@18.218.140.170
-```
 
-2) Backend
-en nueva terminal
+O equivalente SSH documentado en el host. Si la BD es SQL Server/RDS directo desde `.env`, omitir túnel.
+
+### O.4 — Sincronización de instalación (GEN-34), antes de `php artisan serve`
+
+Ejecutar **en `backend/`** salvo que el usuario pidió **sin tocar la BD**.
+
+1. **Resolver instalación de prueba:** leer `PAQSUITE_CLIENTE` y `PAQSUITE_PROYECTO` de `backend/.env` (o variables documentadas del host). Si faltan, **preguntar** `{cliente}` + `{proyecto}` antes de continuar.
+2. **Modo de ejecución:** si la fila `EMPRESAS_CONEXION` de esa instalación tiene **`agent_id` y `client_id` informados** (modo **gateway**), **no** ejecutar `installation:install` / `installation:update` / `sql:sync-dev` en local (el host no debe aplicar SQL directo al cliente). Informar que el SQL se actualiza vía agente (Forge/ops) y **continuar levantando** backend/frontend local salvo que el usuario pidió otra cosa (UI/API local; datos vía gateway). Alternativa: fila **directo** de dev documentada en el runbook del host.
+3. **Comprobar CLI:** `php artisan list` debe incluir `paqsuite:installation:update` (y relacionados). Si *command not defined*, indicar bump de `paqsuite/laravel-core` (GEN-34 / GEN-35) y seguir `docs/06-operacion/runbook-install-update.md` transitorio; **no** simular éxito.
+4. **Elegir escenario** (producto 34 §5.5):
+
+   | Escenario | Cuándo | Comandos (orden) |
+   |-----------|--------|------------------|
+   | **Conservar datos** (default) | Comando base «Iniciá el entorno…» | `php artisan migrate` → `php artisan paqsuite:installation:update --cliente={cliente} --proyecto={proyecto} --non-interactive` |
+   | **BD descartable** | Usuario lo pidió explícitamente y la BD no es prod/compartida sin confirmación | `php artisan migrate:fresh --seed` → (opcional complemento SP diccionario) `php artisan paqsuite:sql:sync-dev` si `PAQSUITE_ALLOW_SQL_SYNC_DEV=true` → si no hay manifiesto aplicado, `paqsuite:installation:install --cliente=… --proyecto=… --non-interactive` |
+   | **Solo SP diccionario en SQLite/local mínimo** | Host documenta sync dev sin ciclo completo | `PAQSUITE_ALLOW_SQL_SYNC_DEV=true` + `php artisan paqsuite:sql:sync-dev` (no sustituye `update` en RDS con datos) |
+
+   **`migrate` solo no sustituye `installation:update`** (misma norma que Forge §5.3 GEN-34).
+
+   **Script del host (recomendado):** si existe `scripts/dev/sync-installation-sql.ps1` o `backend/scripts/dev/run-local-gen34-sync.php`, usarlo en lugar de encadenar artisan a mano (tenant bootstrap + SP host). Regla **`.cursor/rules/base/00-arquitectura/16-entorno-desarrollo-gen34.mdc`**.
+
+5. **Evidencia:** tras sync exitoso, `php artisan paqsuite:installation:status --cliente={cliente} --proyecto={proyecto}` y resumir en chat (último run / manifiesto). Si el update falla (**exit 1**), **informar el error** y preguntar si igualmente levantar frontend/backend para depurar. **Exit 2 (gateway):** omitir SQL local y **seguir** con §O.5.
+6. **Aviso regla 17:** si el working tree tiene migraciones/SP/manifiesto no aplicados aún en la BD usada, mencionarlo aunque el update haya corrido.
+
+### O.5 — Levantar aplicación (terminales separadas)
+
+1. **Backend** (nueva terminal):
+
 ```bash
 cd backend
 php artisan serve
 ```
-3) Frontend
-en otra terminal
-```bash 
+
+2. **Frontend** (otra terminal):
+
+```bash
 cd frontend
 npm run dev
 ```
 
-4) Al **mostrar en el chat** las URLs del entorno ya levantado, incluir **siempre tres enlaces**:
+3. Al **mostrar en el chat** las URLs del entorno ya levantado, incluir **siempre tres enlaces**:
    - **Frontend** (Vite; p. ej. `http://localhost:3000/` según `frontend/vite.config.ts`).
    - **Backend** (Laravel; p. ej. `http://127.0.0.1:8000` si `php artisan serve` usa host y puerto por defecto).
    - **OpenAPI (Swagger UI):** misma base URL que el backend + la ruta configurada en `backend/config/l5-swagger.php` (`documentations.default.routes.api`, actualmente **`/api/documentation`**). Ejemplo con backend en `127.0.0.1:8000`: `http://127.0.0.1:8000/api/documentation`. Si el usuario arranca el backend en otro host o puerto, ajustar la base en consecuencia.
@@ -1047,6 +1077,8 @@ Desplegá la versión preview
 Desplegá la versión develop
 Desplegá preview
 Desplegá develop
+Despliega develop
+Despliega preview
 Publicá en preview
 Publicá en develop
 ```
@@ -1058,6 +1090,9 @@ Desplegá la versión productiva
 Desplegá la versión de producción
 Desplegá producción
 Desplegá productiva
+Despliega producción
+Despliega main
+Despliega productiva
 Publicá en producción
 Publicá en main
 ```
@@ -1189,7 +1224,7 @@ reduciendo errores humanos y mejorando la productividad.
 
 ### Invocaciones combinadas
 
-Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá el entorno de desarrollo** y **ejecutá los tests**), el asistente debe aplicar primero la PARTE **O** (abrir terminales con backend y frontend en ejecución e informar URLs de frontend, backend y OpenAPI según el punto 4 de esa parte) y luego la PARTE **E** (abrir las tres terminales de tests: backend, unitarios, E2E). Las invocaciones son acumulables en el orden **O → E**.
+Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá el entorno de desarrollo** y **ejecutá los tests**), el asistente debe aplicar primero la PARTE **O** (sync GEN-34 §O.4 salvo «sin tocar la BD»; luego terminales con backend y frontend en ejecución e informar URLs según §O.5) y luego la PARTE **E** (abrir las tres terminales de tests: backend, unitarios, E2E). Las invocaciones son acumulables en el orden **O → E**.
 
 ### Funciones de las Skills
 

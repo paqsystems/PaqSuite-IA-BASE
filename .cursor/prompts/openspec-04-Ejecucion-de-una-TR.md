@@ -15,6 +15,13 @@ Implementación:
 - Mantener consistencia con TRs ya implementadas.
 - Si la TR introduce o modifica **claves de `PQ_PARAMETROS_GRAL`** para un módulo: actualizar `docs/backend/seed/PQ_PARAMETROS_GRAL/PQ_PARAMETROS_GRAL.seed.json`, verificar `PqParametrosGralSeeder`, y en desarrollo ejecutar `php artisan db:seed --class=PqParametrosGralSeeder --database=company` (regla `.cursor/rules/28-plan-tareas-hu-parametros-generales.md` §6).
 
+Modelo de datos (MUST si la TR toca persistencia):
+- Actualizar **`docs/modelo-datos/`** en el mismo cambio: un `.md` por tema/módulo/GEN afectado (hosts: p. ej. `md-diccionario/`, `md-empresas/`; Framework: `gen/`, `md-paqsystems/`). Índice y plantilla: **`docs/modelo-datos/README.md`** y **`_plantilla-componente.md`** (Framework publica la plantilla de referencia).
+- Por cada tabla tocada, en el doc correspondiente: **(1)** función de la tabla, **(2)** estructura (campo, tipo, nulos, default), **(3)** significado de cada campo, **(4)** índices y constraints.
+- Scripts SP desplegables: referenciar en el mismo doc o en `docs/modelo-datos/sp/` si el repo lo usa; regla BASE **`70-db/74`** (acceso de negocio por SP).
+- **PaqSuite-IA-FRAMEWORK:** mantener coherencia con **`docs/06-modelo-datos/`** (anexo install/GEN-34) cuando el cambio sea transversal GEN o PAQSYSTEMS.
+- Visual opcional: si el host mantiene **`database/modelo-datos.dbml`**, alinearlo con los `.md` actualizados (regla **`70-db/70-dbml-sync-rule`**).
+
 Documentación de librerías externas (solo si la TR lo exige en el DoD de una tarea):
 - Cuando el plan de la TR indique verificación con documentación actual de un paquete (p. ej. DevExtreme React, Playwright, Vitest), usar el MCP **user-context7** u otra fuente oficial alineada a la versión en `frontend/package.json`.
 - Priorizar siempre reglas y docs del repo (`.cursor/rules/`, `AGENTS.md`, `docs/frontend/devextreme-norms.md`); Context7 complementa dudas de API de terceros, no reemplaza el diseño interno.
