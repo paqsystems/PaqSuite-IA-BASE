@@ -79,7 +79,7 @@ Pin de referencia oleada 2026-10: `@paqsuite/react-core` **≥ 2.4.25-beta.1**, 
 | **22** | Mobile Capacitor | **documentado** | §3 GEN-22 · **80** |
 | **23** | `GruposEmpresariosPage` | **documentado** | §3 GEN-23 |
 | **24–29, 31** | Diferidos (sin export de producto) | **no cablear** | §3 diferidos |
-| **30** | Notification Service | **borrador** (F smoke) | §3 GEN-30 |
+| **30** | Notification Service | **documentado** (CC#14; smoke manual CA-14-05 residual) | §3 GEN-30 |
 | **32** | `ArcaConfigPage` / homologación | **documentado** | §3 GEN-32 |
 | **35** | Registry Cloudsmith | **documentado** | §3 GEN-35 · **45** |
 | **99** | Manual corpus asistente | norma | regla `99-manual-usuario-corpus` |
@@ -518,20 +518,31 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 
 | Campo | Valor |
 |-------|--------|
-| Estado ficha | **borrador** — OpenSpec D+E+F1; índice GEN **diferido** para hosts |
-| MUST | No SMTP/WA/TG paralelos en el producto; esperar exports SDK |
-| Referencia | `docs/02-producto/30-…` |
+| Estado ficha | **documentado** (2026-11-04 CC#14 — Admin ABM, i18n register, OpenAPI, DualPath SP) |
+| SDK mínimo | `@paqsuite/react-core` con `NotificationServiceAdminPage` / `NotificationServiceMonitorPage` + `registerNotificationServiceI18nResources`; `paqsuite/laravel-core` con `NotificationService/*` + `pq_sp_ns_*` |
+| Exports | `NotificationServiceAdminPage`, `NotificationServiceMonitorPage`, `registerNotificationServiceI18nResources` |
+| i18n host | `registerNotificationServiceI18nResources(i18n, namespace)` — prefijo `notificationService.*` |
+| Backend | Host registra `/api/v1/notification-service/*`; bind `NotificationServiceStore` → `StoredProcedureNotificationServiceStore` en SQL Server; smoke CI = Eloquent (excepción) |
+| OpenAPI | [`openapi-notification-service-gen-30.yaml`](../../../../docs/05-open-spec/updates/001-Generalidades/openapi-notification-service-gen-30.yaml) · envelope `5001–5012` |
+| Adopción | [`adopcion-gen-30-notification-service.md`](../../../../docs/06-operacion/adopcion-gen-30-notification-service.md) |
+| Anti-patrones | Fork i18n; Guardar root no-op; Eloquent en host; SMTP/WA/TG paralelos; SES en este GEN (Fase 2) |
+| Gap | Smoke manual Fase 1 simulación (**CA-FW-14-05**); publish/pin host; GEN-37 catálogo operativo |
+| Referencia | SPEC-001-30 · update CC#14 · producto `30-…` |
 
 ### GEN-32 — ARCA
 
 | Campo | Valor |
 |-------|--------|
-| Estado ficha | **documentado** |
-| Exports | `ArcaConfigPage`, `ArcaHomologacionPage`, `arcaApiClient` |
-| Backend | `/api/v1/arca/...`; host arma JSON + persiste CAE; migrate+SP `adopcion-gen-32-arca.md` |
+| Estado ficha | **documentado** (HTTP empaquetado CC PQ #15 · 2026-11-05) |
+| SDK mínimo | `paqsuite/laravel-core` **≥ 1.3.18-beta.29** (rutas HTTP opt-in); UI `@paqsuite/react-core` con `ArcaConfigPage` / `ArcaHomologacionPage` |
+| Exports | FE: `ArcaConfigPage`, `ArcaHomologacionPage`, `arcaApiClient`. BE: rutas package `routes/arca.php` + `ArcaController` |
+| i18n host | Catálogo `arcaIntegration.*` (consola DX); sin fork de envelope `5101–5115` |
+| Wrapper host | UI SDK; **no** controllers HTTP propios |
+| Backend | Opt-in `PAQSUITE_ARCA_ROUTES_ENABLED=true`; middleware `paqsuite.arca.middleware`; bind `ArcaPermissionChecker` (default DenyAll); require `X-Company-Id`; host arma JSON + persiste CAE; migrate+SP [`adopcion-gen-32-arca.md`](../../../../docs/06-operacion/adopcion-gen-32-arca.md) |
 | Excluido mobile | Sí |
+| Anti-patrones | Clonar `ArcaController` / “patrón smoke HTTP”; asumir rutas on por default; SOAP en el host |
 | Gap | OK si el producto no factura ARCA |
-| Referencia | SPEC-001-32 |
+| Referencia | SPEC-001-32 · SPEC-update CC #15 · smoke thin (Track B) |
 
 ### GEN-35 — Cloudsmith
 

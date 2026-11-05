@@ -85,9 +85,9 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | 27 | WhatsApp/Telegram | diferido | Casos de uso; **canales** = GEN-30 (no motor paralelo en el host) |
 | 28 | Cámara/biometría | diferido | Post-MVP mobile |
 | 29 | Voz en modales | diferido | — |
-| 30 | Notification Service | **diferido** | Definición funcional en `docs/02-producto/30-…`. Sin exports SDK. No reinventar mail/WA/TG en el host |
+| 30 | Notification Service | listo | `NotificationServiceAdminPage` / `Monitor` + `registerNotificationServiceI18nResources`; BE host `/notification-service/*` + SP `pq_sp_ns_*` ([adopcion-gen-30-notification-service.md](../../../docs/06-operacion/adopcion-gen-30-notification-service.md)). SES = Fase 2. No reinventar mail/WA/TG en el host |
 | 31 | Integración bancaria | **diferido** | Definición en `docs/02-producto/31-…`. Sin exports SDK. No reinventar conectores bancarios en el host |
-| 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...`; UI smoke `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host arma JSON + persiste CAE. migrate+SP `adopcion-gen-32-arca.md`. **excluido mobile** |
+| 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...` **en package** (opt-in `routesEnabled`, pin ≥ **1.3.18-beta.29**); UI `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host: flag + bind checker + JSON/CAE. migrate+SP `adopcion-gen-32-arca.md`. **No** clonar HTTP smoke. **excluido mobile** |
 | 35 | Distribución SDK Cloudsmith | **ops (prerelease)** · piloto Partes **adoptado** | No hay UI. Cloudsmith `paqsystems/paqsuite-sdk`. SoT [`adopcion-sdk-registry.md`](../../../docs/06-operacion/adopcion-sdk-registry.md). Partes FE+BE Cloudsmith (2026-10-11). TANGO y corte Fase 7 pendientes. Satis/Verdaccio = rollback hasta Fase 7. |
 
 ## Fronteras frecuentes
@@ -99,7 +99,7 @@ Si hay duda de existencia o invocación, preguntar en el repo Framework (no adiv
 | Informe con pivots | GEN-12 shell/block | `PivotGrid` DX suelto sin GEN |
 | Importar planilla | GEN-14 toolbar | Parser/plantilla propios |
 | Emitir PDF/informe | GEN-15 (update) + GEN-30 si hay mail/WA/TG | SMTP o plantillas mail en el host |
-| CAE/CAEA ARCA (FE) | GEN-32 `/api/v1/arca` + JSON SoT | WSAA/WSFE/CAE en el host; menú smoke 70xxx |
+| CAE/CAEA ARCA (FE) | GEN-32 package `/api/v1/arca` (opt-in) + JSON SoT | WSAA/WSFE/CAE o `ArcaController` clonado en el host; menú smoke 70xxx |
 | Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
 | i18n pie grilla / menú contextual totalizadores | `registerGridI18nResources` + `ProcessDataGrid` SDK | `grid.summary.*` en JSON host, `summaryTypeLabels` masivo, copiar `gridI18n` al producto |
 | Bump `@paqsuite/react-core` | Diff template `create-app` + ritual bump producto (regla **`43`**) | Subir pin sin revisar exports ni reintroducir forks |
