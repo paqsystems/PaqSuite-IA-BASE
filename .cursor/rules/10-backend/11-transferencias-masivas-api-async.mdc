@@ -1,0 +1,315 @@
+---
+description: Transferencias masivas de información entre proyectos mediante API asíncrona, staging y worker (MUST)
+alwaysApply: true
+---
+
+# Transferencias masivas de información entre proyectos (MUST)
+
+## Propósito y frontera
+
+Toda transferencia servidor-a-servidor de información ERP en JSON, que pueda
+requerir más de un envío, debe implementarse con el contrato transversal
+**GEN-36 — Importaciones API asíncronas**.
+
+Esta regla aplica a:
+
+- el **HOST**, que recibe, conserva, coordina y procesa la información;
+- el **CLIENT**, que divide la información en lotes, los envía y consulta el
+  resultado;
+- todos los recursos que compartan este mecanismo: maestros, transacciones y
+  recursos con nodos hijos.
+
+No se debe crear un motor paralelo por producto. El HOST aporta el adaptador
+del recurso, sus validaciones, stored procedures y reglas de dominio; el motor
+de recepción, staging, estados, idempotencia, worker y consulta es común.
+
+SoT: Framework `SPEC-001-36 — Importaciones API asíncronas`.
+
+## Terminología canónica
+
+| Concepto | Nombre canónico | Regla |
+|---|---|---|
+| Identificador del ciclo | `importacionId` | Es el `id` de negocio generado por el CLIENT/ERP. Debe ser único para todos los lotes del ciclo y, cuando la transferencia abarque varios recursos, reutilizarse en todos ellos. |
+| Número de envío | `numeroLote` | Entero positivo secuencial, comienza en `1` y aumenta de a uno. |
+| Último envío | `ultimoEnvio` | Booleano. Es `false` en todos los lotes salvo el último, que es `true`. |
+| Fecha del ciclo | `fechaProceso` | La misma fecha/hora lógica en todos los lotes del ciclo. |
+| Tipo de transferencia | `modo` | `snapshot` o `delta`, según lo que soporte el recurso. |
+| Registros del lote | `items` | Array; puede ser vacío, incluso en un snapshot válido. |
+
+`id` puede documentarse como alias humano de `importacionId`, pero las APIs,
+OpenAPI, Postman, código y tablas deben usar `importacionId` como nombre
+canónico.
+
+`umoEnvio`, `nroEnvio` y nombres similares no deben incorporarse como campos
+nuevos: para la secuencia se utiliza `numeroLote`.
+
+### Semántica de `modo`
+
+`modo` indica cómo debe interpretar el HOST el conjunto completo de lotes que
+compone el ciclo:
+
+- **`snapshot`**: el CLIENT envía la fotografía completa del recurso a la
+  fecha indicada en `fechaProceso`. Al recibir `ultimoEnvio=true`, el HOST
+  considera finalizada la recepción, une todos los lotes del ciclo y compara
+  las claves recibidas contra las existentes. Los registros existentes que no
+  aparecen en ningún lote del snapshot se consideran bajas, según la regla del
+  recurso. El snapshot puede ser vacío; en ese caso, si el ciclo es válido,
+  todos los registros existentes visibles para ese recurso quedan candidatos a
+  baja.
+- **`delta`**: el CLIENT envía únicamente cambios desde un punto de corte:
+  altas, modificaciones y, si el contrato del recurso lo define, bajas
+  explícitas. La ausencia de un registro en un lote delta **no** significa
+  baja y el HOST no debe eliminarlo por no haber sido informado. El HOST sólo
+  aplica las operaciones representadas por los items y las reglas específicas
+  de bajas del recurso.
+
+El valor se aplica al ciclo completo, no individualmente a cada lote. Todos los
+lotes con el mismo `importacionId` deben utilizar el mismo `modo`; mezclar
+`snapshot` y `delta` dentro del ciclo debe rechazarse como conflicto de
+contrato. El HOST debe documentar por recurso si soporta uno o ambos modos y
+qué campo representa una baja explícita en modo `delta`.
+
+## Contrato del HOST: recepción
+
+La ruta canónica es:
+
+`POST /api/v1/integracion/importaciones/{recurso}`
+
+El endpoint debe recibir como mínimo:
+
+```json
+{
+  "importacionId": "erp-2026-000001",
+  "numeroLote": 1,
+  "ultimoEnvio": false,
+  "modo": "snapshot",
+  "fechaProceso": "2026-10-24T12:00:00Z",
+  "items": []
+}
+```
+
+El HOST debe:
+
+1. autenticar y resolver la instalación/empresa según los headers de
+   plataforma;
+2. validar la estructura del lote y el modo soportado por el recurso;
+3. conservar el JSON recibido completo, incluso cuando `ultimoEnvio=true`;
+4. guardar tamaño, hash, fecha de recepción, recurso, tenant/empresa y
+   metadatos de correlación no sensibles;
+5. crear o actualizar la cabecera y los lotes en la familia de tablas
+   `PQ_GEN_IMPORTATIONS*`;
+6. responder inmediatamente después de persistir el lote, sin esperar el
+   procesamiento de negocio;
+7. cuando `ultimoEnvio=true`, dejar registrado el ciclo completo y disparar
+   asíncronamente el worker después de confirmar la persistencia.
+
+La respuesta exitosa de recepción es `202 Accepted`, con envelope GEN-20 y sin
+resultado de negocio final:
+
+```json
+{
+  "error": 0,
+  "respuesta": "Importación recibida",
+  "resultado": {
+    "importacionId": "erp-2026-000001",
+    "recurso": "condventa",
+    "numeroLote": 1,
+    "estado": "received"
+  }
+}
+```
+
+El `202` significa únicamente que el HOST aceptó y persistió el lote. No
+significa que el ABM haya terminado.
+
+### Disparo seguro del worker
+
+- El worker sólo puede encolarse después del commit de la persistencia del
+  lote final.
+- El mismo ciclo no debe encolarse más de una vez aunque se reintente el
+  último lote.
+- El envío del job debe ser idempotente; se recomienda una marca de
+  `dispatchado` o una outbox en `PQ_GEN_IMPORTATIONS*`.
+- Si el ciclo está incompleto, no se procesa parcialmente ni se actualizan
+  tablas operativas.
+- El endpoint nunca debe ejecutar el ABM de dominio en línea.
+
+## Contrato del HOST: staging y resultados
+
+La familia `PQ_GEN_IMPORTATIONS*` debe permitir conservar, como mínimo:
+
+- cabecera del ciclo;
+- recurso y tenant/empresa;
+- fecha de proceso;
+- estado y timestamps de recepción, cola, inicio y fin;
+- lotes, `numeroLote`, payload JSON completo y hash;
+- información de idempotencia y conflictos;
+- errores completos;
+- contadores finales y duración;
+- lock lógico del ciclo activo.
+
+Estados mínimos:
+
+`received` → `staging` → `queued` → `processing` →
+`completed` | `failed` | `rejected` | `conflict`.
+
+Mientras el estado no sea final, el GET debe devolver `null` en todos los
+resultados de negocio:
+
+- `duracion`;
+- `procesados`;
+- `agregados`;
+- `modificados`;
+- `eliminados`;
+- `agregadosErroneos`;
+- `modificadosErroneos`;
+- `eliminadosErroneos`;
+- `errores`.
+
+No se deben devolver resultados parciales, aunque internamente el worker
+actualice tablas auxiliares o avance por lotes.
+
+Al finalizar, el worker debe persistir:
+
+- estado final;
+- duración;
+- registros procesados;
+- altas exitosas y erróneas;
+- modificaciones exitosas y erróneas;
+- bajas exitosas y erróneas;
+- detalle completo de errores.
+
+Los seis contadores de operación deben cumplir:
+
+```text
+agregados
++ modificados
++ eliminados
++ agregadosErroneos
++ modificadosErroneos
++ eliminadosErroneos
+= procesados
+```
+
+Las bajas de un `snapshot` se resuelven por análisis de los registros que no
+fueron informados en el ciclo completo. No deben ejecutarse al recibir cada
+lote. La baja es física cuando la regla del recurso lo permite; si el dominio
+define inhabilitación, se modifica el atributo operativo existente.
+
+## Contrato del HOST: consulta genérica
+
+Todos los recursos deben ofrecer la misma consulta de estado, sin duplicar
+implementaciones:
+
+`GET /api/v1/integracion/importaciones/{recurso}/{importacionId}`
+
+La respuesta debe identificar el `importacionId`, el recurso y el estado.
+Mientras no sea final, los resultados son `null`; cuando sea final, devuelve
+los contadores, duración y errores completos.
+
+Si una instalación necesita consultar una campaña que abarca varios recursos
+con el mismo `importacionId`, el contrato puede exponer un agregador por
+`importacionId`, pero debe conservar resultados separados por recurso. No se
+debe mezclar el conteo de recursos diferentes.
+
+## Idempotencia, concurrencia y reintentos
+
+- Repetir `importacionId + recurso + numeroLote` con el mismo hash no duplica
+  staging ni vuelve a aplicar el lote.
+- El mismo lote con hash diferente se rechaza como conflicto.
+- `numeroLote` fuera de secuencia debe rechazarse o quedar explícitamente
+  marcado para recuperación; nunca debe procesarse silenciosamente.
+- Un `ultimoEnvio=true` repetido no dispara otro worker.
+- Debe existir como máximo un ciclo activo por tenant/empresa y recurso, salvo
+  que el contrato del producto documente una partición distinta.
+- Una segunda concurrencia incompatible responde `409 Conflict`; el CLIENT
+  debe detener los lotes restantes y registrar/mostrar el error.
+- El lock se libera en estados finales y mediante recuperación explícita de
+  jobs abandonados.
+
+## Acceso a datos y procesamiento de dominio
+
+La recepción, el worker, el staging, los resultados y el ABM del dominio están
+sujetos a la regla BASE de stored procedures:
+
+- toda consulta o comando de negocio debe pasar por SP o gateway;
+- no usar Eloquent, Query Builder ni SQL ad-hoc en el runtime;
+- el HOST registra un adaptador por recurso;
+- el adaptador declara los SP de validación, altas, modificaciones, bajas,
+  nodos hijos y conteo de errores;
+- el worker debe aplicar la actualización de tablas operativas de forma
+  transaccional según el contrato del recurso;
+- las migraciones/DDL y despliegues de SP son artefactos de instalación, no
+  reemplazan el contrato de ejecución.
+
+El worker no debe interpretar reglas de otro recurso ni crear una segunda vía
+de persistencia para el mismo caso de uso.
+
+## Contrato del CLIENT
+
+El CLIENT debe asumir que un recurso puede no caber en un único envío.
+
+Para cada ciclo debe:
+
+1. generar un `importacionId` único;
+2. usar el mismo `importacionId` y `fechaProceso` en todos los lotes del
+   ciclo;
+3. comenzar `numeroLote` en `1` y aumentarlo secuencialmente;
+4. enviar `ultimoEnvio=false` en todos los lotes intermedios;
+5. enviar `ultimoEnvio=true` sólo en el último lote;
+6. permitir que el último lote tenga `items=[]` cuando el snapshot vacío sea
+   válido;
+7. conservar la respuesta `202` y no interpretarla como finalización;
+8. después de aceptar el último lote, consultar el GET con el mismo
+   `importacionId`;
+9. continuar consultando hasta un estado final, con backoff y límite de
+   reintentos configurables;
+10. detener el ciclo y avisar/registrar el error ante `409`, rechazo de lote,
+    conflicto de hash, autenticación o error de contrato.
+
+La respuesta de recepción sólo autoriza a seguir enviando lotes o a comenzar
+la consulta. La finalización, éxito, error y cantidades definitivas sólo se
+conocen mediante el GET.
+
+Cuando una transferencia abarque varios recursos, el CLIENT reutiliza el
+`importacionId`, pero debe respetar el orden funcional que el contrato del
+HOST exija y consultar los resultados por recurso. El motor no inventa el
+orden entre recursos.
+
+## Retención y errores
+
+- Conservar el JSON completo es obligatorio en la primera versión, incluido el
+  último envío.
+- Conservar el detalle completo de errores es obligatorio; no truncarlo
+  silenciosamente.
+- La retención debe ser configurable y no puede purgar ciclos activos.
+- El tamaño de payload y de errores debe tener límites operativos explícitos,
+  observabilidad y una política de purga; esos límites no deben cambiar el
+  contrato sin documentarlo.
+- No usar `DROP`, `TRUNCATE` ni vaciado de tablas para resolver retención.
+
+## Documentación y pruebas obligatorias
+
+Cada recurso nuevo o modificado debe actualizar:
+
+- OpenAPI con `202`, `409`, estados, payload y GET;
+- colección y environment de Postman con varios lotes, último lote,
+  snapshot vacío, reintento idempotente, conflicto y consulta final;
+- pruebas de contrato para que los contadores y estados sean verificables;
+- pruebas del worker con éxito, error, reintento y recuperación del lock;
+- documentación del SP/adaptador del recurso;
+- smoke E2E: recibir varios lotes → aceptar `202` → consultar → validar
+  resultado final.
+
+## Prohibiciones
+
+- Esperar la finalización del ABM dentro del POST.
+- Procesar cada lote como una importación completa.
+- Omitir la persistencia del último JSON.
+- Calcular bajas antes de recibir `ultimoEnvio=true`.
+- Devolver contadores provisionales o errores parciales en el GET.
+- Generar un `importacionId` distinto para cada lote.
+- Confundir `202 Accepted` con resultado final.
+- Crear un endpoint o worker específico por recurso cuando GEN-36 ya cubre el
+  comportamiento transversal.
+- Copiar el motor de importaciones desde Framework a un producto HOST.

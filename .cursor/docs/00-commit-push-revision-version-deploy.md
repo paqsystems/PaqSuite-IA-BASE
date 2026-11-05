@@ -103,7 +103,7 @@ Frontend (Vercel u otro): rebuild si cambió `frontend/` o `VITE_*`.
 
 ## 6) Relación con PR y documentación
 
-- **Flujo de ramas:** no hacer push a `main`/`master`. `main` solo se actualiza con un **Pull Request desde `develop`**. El push diario va a `develop` (u otras ramas de trabajo). Detalle: regla `18-git-flujo-main-desde-develop.mdc`.
+- **Flujo de ramas:** no hacer push directo a `develop` ni `main`/`master`. Los cambios llegan mediante PR a `develop`; `main` solo se actualiza con un **Pull Request desde `develop`**. Detalle: regla `18-git-flujo-main-desde-develop.mdc`.
 - Si el aviso es relevante, mencionarlo en el **cuerpo del PR** (sección «Observaciones deploy» o «Test plan»).
 - Si el cambio introduce SQL repetible, preferir versionarlo en `backend/scripts/sql/` (como `seed-pivot-catalog.sql`).
 - No sustituye consentimiento para operaciones **destructivas** de BD (ver reglas `no-drop-database` del producto).

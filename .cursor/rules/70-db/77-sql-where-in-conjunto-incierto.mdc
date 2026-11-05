@@ -1,0 +1,62 @@
+---
+description: Prohibido WHERE IN con conjunto de tamaño incierto (límite SQL Server 2100 parámetros)
+alwaysApply: true
+---
+
+# SQL — no `WHERE IN` con cantidad incierta (MUST)
+
+Complementa: `74-acceso-datos-stored-procedures.mdc` (acceso de negocio por SP).  
+Aplica a **SQL de SP**, scripts T-SQL y, mientras exista Eloquent/Query Builder en excepciones, a **ese** código PHP.
+
+## Norma
+
+**Nunca** usar `WHERE columna IN (...)` ni Eloquent `whereIn()` cuando el conjunto lo arma el runtime y **no se conoce a priori** cuántos elementos tendrá (lista de clientes, artículos, comprobantes, etc.).
+
+Motivo: SQL Server admite **como máximo 2100 parámetros** ligados. Un `whereIn('cod_client', $milesDeCodigos)` revienta con `SQLSTATE[IMSSP] Tried to bind parameter number 2101`. Además es peor plan que un JOIN/EXISTS.
+
+## Qué usar
+
+| Situación | Enfoque |
+|-----------|---------|
+| Filtrar por universo de clientes/artículos visible | `JOIN` / `JOIN` a subconsulta / `EXISTS` con la misma regla de visibilidad (vendedor, supervisor, igualdad a un código) |
+| Un valor conocido | `WHERE col = @param` |
+| Catálogo **cerrado y chico** (estados 0/1/99, tipos fijos en config) | `IN` de literales o lista **fija** de pocos valores (decenas, no miles) está permitido |
+| Lote grande a procesar | tabla temporal / TVP / JOIN al origen, no expandir array PHP a `IN (?,?,…)` |
+
+## Prohibido
+
+```php
+$codigos = $clientes->pluck('cod_client'); // N desconocido
+Contacto::query()->whereIn('cod_client', $codigos);
+```
+
+```sql
+SELECT * FROM pq_pedidosweb_clientescontactos
+WHERE cod_client IN (@p1, @p2, /* … miles */)
+```
+
+## Correcto
+
+```php
+$query->joinSub(
+    $visibleClients->select('cod_client'),
+    'clientes_visibles',
+    'clientes_visibles.cod_client',
+    '=',
+    'pq_pedidosweb_clientescontactos.cod_client'
+);
+```
+
+```sql
+FROM pq_pedidosweb_clientescontactos c
+INNER JOIN pq_pedidosweb_clientes cli ON cli.cod_client = c.cod_client
+WHERE cli.cod_vended = @codVended
+```
+
+`WHERE col IN (SELECT …)` sigue siendo `IN`: preferir `EXISTS` o `JOIN` a la subconsulta. No usar `IN (SELECT)` como atajo si el producto pide JOIN/EXISTS.
+
+## Checklist
+
+- [ ] El `IN`/`whereIn` es catálogo cerrado de tamaño fijo, o no hay `IN`
+- [ ] No se hace `pluck`/`toArray` de un resultset para meterlo en `whereIn`
+- [ ] Eager load Eloquent (`with()`) no dispara `whereIn` de miles de PKs en el mismo caso (si aplica, JOIN/subconsulta)

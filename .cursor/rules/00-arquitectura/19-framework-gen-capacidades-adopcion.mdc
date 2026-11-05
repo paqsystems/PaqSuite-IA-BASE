@@ -1,0 +1,109 @@
+---
+description: >-
+  Antes de SPEC/HU/TR o implementar informe, pivot, grilla, dashboard, Excel,
+  emisión, chat, LLM, tareas, tablero BI u otra pantalla transversal: adoptar
+  capacidad GEN del Framework (índice, estado, componente). No reinventar motor.
+  PaqSuite IA hosts que consumen @paqsuite/react-core y paqsuite/laravel-core.
+globs:
+  - "docs/05-open-spec/**"
+  - "docs/03-historias-usuario/**"
+  - "docs/04-tareas/**"
+  - "docs/02-producto/**"
+  - "docs/00-Conceptualizacion/**"
+alwaysApply: true
+---
+
+# Framework GEN — adoptar, no reinventar (hosts)
+
+Aplica a productos que consumen el SDK (`paqsuite/laravel-core` + `@paqsuite/react-core`). Asociar el paquete **no** enciende la capacidad ni hace que OpenSpec “detecte” GEN-xx.
+
+## Dónde consultar el checklist de componentes
+
+| Qué necesitás | Dónde |
+|---------------|--------|
+| **Checklist operativo en el host** (GEN, estado listo/diferido, export a invocar) | **Esta regla** — índice abajo. Es la referencia diaria en el producto (symlink `rules/base`). |
+| **Cableado concreto por componente** (i18n, props, tema, API, anti-patrones, checklist merge) | Regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`). Catálogo vivo: índice §2 + ficha §3 por GEN listo (2026-10-11). |
+| **Detalle de producto / adopción / guías** | Repo **`PaqSuite-IA-FRAMEWORK`**: `docs/02-producto/`, `docs/05-open-spec/001-Generalidades/SPEC-001-xx`, `docs/06-operacion/adopcion-*.md`, guía `docs/00-Conceptualizacion/04-guias/COMO_USAR_EL_FRAMEWORK_DESDE_UN_PROYECTO.md` (copia PQ: `…-PQ.md` §9.1). |
+
+Antes de inventar UI/login/shell/grilla/pivot/excel/etc.: **abrir esta regla** (y el SoT Framework si hace falta profundidad). No adivinar.
+
+**SoT:** repo `PaqSuite-IA-FRAMEWORK` — paths de la tabla anterior.
+
+## MUST en todo SPEC / HU / TR del host (proceso con UI o capacidad transversal)
+
+1. Si el pedido encaja en una fila **listo** → **nombrar GEN-xx** y el **export**; **no reimplementar**.
+2. Si es **diferido** → no inventar el motor en el host; abrir/esperar Framework, salvo que sea 100 % de ese producto (entonces no es GEN).
+3. El host aporta solo dominio: menú, permisos, `consultaId`/`processCode`, catálogo, API/SP, filtros, widgets.
+4. **Prohibido** copiar carpetas GEN (u homólogos) del Framework al producto.
+
+Plantilla **obligatoria** en el enunciado (SPEC y, por trazabilidad, HU/TR):
+
+```text
+[Proceso] de [host]: adoptar GEN-xx. UI/motor = [export]. No reimplementar.
+SoT: Framework SPEC-001-xx. Host: [consultaId/processCode, catálogo, API/SP, filtros, menú].
+```
+
+Si hay duda de existencia o invocación, preguntar en el repo Framework (no adivinar).
+
+## Básicos (día 0) vs adicionales
+
+| Tipo | GEN típicos | Criterio |
+|------|-------------|----------|
+| **Básicos** — usar desde scaffold / UI base | 01 estética, 02 i18n, 04 login, 07 menú, 08 avatar, 11 grillas, 19 shell/tenancy, 20 envelope (+ 05 selector si MULTI) | No codificar login/shell/envelope/grilla de proceso propios |
+| **Adicionales** — cuando el proceso lo pida | 03, 06, 09–10, 12–18, 21–24, … | Solo si estado **listo**; si **diferido**, no inventar |
+
+## Índice (estado = invocable en SDK, no el doc conceptual)
+
+| GEN | Tema | Estado | Invocar (host) |
+|-----|------|--------|----------------|
+| 01 | Estética UI | listo (norma) | Controles **100 % DX**; layouts `AuthPageLayout` / `ShellLayout` / `ProcessPageLayout` |
+| 02 | i18n | listo | `LanguageSelector`; envelope + namespaces GEN; **`registerGridI18nResources(i18n)`** (grillas); menú/títulos → `adopcion-menu-i18n.md` + regla **`43-host-sdk-i18n-sin-fork-gen`** |
+| 03 | Smart Capture | listo | `SmartCapturePanel` (prereq GEN-16 BD+SP) |
+| 04 | Login | listo | Flujo auth SDK; no rehacer login |
+| 05 | Selector empresas | listo | `EmpresaSelectorPage` (MULTI / N>1) |
+| 06 | Seguridad admin | listo | ABM roles/permisos/empresas GEN (`SecurityRolesPage`, `EmpresasAdminPage`, …); cableado host → regla **`44`**; **excluido mobile** |
+| 07 | Menú | listo | `MenuSidebar` + API menú; `id` jerárquico `pq_menus`; **Must** `t`+`locale` + `labelKey` (regla `42-host-menu-shell-i18n`) |
+| 08 | Menú avatar | listo | `UserAvatarMenu` |
+| 09 | Dashboard inicio | listo | `DashboardContainer` + widgets **del producto** (no es BI) |
+| 10 | ABM Parámetros | listo | Pantalla parámetros GEN |
+| 11 | Grillas/layouts | listo | `ProcessDataGrid` / `DataGridDx` + `/grid-layouts*`; i18n pie → **`registerGridI18nResources`** (regla **`43`**, regla **`29`**) |
+| 12 | Pivots | listo | `ConsultaGrillaPivotShell` / `PivotGridBlock` + `consultaId`; **excluido mobile** |
+| 13 | Tareas programadas | listo | `TaskProcessesPage` / Definitions / Executions; `TaskProcessRegistry` |
+| 14 | Import Excel | listo | `ExcelImportToolbar` (fila propia) + handler/seed host; **excluido mobile** |
+| 15 | Emisiones | **redefinir** | SoT = `15-reportes-emisiones-update.md`; SPEC-001-15 …+**D1 Aprobado** (siguiente D). Comunicación = GEN-30 |
+| 16 | Provider IA BYOK | listo | `LlmPreferencesPanel`; migrate+SP `adopcion-gen-16-byok.md` |
+| 17 | Auditoría / bandeja | listo | `AuditEventsPage` + `NotificationsBell`. Mail/canales dirigidos → GEN-30 |
+| 18 | Install/update | listo (ops) | Runbook Framework; no redefinir ciclo |
+| 19 | Shell/tenancy | listo | Headers `X-Paq-Cliente` + `X-Company-Id`; A1 tema empresa + **tokens proceso** (`--pq-process-*`) en grillas/pivot vía SDK. **Puente `{cliente}`:** `bootstrapClienteFromWindow` en `main.tsx` **antes** del Router; 302 con `?cliente=`. Reglas `34-cliente-bridge-spa`, `44-host-shell-process-surface-grid-pivot`, cableado **`44-host-framework-gen-cableado-componentes`** |
+| 20 | Envelope API | listo | `{ error, respuesta, resultado }` |
+| 21 | Chat / ayuda | listo | `ChatAssistantPage` / `openExternalHelp` (prereq 16) |
+| 22 | Mobile Capacitor | listo | `isNativeApp()`; kardex; sin pivot/excel/admin/`openInNewTab` |
+| 23 | Grupos empresarios | listo | `GruposEmpresariosPage`; visible si `tenancy=multi` |
+| 24 | Módulos clientes | diferido | Ops/dev; no ABM prod |
+| 25 | Tablero BI | **diferido** | **No hay componente.** ≠ GEN-09. No armar BI propio si debe ser transversal |
+| 26 | Cobros digitales | diferido | — |
+| 27 | WhatsApp/Telegram | diferido | Casos de uso; **canales** = GEN-30 (no motor paralelo en el host) |
+| 28 | Cámara/biometría | diferido | Post-MVP mobile |
+| 29 | Voz en modales | diferido | — |
+| 30 | Notification Service | listo | `NotificationServiceAdminPage` / `Monitor` + `registerNotificationServiceI18nResources`; BE host `/notification-service/*` + SP `pq_sp_ns_*` ([adopcion-gen-30-notification-service.md](../../../docs/06-operacion/adopcion-gen-30-notification-service.md)). SES = Fase 2. No reinventar mail/WA/TG en el host |
+| 31 | Integración bancaria | **diferido** | Definición en `docs/02-producto/31-…`. Sin exports SDK. No reinventar conectores bancarios en el host |
+| 32 | Facturación electrónica ARCA | listo | API `/api/v1/arca/...` **en package** (opt-in `routesEnabled`, pin ≥ **1.3.18-beta.29**); UI `ArcaConfigPage` / `ArcaHomologacionPage`; `arcaApiClient`. Host: flag + bind checker + JSON/CAE. migrate+SP `adopcion-gen-32-arca.md`. **No** clonar HTTP smoke. **excluido mobile** |
+| 35 | Distribución SDK Cloudsmith | **ops (prerelease)** · piloto Partes **adoptado** | No hay UI. Cloudsmith `paqsystems/paqsuite-sdk`. SoT [`adopcion-sdk-registry.md`](../../../docs/06-operacion/adopcion-sdk-registry.md). Partes FE+BE Cloudsmith (2026-10-11). TANGO y corte Fase 7 pendientes. Satis/Verdaccio = rollback hasta Fase 7. |
+
+## Fronteras frecuentes
+
+| Pedido | Usar | No usar |
+|--------|------|---------|
+| Tenant cae en DEMO en prod | GEN-19: 302 `/?cliente=` + persistir en `main.tsx` antes del Router | Cookie `DEMO` / `<Navigate to="/login">` sin `search` |
+| Inicio con KPIs | GEN-09 `DashboardContainer` | GEN-25 |
+| Informe con pivots | GEN-12 shell/block | `PivotGrid` DX suelto sin GEN |
+| Importar planilla | GEN-14 toolbar | Parser/plantilla propios |
+| Emitir PDF/informe | GEN-15 (update) + GEN-30 si hay mail/WA/TG | SMTP o plantillas mail en el host |
+| CAE/CAEA ARCA (FE) | GEN-32 package `/api/v1/arca` (opt-in) + JSON SoT | WSAA/WSFE/CAE o `ArcaController` clonado en el host; menú smoke 70xxx |
+| Tablero charts/filtros cruzados | Esperar GEN-25 | Copiar un BI en el host |
+| i18n pie grilla / menú contextual totalizadores | `registerGridI18nResources` + `ProcessDataGrid` SDK | `grid.summary.*` en JSON host, `summaryTypeLabels` masivo, copiar `gridI18n` al producto |
+| Bump `@paqsuite/react-core` | Diff template `create-app` + ritual bump producto (regla **`43`**) | Subir pin sin revisar exports ni reintroducir forks |
+| ABM empresas + tema A1 | `EmpresasAdminPage` + `registerEmpresasAdminI18nResources` (regla **`44`**, SDK ≥ 2.4.19) | Fork i18n/mapper host, `paqsuite.*` en PUT, reload en “Aplicar” |
+| Registry privado SDK (npm/Composer) | GEN-35 Cloudsmith (SPEC-001-35); adopción en Host | Satis/Verdaccio nuevos; path al monorepo Framework en CI/prod |
+
+Pivots: también `.cursor/rules/base/20-frontend/31-ui-pivot-layouts.md`. Mobile: regla `80-mobile`. Tenant web: regla `20-frontend/34-cliente-bridge-spa.mdc`. i18n SDK sin forks: regla **`43-host-sdk-i18n-sin-fork-gen`** (`40-i18n`). Cableado por componente: regla **`44-host-framework-gen-cableado-componentes`** (`00-arquitectura`).

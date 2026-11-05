@@ -20,3 +20,4 @@ Reducir fragilidad, duplicación y regresiones visuales alineando el producto co
 
 - Guía humana y licencia: `docs/frontend/devextreme-norms.md`
 - Estándar DataGrid: `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`
+- Docs oficiales (MCP `dxdocs`): `.cursor/rules/base/20-frontend/33-devextreme-mcp-dxdocs.md`

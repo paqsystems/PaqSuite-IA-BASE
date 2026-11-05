@@ -2,6 +2,7 @@
 
 En el método **Open-Spec completo** los prompts se ejecutan en este orden:
 
+0. **`openspec-00-A0-backlog-jira.md`** — Epic en Backlog (si aún no hay `Jira:`); **A0 embebido** si se pidió este paso sin A0
 1. **`openspec-01-SPEC-desde-contexto.md`** (este archivo) — definir alcance en SPEC  
 2. **`openspec-02-HU-desde-SPEC.md`** — HU solo desde SPEC  
 3. **`openspec-03-TR-desde-SPEC-y-HU.md`** — TR solo desde SPEC + HU  
@@ -50,10 +51,11 @@ Podés partir de:
 ## Comportamiento
 
 1. Leer **`.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md`** y la plantilla **`docs/05-open-spec/_template-spec.md`** si existe.
-2. Crear o actualizar **`docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md`** (subcarpeta alineada a épica/HU del proyecto).
-3. Metadatos: **`Estado: Pendiente`** hasta cerrar alcance; completar criterios verificables, fuera de alcance, riesgos.
-4. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
-5. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
+2. Si el alcance toca UI o capacidad transversal (login, shell, grilla, pivot, Excel, dashboard, emisión, chat, etc.): leer **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`**, nombrar **GEN-xx** + export, plantilla *adoptar GEN-xx; …; no reimplementar*; **prohibido** copiar carpetas GEN del Framework. Checklist = índice de esa regla; detalle en `PaqSuite-IA-FRAMEWORK`.
+3. Crear o actualizar **`docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md`** (subcarpeta alineada a épica/HU del proyecto).
+4. Metadatos: **`Estado: Pendiente`** hasta cerrar alcance; completar criterios verificables, fuera de alcance, riesgos.
+5. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
+6. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
 
 ---
 
@@ -68,3 +70,9 @@ O explícito:
 ```
 
 Tras este paso sigue **`openspec-02-HU-desde-SPEC.md`** con la ruta del SPEC creado.
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Si no hay `Jira:` en el origen: **A0 embebido** (Epic Backlog + clave en el md + comentario). Luego transicionar Epic a **SPEC**, summary `[SPEC-…]`, ledger, labels `SDD` / `GEN-xx`. MCP fail → no abortar.

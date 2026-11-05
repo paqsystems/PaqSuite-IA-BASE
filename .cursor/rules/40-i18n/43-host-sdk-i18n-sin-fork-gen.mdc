@@ -1,0 +1,121 @@
+---
+description: >-
+  Hosts SDK — MUST registrar i18n GEN de grillas (registerGridI18nResources),
+  ritual bump vs create-app, prohibir forks grid.summary/summaryTypeLabels;
+  alinear shell/menú GEN con scaffold (sin duplicar catálogos del SDK).
+alwaysApply: true
+---
+
+# Host — adopción i18n SDK sin forks GEN (grillas + bump)
+
+Aplica a **todo host** que consuma `@paqsuite/react-core` + `paqsuite/laravel-core` (Partes, PedidosWeb, TANGO, proyectos `create-app`, smoke).
+
+Complementa: regla **19** (adoptar GEN) · regla **29** (`ProcessDataGrid`) · regla **42** (menú `t` + `locale` + `productI18n`).
+
+SoT Framework: `packages/js/react-core/README.md` (§ i18n grilla) · `docs/06-operacion/adopcion-sdk-registry.md` · template `@paqsuite/create-app` (versión acordada al bump).
+
+---
+
+## Problema que evita esta regla
+
+Copiar en el host catálogos o props que **ya vive en react-core** (`grid.summary.*`, `summaryTypeLabels`, `shellI18n` duplicando `menu.*` GEN) genera drift, regressions al cambiar idioma y deuda en cada bump del SDK.
+
+El host debe **registrar** recursos GEN en su instancia i18next y reservar JSON/catálogos locales solo para **dominio del producto**.
+
+---
+
+## MUST — Ritual bump SDK (FE)
+
+Tras subir `@paqsuite/react-core` (y alinear `paqsuite/laravel-core` si el release lo exige):
+
+1. **Diff obligatorio** contra el template `@paqsuite/create-app` de la **misma oleada** (p. ej. `ShellPage.tsx`, `i18n`/bootstrap, exports en `node_modules/@paqsuite/react-core/src/index.ts`).
+2. Anotar exports/helpers reales de menú/shell/grilla; **no** asumir nombres sin leer el paquete instalado.
+3. Actualizar en el repo del producto la doc operativa de pins (p. ej. `docs/01-arquitectura/ritual-bump-sdk.md`).
+4. Smoke mínimo: health/login + **una** capacidad GEN tocada por el changelog (grilla con pie i18n o menú según el bump).
+
+Si el registry no expone la versión requerida: tarball vendored documentado (`adopcion-sdk-registry.md`); no reintroducir forks mientras se espera el release.
+
+---
+
+## MUST — i18n de grillas (GEN-02 + GEN-11)
+
+Cuando el SDK exporte `registerGridI18nResources` (release acordado del producto, p. ej. ≥ 2.4.13):
+
+1. Tras `i18n.init(...)` en el bootstrap del host:
+
+```ts
+import {
+  registerGridI18nResources,
+  syncDevExtremeLocale,
+} from '@paqsuite/react-core';
+
+registerGridI18nResources(i18n);
+syncDevExtremeLocale(initialLocale);
+```
+
+2. Al cambiar idioma (`changeLanguage` / `applyGuestLocale`): **`syncDevExtremeLocale(next)`** después del cambio (una sola convención por host).
+3. Grillas de proceso: **`ProcessDataGrid`** (regla 29); remount al cambiar locale si aplica: `key={\`${gridId}-${locale}\`}` (SPEC-001-02 §7).
+4. **`productI18n.ts` / JSON del host** — solo claves **producto** (`menu.{codigo}`, `partes.*`, sufijos de presentación de dominio). **No** reemplaza el registro GEN de grilla.
+
+### Prohibido en el host (forks GEN de grilla)
+
+| No reintroducir | Motivo |
+|-----------------|--------|
+| Claves `grid.summary.*` (y familia `grid.*` / `gridExport.*` / `gridLayout.*` ya en SDK) en `locales/*/common.json` | Catálogo GEN vía `registerGridI18nResources` |
+| Helpers tipo `useXGridSummaryTypeLabels` que dupliquen el menú contextual del pie | SDK / `useGridI18n` interno |
+| Prop `summaryTypeLabels` en cada `ProcessDataGrid` salvo override puntual documentado en HU/TR | Default traducido en SDK |
+| Copiar `gridI18n.ts` / catálogos equivalentes del monorepo Framework al repo producto | Regla 19 — prohibido copiar carpetas GEN |
+
+### Permitido (dominio legítimo)
+
+- `defaultTotalItems` / `columnSummaryFormatters` / hooks de **formato de negocio** (duración HH:mm, horas decimales, moneda producto).
+- Claves i18n **producto** en JSON del host (p. ej. sufijo `partes.grid.summary.*` que no exista en GEN).
+- Props puntuales en `ProcessDataGrid` (`createHint`, `loadingLabel`, …) con `t('partes.*')` cuando la HU lo exija.
+
+---
+
+## MUST — Menú / shell GEN (sin duplicar catálogos)
+
+1. Cableado menú: regla **42** (`MenuSidebar` + `t` + `locale` + `labelKey` en `pq_menus`).
+2. Catálogo **dominio**: `productI18n.ts` (o JSON) con claves `labelKey` del menú del producto en **5 locales** — **permanece en el host**.
+3. Tras bump, **alinear** wiring de shell/menú al template `create-app` de la oleada: preferir exports/helpers del SDK sobre un `shellI18n.ts` local que **replique** claves GEN `menu.*` / `shell.dashboard.*` ya provistas por react-core o por el patrón oficial del template.
+4. Prohibido mantener **dos fuentes** para las mismas claves GEN (p. ej. `shellI18n.ts` + `common.json` + fallback hardcoded en sidebar).
+
+La eliminación concreta de archivos fork del host se planifica en TR del producto; esta regla fija el **criterio**, no sustituye el plan de migración por fases.
+
+---
+
+## Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| Bump react-core sin diff `create-app` | Drift silencioso en shell/grilla |
+| Traducir solo DX (`syncDevExtremeLocale`) sin `registerGridI18nResources` | Pie de grilla / layouts en ES fijo |
+| `grid.summary.count` en JSON host “por las dudas” | Duplicado y desincronización con SDK |
+| Copiar template antiguo de totalizadores al producto | Violación regla 19 |
+| Triple fuente menú (`shellI18n` + JSON + sidebar) | Idioma inconsistente entre controles y árbol |
+
+---
+
+## Checklist antes de merge (bump / grillas / anti-fork)
+
+- [ ] Versión SDK pinneada + lock actualizado; doc de ritual bump del producto al día
+- [ ] Diff `index.ts` react-core + template `create-app` anotado o aplicado
+- [ ] `registerGridI18nResources(i18n)` tras init (si el pin incluye el export)
+- [ ] `syncDevExtremeLocale` en cambio de locale
+- [ ] Sin `grid.summary.*` (ni catálogos GEN de grilla duplicados) en JSON del host
+- [ ] Sin `summaryTypeLabels` masivo en `ProcessDataGrid` (salvo excepción TR)
+- [ ] Dominio de formato de pie/columna solo donde corresponda negocio
+- [ ] Menú: regla 42 + `productI18n`; sin duplicar claves GEN de shell/menú
+- [ ] Smoke: cambio FR/EN → menú contextual pie grilla traducido + al menos un proceso con título coherente
+
+---
+
+## Trazabilidad OpenSpec
+
+| GEN | Acción |
+|-----|--------|
+| GEN-02 | Registro recursos GEN + merge catálogos producto |
+| GEN-07 | `productI18n` + regla 42; no fork `menu.*` GEN |
+| GEN-11 | `ProcessDataGrid` + registro grid i18n; sin forks de totalizadores |
+| Regla 19 | No copiar implementación GEN al host |

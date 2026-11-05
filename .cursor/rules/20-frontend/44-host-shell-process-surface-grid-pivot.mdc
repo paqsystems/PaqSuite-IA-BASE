@@ -1,0 +1,45 @@
+---
+description: Host — superficie A1 en grillas/pivots (tokens proceso SDK); sin overrides .dx-datagrid locales
+globs:
+  - "**/frontend/**"
+  - "**/apps/**"
+  - "**/packages/js/react-core/**"
+alwaysApply: false
+---
+
+# 44 — Host: superficie de proceso A1 (DataGrid / PivotGrid)
+
+Complementa: **GEN-19** · [SPEC catálogo 24 § Superficie proceso](../../../docs/05-open-spec/001-Generalidades/SPEC-001-19-catalogo-apariencias-paqsuite-24.md) · regla **`44-host-framework-gen-cableado-componentes`** · adopción shell UI.
+
+## Síntoma
+
+Con **bridge D1** (temas stock DevExtreme + tokens shell), el menú y fondo de página siguen la paleta PaqSuite, pero el **cuerpo** de la grilla/pivot puede verse **blanco puro** (claros) o **negro/gris stock** (oscuros). Eso **no** implica que el host omitió `applyShellTokens`: los controles DX siguen el CSS del bridge hasta que el SDK aplica `--pq-process-*`.
+
+## MUST (host)
+
+1. Importar `@paqsuite/react-core/shell.css` y usar `applyEmpresaAppearance` / tokens del SDK (sin fork).
+2. **No** agregar `shellAppearanceBridge.css` ni overrides locales de `.dx-datagrid` / `.dx-pivotgrid` para “arreglar” el color de fondo.
+3. Tras bump del SDK que incluye tokens proceso, **solo** verificar smoke visual; no duplicar CSS en el producto.
+
+## Tokens (24 apariencias)
+
+Definidos en `@paqsuite/themes-paqsuite` y aplicados en `:root` vía `applyShellTokens`:
+
+| Token | Uso |
+|-------|-----|
+| `--pq-process-surface` | Cuerpo de grilla/pivot, nodata |
+| `--pq-process-surface-alt` | Cabeceras, filter row, zebra alt, áreas pivot |
+| `--pq-process-border` | Bordes en superficie de proceso |
+
+## Alcance SDK
+
+Reglas en `shellLayout.css` bajo `.pqShellMain` y `body:has(.pqShell) .dx-popup-content` (grillas en Popup ABM con shell activo).
+
+## Prohibido
+
+- Copiar bloques de `shellLayout.css` al host para grillas.
+- Forzar `#ffffff` / negro en `.dx-datagrid-rowsview` en CSS de producto.
+
+## Referencia operativa
+
+`docs/06-operacion/adopcion-shell-ui.md` · guía smoke apariencias 24.

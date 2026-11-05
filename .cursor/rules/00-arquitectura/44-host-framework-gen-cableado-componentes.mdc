@@ -1,0 +1,580 @@
+---
+description: >-
+  Hosts SDK — catálogo vivo de cableado por componente/capacidad GEN del Framework
+  (@paqsuite/react-core + laravel-core): i18n, props, tema, API/SP, checklist y
+  anti-patrones. Garantizar paridad entre create-app y productos existentes.
+alwaysApply: true
+---
+
+# Host — cableado de componentes Framework GEN (catálogo)
+
+Aplica a **todo host** que consuma `@paqsuite/react-core` + `paqsuite/laravel-core` (Partes, PedidosWeb, TANGO, `create-app`, smoke).
+
+Complementa: regla **19** (índice GEN y “adoptar, no reinventar”) · regla **42** (menú/shell i18n) · regla **43** (i18n grillas + ritual bump) · regla **36** (errores en modal) · regla **`44-host-shell-process-surface-grid-pivot`** (superficie grilla/pivot A1).
+
+**SoT implementación:** repo `PaqSuite-IA-FRAMEWORK` (`packages/js/react-core`, `packages/php/laravel-core`, OpenSpec SPEC-001-xx).
+
+**SoT cableado host:** **esta regla** (índice + fichas por componente). Al agregar o cambiar un export GEN con contrato de host, **actualizar la ficha aquí** en el mismo PR/release del Framework.
+
+---
+
+## Cómo usar este catálogo
+
+| Rol | Acción |
+|-----|--------|
+| **Producto nuevo** | Tras `create-app`, recorrer índice §2; aplicar cada ficha **Estado = documentado** antes de merge. |
+| **Bump SDK** | Diff `create-app` de la oleada + releer fichas de componentes tocados en el changelog. |
+| **SPEC/HU/TR** | Si el alcance usa un GEN listo, citar ficha §3 (`GEN-xx`) además de regla 19. |
+
+### Plantilla para nuevas fichas (copiar en §3)
+
+```markdown
+### GEN-XX — [Nombre] (`ExportPrincipal`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | borrador \| documentado \| verificado create-app |
+| SDK mínimo | @paqsuite/react-core ≥ x.y.z |
+| Exports | … |
+| i18n host | register…(i18n, namespace) |
+| Wrapper host | props obligatorias / opcionales |
+| Backend | rutas, SP, validación |
+| Tema / shell | si aplica |
+| Anti-patrones | … |
+| Checklist merge | … |
+| Referencia | repo/path ejemplo |
+```
+
+---
+
+## Índice de fichas (§3)
+
+Pin de referencia oleada 2026-10: `@paqsuite/react-core` **≥ 2.4.25-beta.1**, `paqsuite/laravel-core` **≥ 1.3.14-beta.1**.
+
+| GEN | Componente / pantalla | Estado ficha | Dónde (esta regla u otra) |
+|-----|------------------------|--------------|---------------------------|
+| **01** | Layouts DX (`Auth*`, `ShellLayout`, `ProcessPageLayout`) | **documentado** | §3 GEN-01 |
+| **02** | i18n bootstrap (`LanguageSelector`, `syncDevExtremeLocale`) | **documentado** | §3 GEN-02 · detalle grillas **43** |
+| **03** | `SmartCapturePanel` | **documentado** | §3 GEN-03 |
+| **04** | Auth UI (layouts + `apiRequest`; no hay `LoginPage`) | **documentado** | §3 GEN-04 · `adopcion-auth-ui.md` |
+| **05** | `EmpresaSelectorPage` | **documentado** | §3 GEN-05 |
+| **06** | `EmpresasAdminPage` | **documentado** | §3 GEN-06 empresas (ficha larga) |
+| **06** | `SecurityRolesPage` / `RolAtributosPage` | **documentado** | §3 GEN-06 roles |
+| **06** | `UsuariosAdminPage` / `PermisosAdminPage` | **documentado** | §3 GEN-06 usuarios/permisos |
+| **07** | `MenuSidebar` | **documentado** | §3 GEN-07 · detalle **42** |
+| **08** | `UserAvatarMenu` | **documentado** | §3 GEN-08 |
+| **09** | `DashboardContainer` | **documentado** | §3 GEN-09 |
+| **10** | `ParametrosGeneralesPage` | **documentado** | §3 GEN-10 |
+| **11** | `ProcessDataGrid` | **documentado** | §3 GEN-11 · detalle **43** / **29** |
+| **12** | `ConsultaGrillaPivotShell` | **documentado** | §3 GEN-12 |
+| **13** | `TaskProcessesPage` | **documentado** | §3 GEN-13 |
+| **14** | `ExcelImportToolbar` | **documentado** | §3 GEN-14 |
+| **15** | Emisiones (`EmissionReportDesignerPage` / diálogo) | **borrador** (SPEC redefinir) | §3 GEN-15 |
+| **16** | `LlmPreferencesPanel` | **documentado** | §3 GEN-16 |
+| **17** | `AuditEventsPage` + `NotificationsBell` | **documentado** | §3 GEN-17 |
+| **18** | Install/update (ops, no UI SDK) | **documentado** | §3 GEN-18 · `adopcion-instalacion-sql.md` |
+| **19** | Shell A1 + tenancy + superficie proceso | **documentado** | §3 GEN-19 (ficha larga) · **34** · **44-grid-pivot** |
+| **20** | Envelope `ApiResponse` / `apiRequest` | **documentado** | §3 GEN-20 |
+| **21** | `ChatAssistantPage` / `openExternalHelp` | **documentado** | §3 GEN-21 |
+| **22** | Mobile Capacitor | **documentado** | §3 GEN-22 · **80** |
+| **23** | `GruposEmpresariosPage` | **documentado** | §3 GEN-23 |
+| **24–29, 31** | Diferidos (sin export de producto) | **no cablear** | §3 diferidos |
+| **30** | Notification Service | **documentado** (CC#14; smoke manual CA-14-05 residual) | §3 GEN-30 |
+| **32** | `ArcaConfigPage` / homologación | **documentado** | §3 GEN-32 |
+| **35** | Registry Cloudsmith | **documentado** | §3 GEN-35 · **45** |
+| **99** | Manual corpus asistente | norma | regla `99-manual-usuario-corpus` |
+
+---
+
+## Fichas de cableado
+
+### GEN-19 — Shell, tenancy y superficie proceso A1
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-10) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.20**, `@paqsuite/themes-paqsuite` **≥ 1.1.0** |
+| OpenSpec | SPEC-001-19 catálogo 24 § Superficie proceso; update superficie **Finalizado** |
+| Exports / runtime | `applyEmpresaAppearance`, `applyShellTokens`, `resolveEmpresaAppearance`; import `shell.css` |
+
+#### MUST — Host
+
+- Puente instalación: `bootstrapClienteFromWindow` / `?cliente=` en `main.tsx` **antes** del Router (regla `34-cliente-bridge-spa`).
+- Headers: `buildPlatformHeaders` — `X-Paq-Cliente` + `X-Company-Id` (MULTI).
+- Tokens en `:root`: `--pq-shell-*`, `--pq-menu-*`, **`--pq-process-*`** (14 claves por apariencia vía `applyShellTokens`).
+- Grillas/pivot: `ProcessDataGrid`, `ConsultaGrillaPivotShell` / `PivotGridBlock` — **sin** CSS host en `.dx-datagrid` / `.dx-pivotgrid` para fondo de datos.
+- Popup ABM con `.pqShell` montado: superficie proceso vía SDK (`body:has(.pqShell) .dx-popup-content`).
+
+#### Prohibido
+
+- `shellAppearanceBridge.css` u overrides locales que “arreglen” isla blanca/negra en grilla (subir pin SDK).
+- Copiar bloques de `shellLayout.css` al producto.
+
+#### Checklist merge (oleada superficie proceso)
+
+- [ ] Pin react-core + themes-paqsuite de la oleada
+- [ ] `registerGridI18nResources` + `syncDevExtremeLocale` (regla **43**)
+- [ ] Smoke naranja + bordó: grilla/pivot main + grilla en popup si aplica
+- [ ] Sin nuevos `background` fijos en `.dx-datagrid-rowsview` en el host
+
+#### Referencia
+
+- Regla detalle: `20-frontend/44-host-shell-process-surface-grid-pivot.mdc`
+- Ops: `docs/06-operacion/adopcion-shell-ui.md` (repo Framework)
+
+---
+
+### GEN-06 — ABM Empresas (`EmpresasAdminPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-10) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.23** (IAT-79 puente + preview canónico; ≥ 2.4.19 cableado base) |
+| OpenSpec / TR Framework | SPEC-001-06 / GEN-06 empresas; tema empresa SPEC-001-19 §5 |
+| Excluido mobile | Sí (admin seguridad) |
+
+#### Qué hace el SDK (no reimplementar en el host)
+
+- Listado + modal alta/edición: `EmpresasAdminPage`, `EmpresaFormPopup`.
+- Catálogo UI de apariencias: claves `paqsuite.*` + puente a stock DevExtreme (`paqsuiteDxStockBridge`).
+- **Lectura API:** `normalizeThemeFromApi(theme)` — `paqsuite.*` tal cual; stock legacy → `paqsuite.*` para el SelectBox.
+- **Escritura API:** `mapThemeForApiPersistence(theme)` — persiste clave canónica **`paqsuite.*`** (SPEC-001-19 / IAT-79). Stock DX **no** se guarda.
+- **Runtime DX:** `mapThemeForDxRuntime` / `paqsuiteDxStockBridge` solo para CSS / `themes.current`.
+- Vista previa en modal: `applyDxTheme` interno (**sin** reload de página); callbacks con `paqsuite.*`.
+- i18n GEN: `admin.empresas.*` + `appearance.paqsuite.*` vía `registerEmpresasAdminI18nResources`.
+
+Exports útiles: `EmpresasAdminPage`, `registerEmpresasAdminI18nResources`, `normalizeThemeFromApi`, `mapThemeForApiPersistence`, `mapThemeForDxRuntime`, `paqsuiteDxStockBridge`, `applyDxTheme` / `applyPaqsuiteTheme` (shell).
+
+#### MUST — Bootstrap i18n (host)
+
+Tras `i18n.init`, **mismo namespace** que usa el resto del shell (`common` o `translation`):
+
+```ts
+import {
+  registerEmpresasAdminI18nResources,
+  registerGridI18nResources,
+  syncDevExtremeLocale,
+} from '@paqsuite/react-core';
+
+registerGridI18nResources(i18n, namespace);
+registerEmpresasAdminI18nResources(i18n, namespace);
+syncDevExtremeLocale(initialLocale);
+```
+
+- **Prohibido** mantener un segundo catálogo host con las mismas claves `admin.empresas.*` / `appearance.paqsuite.*` “por las dudas”.
+- **Prohibido** mapeos tipo `securityEmpresasSdkI18n` que dupliquen claves ya registradas por el SDK.
+
+#### MUST — Página wrapper (host)
+
+Ruta fina: token, headers plataforma, `tenancyMode`, namespace i18n, callbacks de tema/sesión.
+
+```tsx
+import {
+  EmpresasAdminPage as EmpresasAdminPageSdk,
+  type EmpresaListItem,
+} from '@paqsuite/react-core';
+
+<EmpresasAdminPageSdk
+  accessToken={getAuthToken()}
+  platform={buildPlatformHeaders()}
+  i18nNamespace="common" // o "translation" — igual que defaultNS del host
+  tenancyMode="single"   // MONO: solo edición; "multi" si alta ERP aplica
+  onPreviewTheme={(paqsuiteTheme) =>
+    void applyShellTheme(paqsuiteTheme, { reloadOnGroupChange: false })
+  }
+  onRestoreCommittedTheme={(paqsuiteTheme) =>
+    void applyShellTheme(paqsuiteTheme, { reloadOnGroupChange: false })
+  }
+  onEmpresaSaved={(item) => {
+    patchSessionEmpresa(item);
+    void applyShellTheme(item.theme, { reloadOnGroupChange: true }); // opcional si cambió grupo DX
+  }}
+/>
+```
+
+| Prop | Obligatorio | Notas |
+|------|-------------|--------|
+| `accessToken` | Sí (autenticado) | Bearer admin seguridad |
+| `platform` | Sí | `X-Paq-Cliente`, `X-Company-Id` si MULTI |
+| `i18nNamespace` | **Sí** | Debe coincidir con `registerEmpresasAdminI18nResources` |
+| `tenancyMode` | Sí | `single` en MONO instalación una empresa |
+| `onPreviewTheme` | Recomendado | Recibe **`paqsuite.*`** (IAT-79; no stock DX); shell sin reload |
+| `onRestoreCommittedTheme` | Recomendado | Cancelar modal tras “Aplicar”; misma clave `paqsuite.*` |
+| `onEmpresaSaved` | Recomendado | Actualizar `empresas[]` en sesión + tema shell |
+| `t` | No | Solo overrides puntuales de producto |
+
+`applyShellTheme` = función del host (`applyDevExtremeTheme`, `applyDxTheme`, o `applyEmpresaAppearance` según integración A1).
+
+#### MUST — Backend (host / laravel-core)
+
+- Rutas: `GET/PUT /api/v1/admin/empresas` (+ `POST`/candidatos solo MULTI).
+- Persistencia por **SP** (`pq_sp_admin_empresas_*`); regla **74**.
+- Campo `theme` en BD/API: **whitelist `paqsuite.*`** (`EmpresaThemeCatalog::isAllowed` / `toPersistedTheme`). Stock legacy se normaliza al leer.
+- Validación 422 tema inválido → clave envelope; el SDK muestra `admin.empresas.validation.themeInvalid` en el modal (regla **36**).
+
+MONO: prohibido alta/baja; solo consulta y edición (`empresas.alta.monoForbidden`).
+
+#### Modelo de datos de tema (obligatorio entender)
+
+| Capa | Formato de `theme` |
+|------|---------------------|
+| UI SelectBox (SDK) | `paqsuite.{palette}.{family}` |
+| API / BD / sesión auth | **`paqsuite.*`** (canónico; IAT-79) |
+| Runtime CSS DX | stock vía `paqsuiteDxStockBridge` / `mapThemeForDxRuntime` |
+| `data-theme` documento (A1) | `paqsuite.*` (lo setea `applyDxTheme` en SDK) |
+
+El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la API aún devolviera stock legacy, normalizar con `normalizeThemeFromApi` antes del combo.
+
+#### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| `onPreviewTheme` con `reloadOnGroupChange: true` | Cierra el modal / pierde edición |
+| Parchear mapa stock↔paqsuite en el host | Drift; IAT-79 se corrige en SDK |
+| Persistir stock DX “porque el bridge lo usa” | Pierde identidad de las 24 (stocks compartidos D1) |
+| Fork i18n `admin.empresas.form.save` solo en JSON host sin `registerEmpresasAdminI18nResources` | Mezcla EN/ES (“Save” / “Guardar”) |
+| `isEmpresaThemeKey` tratando DX como valor de SelectBox sin normalizar | Combo vacío con “Select…” |
+| PUT con stock DX (`material.*` / `generic.*`) | 422 o normalización incorrecta |
+| Copiar `EmpresaFormPopup` al producto | Drift; viola regla **19** |
+| Omitir `i18nNamespace` con `defaultNS: 'common'` | Claves sin traducir (muestra la key) |
+
+#### Checklist antes de merge (ABM empresas en host)
+
+- [ ] Pin `@paqsuite/react-core` ≥ **2.4.23** (IAT-79)
+- [ ] `registerEmpresasAdminI18nResources(i18n, <namespace>)` en bootstrap
+- [ ] Wrapper con `i18nNamespace` alineado
+- [ ] `tenancyMode` coherente con instalación (MONO → `single`)
+- [ ] Preview/restore shell **sin** reload; guardar actualiza sesión
+- [ ] Whitelist PHP/SQL de `theme` = **24 `paqsuite.*`**
+- [ ] Menú `pq_menus` + permisos admin; ruta `/admin/empresas`
+- [ ] Smoke: editar → tema visible → Aplicar (modal abierto) → Guardar sin 422
+- [ ] Sin forks i18n duplicados del SDK
+
+#### Referencia verificada
+
+- Partes (MONO): `frontend/src/i18n/i18n.ts`, `frontend/src/features/admin/security/EmpresasAdminPage.tsx`
+- Framework: `packages/js/react-core/src/features/empresas/*`, `src/i18n/empresasAdminI18n.ts`, `src/i18n/registerEmpresasAdminI18nResources.ts`
+
+#### Pendiente scaffold
+
+- `@paqsuite/create-app`: incluir registro i18n + wrapper ejemplo en la oleada que pinnee ≥ 2.4.19 (diff obligatorio en ritual bump, regla **43**).
+
+---
+
+### GEN-01 — Layouts y estética DX
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-10-11) |
+| SDK mínimo | react-core con `AuthLoginLayout` / `AuthCardLayout` / `ShellLayout` / `ProcessPageLayout` |
+| Exports | esos layouts; controles **100 % DevExtreme**; `ProcessDateBox` + `displayFormat` regla **35**; atajos `DialogActionButton` / `resolveAccessKey` |
+| i18n host | Títulos de proceso vía `resolveMenuCaption` o `t()` (regla **42**); sin literales ES |
+| Wrapper host | Páginas de proceso envueltas en `ProcessPageLayout`. Auth: layouts SDK + `auth.css` del paquete |
+| Backend | N/A (presentación) |
+| Anti-patrones | CSS propio de login/forgot; `ChangePasswordPage` sin layout SDK; `<h1>` ES en chrome de proceso |
+| Checklist merge | Login/forgot/reset/cambio clave usan layout SDK; procesos de menú usan `ProcessPageLayout` |
+| Referencia | smoke `ShellPage`; `adopcion-auth-ui.md`; SPEC-001-01 |
+
+### GEN-02 — i18n
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| SDK mínimo | ≥ 2.4.13 (`registerGridI18nResources`) |
+| Exports | `LanguageSelector`, `syncDevExtremeLocale`, `normalizeLocale`, `register*I18nResources` por GEN |
+| i18n host | Un namespace (`common` o `translation`) alineado a `i18n.init`. Tras init: `registerGridI18nResources` + registers del GEN montado. Al cambiar idioma: `syncDevExtremeLocale(next)` |
+| Anti-patrones | `syncDevExtremeLocale('es')` hardcode en `main.tsx`; forks `grid.summary.*` / `menu.*` GEN en JSON host; mapper `t` que traduce claves SDK a otras claves |
+| Checklist merge | 5 locales de **dominio**; GEN vía register SDK |
+| Referencia | regla **43**; SPEC-001-02 **Finalizado** |
+
+### GEN-03 — Smart Capture (`SmartCapturePanel`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Prereq | GEN-16 BYOK operativo (BD+SP) |
+| Exports | `SmartCapturePanel` |
+| Wrapper host | Montar en el proceso de dominio (p. ej. carga diaria); token + `platform` |
+| Anti-patrones | Motor de captura propio; montar en native si el SPEC del producto lo excluye |
+| Referencia | smoke Smart Capture; SPEC-001-03 |
+
+### GEN-04 — Auth
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (idle runtime 2026-10-15) |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.29-beta.1** (idle export) |
+| Exports | Layouts GEN-01 + `apiRequest` / `setApiUnauthorizedHandler`. Idle: `startIdleSession`, `stopIdleSession`, `resetIdleSession`, `resolveIdleMinutes`, `shouldStartIdleSession`. **No** existe `LoginPage` export: el formulario es del host sobre layout SDK |
+| Backend | Sanctum (excepción regla **74**); envelope **GEN-20** (`error: 0`) también en login; `minutosWeb` en login/`me` |
+| Wrapper host | Valor Auth desde login/`me`. Arrancar idle en el **shell** si `shouldStartIdleSession(firstLogin)`. No en login, selector ni firstLogin. No `resetIdleSession` al cambiar empresa. Logout/401: `stopIdleSession`. |
+| Anti-patrones | Envelope propio `error: null`; forgot/reset sin `AuthCardLayout`; cambio de clave con literales ES; `idleSessionService` copiado en el host; `startIdleSession` en `LoginPage` |
+| Referencia | `adopcion-auth-ui.md`; template `create-app`; SPEC-001-04-update-runtime-params-auth-post-login |
+
+### GEN-05 — Selector de empresas (`EmpresaSelectorPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.28-beta.1** (tiles Button CC PQ #7) |
+| Cuándo | MULTI o N>1 empresas; MONO puede montarlo igual (smoke) |
+| Exports | `EmpresaSelectorPage`, `resolveEmpresaGate`, `notifyCompanyChange` |
+| Backend | Query empresas del usuario vía contrato core (`UserEmpresasQueryRepository` / SP). Pin **≥ 1.3.14-beta.1** para adapter SP (CC PQ 11/10) |
+| Anti-patrones | Página propia que solo llama `changeActiveEmpresa`; fallback tenant `demo`; `List` a ancho de pantalla; outlined blanco sobre blanco |
+| Referencia | smoke `/select-empresa`; SPEC-001-05 + update CC 15/10/2026 |
+
+### GEN-06 — Roles y atributos (`SecurityRolesPage`, `RolAtributosPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| SDK mínimo | ≥ 2.4.17 |
+| i18n host | `registerSecurityRolesI18nResources(i18n, namespace)` — **sin** mapper `securityRolesSdkI18n` |
+| Wrapper | `accessToken`, `platform`, `i18nNamespace` |
+| Backend | SP `pq_sp_admin_roles_*` / atributos; adapters `StoredProcedure*` en laravel-core ≥ **1.3.14-beta.1** (CC #6 en curso) |
+| Anti-patrones | `t` que remapea claves GEN; SQL ad-hoc en controller (TANGO TG-04) |
+| Referencia | `adopcion-gen-06-seguridad-roles.md` |
+
+### GEN-06 — Usuarios y permisos (`UsuariosAdminPage`, `PermisosAdminPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| SDK mínimo | `@paqsuite/react-core` **≥ 2.4.25-beta.1** |
+| Exports | `UsuariosAdminPage`, `PermisosAdminPage`, `registerUsuariosAdminI18nResources`, `registerPermisosAdminI18nResources` |
+| i18n host | Tras `i18n.init`: ambos `register*` con el **mismo** namespace (`common` en Partes) |
+| Wrapper | `accessToken`, `platform`, `i18nNamespace` (usuarios); más `tenancyMode` + `defaultEmpresaId` (permisos MONO) |
+| Anti-patrones | Fork de listado/popup; no registrar i18n SDK; pin &lt; 2.4.25-beta.1 |
+| Excluido mobile | Sí |
+| Referencia | smoke `UsuariosAdmin` / `PermisosAdmin` |
+
+### GEN-07 — Menú (`MenuSidebar`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| MUST | `t` + `locale` + `labels` (`menuSidebarLabelsFromT`) + `onItemsLoaded` + `openInNewTab` (web). `labelKey` en **todo** `pq_menus` |
+| Backend | API menú; SP `MenuQueryRepository` (CC PQ 11/10, pin ≥ 1.3.14-beta.1) |
+| Anti-patrones | Sidebar dual host; `PROCEDIMIENTO_TO_ROUTE`; sin `onItemsLoaded`; `shellI18n` duplicando `menu.*` |
+| Referencia | regla **42**; `adopcion-menu-i18n.md`; `adopcion-gen-08-open-in-new-tab.md` |
+
+### GEN-08 — Avatar (`UserAvatarMenu`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `UserAvatarMenu` |
+| MUST | Preferencias idioma/tema; **sin** toggle `openInNewTab` en native |
+| Anti-patrones | Menú avatar propio; abrir procesos con `window.open` en mobile |
+| Referencia | SPEC-001-08 **Finalizado** |
+
+### GEN-09 — Dashboard (`DashboardContainer`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `DashboardContainer` + widgets **del producto** |
+| Anti-patrones | Dashboard Recharts propio si el producto adopta GEN-09; confundir con GEN-25 BI (diferido) |
+| Referencia | smoke dashboard; CC-Partes botón actualizar = patrón `GridRefreshButton` (host) |
+
+### GEN-10 — Parámetros (`ParametrosGeneralesPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `ParametrosGeneralesPage` |
+| Backend | ABM params vía SP GEN; no Eloquent de `PQ_PARAMETROS_GRAL` en API nueva |
+| Anti-patrones | Pantalla params fork |
+| Referencia | SPEC-001-10 (F1 Framework pendiente; export usable) |
+
+### GEN-11 — Grillas (`ProcessDataGrid`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| SDK mínimo | ≥ 2.4.13 |
+| MUST | `registerGridI18nResources`; remount `key={\`${gridId}-${locale}\`}`; superficie `--pq-process-*` (GEN-19) |
+| Anti-patrones | `DataGrid` crudo de proceso; `summaryTypeLabels` masivo; CSS fondo `.dx-datagrid-rowsview` |
+| Residual FW | CC #3 menú contextual / agrupamiento |
+| Referencia | reglas **29**, **43**, **44-grid-pivot**; `adopcion-gen-11-process-datagrid-refresh.md` |
+
+### GEN-12 — Pivots (`ConsultaGrillaPivotShell` / `PivotGridBlock`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| MUST | `consultaId` de catálogo host; shell SDK; **excluido mobile** |
+| Anti-patrones | `PivotGrid` DX suelto de proceso; layouts Eloquent ad-hoc si hay DualPath SP |
+| Referencia | `adopcion-gen-12-consulta-grilla-pivot-shell.md`; regla **31** |
+
+### GEN-13 — Tareas programadas
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `TaskProcessesPage`, Definitions, Executions; `TaskProcessRegistry` en BE |
+| MUST | Títulos i18n (no `<h1>Tareas programadas</h1>`); chrome `ProcessPageLayout`; adoptar el proceso único `BACKUP_DATABASE` para Windows/RDS |
+| Backup | MONO sin picker; MULTI incluye empresas y diccionario con seleccionar/deseleccionar todas; Windows `INIT`/`NOINIT`; RDS sobreescribe siempre y usa polling `rds_task_status`; lock RDS global por instalación |
+| UI host | Usar la pantalla genérica de definiciones; no copiar formulario ni handler de backup al host |
+| Referencia backup | [SPEC-001-13-update — Backups Windows y RDS](../../../../docs/05-open-spec/updates/001-Generalidades/SPEC-001-13-update-backups-windows-rds.md) |
+| Gap | Host puede no montarlo (Partes hoy: gap aceptable si el producto no lo ofrece) |
+| Referencia | smoke tareas |
+
+### GEN-14 — Excel (`ExcelImportToolbar`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `ExcelImportToolbar` (fila propia); modal/hoja/grilla errores internos |
+| i18n host | Catálogo `excelImport.*` (incl. `sheet.label` / `placeholder` / `required`) en 5 locales **o** futuro `registerExcelImportI18nResources`. Dominio: `messageKey` de fila, nunca prosa |
+| Wrapper | `processCode`, `t`, `onComplete`; **no** montar si `isNativeApp()` |
+| Backend | Handler host `validateRow`/`processBatch`; binds parser/exporter GEN; params `ExcelImport*` |
+| Anti-patrones | Parser OpenXML propio; ruta `/excel-import` admin; toolbar en la fila de filtros |
+| Referencia | `adopcion-excel-import.md`; smoke `/demo/clientes-import`; Partes `partes.tareas.import` |
+
+### GEN-15 — Emisiones
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **borrador** — SPEC en **redefinir**; UI smoke `EmissionReportDesignerPage` / diálogo emitir |
+| MUST | No reimplementar diseñador DX; comunicación dirigida = GEN-30 |
+| Host | `consultaId` / proceso + persistencia artefacto del producto |
+| Referencia | `15-reportes-emisiones-update.md`; F Framework pendiente |
+
+### GEN-16 — BYOK (`LlmPreferencesPanel`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Prereq | migrate + SP `adopcion-gen-16-byok.md` |
+| Exports | `LlmPreferencesPanel` |
+| Anti-patrones | Guardar API keys en FE; pantalla preferencias LLM fork |
+| Referencia | SPEC-001-16 **Finalizado** |
+
+### GEN-17 — Auditoría y bandeja
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `AuditEventsPage`, `NotificationsBell` |
+| Backend | Writer bitácora GEN; mail/WA/TG dirigidos → **30** |
+| Gap | No montar no es error si el producto no ofrece la bandeja |
+| Referencia | SPEC-001-17 |
+
+### GEN-18 — Install / update
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (ops) |
+| MUST | Runbook Framework; desplegar SP de módulos contratados; no redefinir ciclo |
+| Anti-patrones | Instalar a mano omitiendo SP excel/emisiones/admin |
+| Referencia | `adopcion-instalacion-sql.md`; SPEC-001-18 **Finalizado** |
+
+### GEN-20 — Envelope API
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `apiRequest`, `isEnvelope`, `parseEnvelope`; PHP `ApiResponse` |
+| MUST | `{ error, respuesta, resultado }` con **`error: 0`** en éxito (nunca `null`) |
+| Anti-patrones | `ApiEnvelope` host; JSON armado a mano en controllers de negocio |
+| Referencia | SPEC-001-20 |
+
+### GEN-21 — Chat / ayuda externa
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Prereq | GEN-16 |
+| Exports | `ChatAssistantPage`, `openExternalHelp` |
+| Anti-patrones | Ventana/asistente HTTP propio (TANGO `aiAssistant.service`) |
+| Referencia | SPEC-001-21 |
+
+### GEN-22 — Mobile
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Exports | `isNativeApp`, policy, kardex, config panel |
+| MUST | Excluir pivot, excel-import, admin seguridad, `openInNewTab`; consultas = kardex |
+| Referencia | reglas **80** / `00-mobile`; SPEC-001-22 (HU B pendiente en FW) |
+
+### GEN-23 — Grupos empresarios (`GruposEmpresariosPage`)
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| Cuándo | `tenancy=multi`; MONO no montar |
+| i18n | Register/catálogo SDK; no `sdkToHostKeys` |
+| Referencia | `adopcion-grupos-empresarios.md` |
+
+### GEN-24 a 29 y 31 — Diferidos
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **no cablear** |
+| MUST | No inventar BI (25), módulos ABM (24), cobros (26), WA/TG motor (27), cámara (28), voz (29), banca (31) en el host |
+
+### GEN-30 — Notification Service
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (2026-11-04 CC#14 — Admin ABM, i18n register, OpenAPI, DualPath SP) |
+| SDK mínimo | `@paqsuite/react-core` con `NotificationServiceAdminPage` / `NotificationServiceMonitorPage` + `registerNotificationServiceI18nResources`; `paqsuite/laravel-core` con `NotificationService/*` + `pq_sp_ns_*` |
+| Exports | `NotificationServiceAdminPage`, `NotificationServiceMonitorPage`, `registerNotificationServiceI18nResources` |
+| i18n host | `registerNotificationServiceI18nResources(i18n, namespace)` — prefijo `notificationService.*` |
+| Backend | Host registra `/api/v1/notification-service/*`; bind `NotificationServiceStore` → `StoredProcedureNotificationServiceStore` en SQL Server; smoke CI = Eloquent (excepción) |
+| OpenAPI | [`openapi-notification-service-gen-30.yaml`](../../../../docs/05-open-spec/updates/001-Generalidades/openapi-notification-service-gen-30.yaml) · envelope `5001–5012` |
+| Adopción | [`adopcion-gen-30-notification-service.md`](../../../../docs/06-operacion/adopcion-gen-30-notification-service.md) |
+| Anti-patrones | Fork i18n; Guardar root no-op; Eloquent en host; SMTP/WA/TG paralelos; SES en este GEN (Fase 2) |
+| Gap | Smoke manual Fase 1 simulación (**CA-FW-14-05**); publish/pin host; GEN-37 catálogo operativo |
+| Referencia | SPEC-001-30 · update CC#14 · producto `30-…` |
+
+### GEN-32 — ARCA
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** (HTTP empaquetado CC PQ #15 · 2026-11-05) |
+| SDK mínimo | `paqsuite/laravel-core` **≥ 1.3.18-beta.29** (rutas HTTP opt-in); UI `@paqsuite/react-core` con `ArcaConfigPage` / `ArcaHomologacionPage` |
+| Exports | FE: `ArcaConfigPage`, `ArcaHomologacionPage`, `arcaApiClient`. BE: rutas package `routes/arca.php` + `ArcaController` |
+| i18n host | Catálogo `arcaIntegration.*` (consola DX); sin fork de envelope `5101–5115` |
+| Wrapper host | UI SDK; **no** controllers HTTP propios |
+| Backend | Opt-in `PAQSUITE_ARCA_ROUTES_ENABLED=true`; middleware `paqsuite.arca.middleware`; bind `ArcaPermissionChecker` (default DenyAll); require `X-Company-Id`; host arma JSON + persiste CAE; migrate+SP [`adopcion-gen-32-arca.md`](../../../../docs/06-operacion/adopcion-gen-32-arca.md) |
+| Excluido mobile | Sí |
+| Anti-patrones | Clonar `ArcaController` / “patrón smoke HTTP”; asumir rutas on por default; SOAP en el host |
+| Gap | OK si el producto no factura ARCA |
+| Referencia | SPEC-001-32 · SPEC-update CC #15 · smoke thin (Track B) |
+
+### GEN-35 — Cloudsmith
+
+| Campo | Valor |
+|-------|--------|
+| Estado ficha | **documentado** |
+| MUST | npm/Composer Cloudsmith; `CLOUDSMITH_READ_TOKEN`; **sin** `path`/`file:` en git; **sin** Satis/Verdaccio en host nuevo |
+| Piloto | Partes FE+BE **adoptado** 2026-10-11 |
+| Pendiente | TANGO; Fase 7 corte legado |
+| Anti-patrones | Alias Vite al source Framework; shim `declare module '@paqsuite/react-core'`; token write en Host |
+| Referencia | regla **45**; `adopcion-sdk-registry.md` |
+
+---
+
+## Relación con otras reglas
+
+| Tema | Regla |
+|------|--------|
+| ¿Existe el GEN? ¿Export? | **19** |
+| Menú / títulos proceso | **42** |
+| Grillas / bump SDK | **43** |
+| Errores guardado en Popup | **36** |
+| Superficie grilla/pivot A1 | **`44-host-shell-process-surface-grid-pivot`** |
+| SP / gateway | **74** |
+| Mobile exclusiones admin | **80** / **00-mobile** |
+| Cloudsmith / token | **45** / **23** |
+| Puente `{cliente}` | **34** |
+
+---
+
+## Mantenimiento (editores Framework / BASE)
+
+1. Nuevo componente GEN con contrato de host → añadir fila al índice §2 + ficha §3 con plantilla.
+2. Cambio breaking en props o i18n → subir **SDK mínimo** en la ficha y anotar en changelog react-core.
+3. Cuando `create-app` incorpore la ficha → marcar **Estado ficha** = `verificado create-app`.

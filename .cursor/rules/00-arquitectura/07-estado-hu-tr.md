@@ -99,6 +99,6 @@ Con un único par HU-update/TR-update, ambos en **Finalizado** y fusionados sin 
 
 - `.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md` — SPEC, SPEC-update, unificación
 - `.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md` — tabla de metadatos del TR
-- `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` — **A–F** (núcleo Open-Spec; orden alfabético = orden de ejecución), **G–I** (correcciones / cierre CC / unificación), **J–M** (atajos: producto, excepción TR, SPEC-update aislado, unificar solo SPEC), **N–Q** (Git, entorno, i18n, manual)
+- `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md` — **A–F** (núcleo Open-Spec; orden alfabético = orden de ejecución), **G–I** (correcciones / cierre CC / unificación), **J–M** (atajos: producto, excepción TR, SPEC-update aislado, unificar solo SPEC), **N–T** (Git, entorno, i18n, manual, despliegue estándar, SDK host, publicar Preview/Productiva)
 - `.cursor/rules/multi/06-task-execution-traceability.md` ó `.cursor/rules/mono/06-task-execution-traceability.md`
 

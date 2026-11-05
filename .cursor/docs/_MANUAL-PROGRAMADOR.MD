@@ -1,7 +1,7 @@
 # Manual del Programador
 
-**Versión:** 1.13  
-**Última actualización:** 2026-05-28
+**Versión:** 1.14  
+**Última actualización:** 2026-08-20
 
 ---
 
@@ -316,9 +316,61 @@ cd frontend && npm run test:e2e   # Solo Playwright
 
 ### 0. Proyecto nuevo o alineación de arquitectura
 
-Antes de modelar datos o implementar módulos en un **proyecto nuevo** (o al definir si un producto sigue el mismo stack que PaqSuite), conviene partir de **`docs/_base/00-inicio-arquitectura.md`** y dejar **explícito** si la instalación es **MONO** (mono-empresa, una sola BD, sin `X-Company-Id` ni tenancy) o **MULTI** (multi-empresa, modelo Dictionary/Company y reglas de tenant cuando apliquen). Ese documento resume stack, orden sugerido y reglas esenciales enlazadas desde `.cursor/rules/` y `docs/`.
+Antes de modelar datos o implementar módulos en un **proyecto nuevo** (o al definir si un producto sigue el mismo stack que PaqSuite), conviene partir de **`docs/_base/00-inicio-arquitectura.md`** y dejar **explícito** si la instalación es **MONO** (mono-empresa / clientes por URL, sin selector MULTI) o **MULTI** (multi-empresa, modelo Dictionary/Company y reglas de tenant cuando apliquen). Ese documento resume stack, orden sugerido y reglas esenciales enlazadas desde `.cursor/rules/` y `docs/`.
 
 En **Windows**, el primer paso operativo del producto nuevo es configurar los **symlinks** de herencia (reglas, prompts, docs) según **`docs/_base/symlinks_paqsuite_ia.md`**; ver **§4.0** de la guía de inicio y el prompt **`scaffold-fullstack-inicio-proyecto.md`**.
+
+### 0.1 URLs de deploy del producto (MUST al scaffoldear)
+
+Al generar el proyecto (scaffold), **confirmar el slug `{proyecto}`** y **guardar** los nombres de plataforma en **`docs/06-operacion/urls-deploy.md`**.
+
+SoT: **`docs/_base/00-urls-deploy-proyecto.md`**.
+
+| Rol | Patrón |
+|-----|--------|
+| Frontend producción | `https://{proyecto}.paqsystems.com/` |
+| Frontend pre-producción | `https://dev.{proyecto}.paqsystems.com/` |
+| Backend producción | `https://{proyecto}paqsystems.on-forge.com/` |
+| Backend pre-producción | `https://{proyecto}paqsystems-dev.on-forge.com/` |
+| Entrada cliente (sin cambio) | `https://{cliente}.{proyecto}.paqsystems.com` |
+
+Ejemplo Partes de Atención (`{proyecto}` = `tango`):
+
+- FE prod: `https://tango.paqsystems.com/`
+- FE pre-producción: `https://dev.tango.paqsystems.com/`
+- BE prod: `https://tangopaqsystems.on-forge.com/`
+- BE pre-producción: `https://tangopaqsystems-dev.on-forge.com/`
+
+Los usuarios siguen entrando por `{cliente}.{proyecto}.paqsystems.com` (redirect al FE Vercel de producción). Detalle de tenant/SQL: `docs/_base/resolucion-host-cliente-sql-mono.md`.
+
+### 0.2 Configuración de infraestructura de despliegue
+
+Después de completar el scaffold y confirmar `{proyecto}` y `{repositorio}`, ejecutar la skill:
+
+```text
+vercel-github-deployment-standard
+```
+
+La invocación debe indicar, como mínimo:
+
+- `{proyecto}`;
+- `{repositorio}`;
+- ambiente de producción (`main`);
+- ambiente de pre-producción (`develop`);
+- cuenta/proyecto Vercel;
+- sitios Forge o servidores EC2 objetivo.
+
+La skill configura y verifica la asociación:
+
+```text
+develop / Preview    → dev.{proyecto}.paqsystems.com
+                      → {proyecto}paqsystems-dev.on-forge.com
+
+main / Production    → {proyecto}.paqsystems.com
+                      → {proyecto}paqsystems.on-forge.com
+```
+
+El scaffold solo prepara la documentación, los workflows y las variables esperadas. La creación o modificación de recursos externos en GitHub, Vercel, Route 53 y Forge/EC2 requiere ejecutar la skill explícitamente y verificar el resultado.
 
 ### 1. Configuración del entorno
 
