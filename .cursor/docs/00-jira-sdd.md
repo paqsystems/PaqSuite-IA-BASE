@@ -71,6 +71,15 @@ Registrá en el backlog de Jira docs/02-producto/<carpeta>/
 
 El agente crea la Epic, escribe `Jira: KEY-n` en el markdown y no copia el documento.
 
+## Control de Calidad (mismo contrato en todos los hosts)
+
+| Momento | Jira |
+|---------|------|
+| **Registrar** el hito (`Generá un hito en Control de Calidad…` o el humano edita `docs/00-ControlCalidad/00-ControlCalidad-xx.md`) | **Nada.** Solo markdown, estado **Pendiente**. |
+| **Parte G** (`Corrige los errores del dd/MM/yyyy de xx`) | **A0 embebido** si el bloque no tiene `Jira:` (Epic `[CC-{sigla}-#N]`, clave en *Referencia del control*); luego Epic + hijas → columna **Control calidad**. |
+
+No crear el ticket al anotar el control: un CC escrito a mano y uno generado por el agente deben llegar al tablero por **G**.
+
 ## Trazabilidad en markdown
 
 En origen (`02-producto`, CC, SPEC, HU, TR), una línea estable:

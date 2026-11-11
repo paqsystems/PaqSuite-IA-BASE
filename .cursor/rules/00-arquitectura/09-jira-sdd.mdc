@@ -38,6 +38,7 @@ Si el repo no está en la tabla: **no** crear issues; avisar que falta el proyec
 | Tipo Jira | Artefacto | Summary |
 |-----------|-----------|---------|
 | **Epic** | SPEC (GEN-xx = label, no tipo extra) | `[SPEC-…] …` + label `GEN-xx` si aplica |
+| **Epic** | Bloque Control de Calidad (alta en **G**, A0 embebido) | `[CC-{sigla}-#N] …` + label `update` |
 | **Story** | HU | `[HU-…] …` parent = Epic |
 | **Task** | TR | `[TR-…] …` parent = Story; si Cloud no admite Task→Story: parent Epic + enlace a HU |
 | **Bug** (opcional, G) | Ítem CC técnico sin cambio de alcance | `[CC-{sigla}-{fecha}] …` ligado a TR/HU |
@@ -106,7 +107,7 @@ Comando: `Registrá en el backlog de Jira [ruta markdown]`.
 4. Escribir `Jira: {KEY-n}` en el markdown origen.
 5. MCP fail → no abortar.
 
-**A0 vs G:** A0 = trabajo **nuevo** (aún no hay SPEC). Ítem CC sobre HU/SPEC existente = **G**.
+**A0 vs G vs registro CC:** A0 a secas = trabajo **nuevo** (aún no hay SPEC) o comando explícito `Registrá en el backlog de Jira`. **Registrar un hito de Control de Calidad** (agente o a mano) = **solo markdown**; **prohibido** A0 / `createJiraIssue` en ese paso. **G** (`Corrige…`) = **A0 embebido** si el bloque CC no tiene `Jira:` + volcado + Epic → **Control calidad**. Ítem CC sobre HU/SPEC existente se vuelca en **G**, no con A0 a secas.
 
 **A sin A0:** no bloquear. **A0 embebido**: crear Epic en Backlog, grabar clave, comentario `A0 embebido`, luego SPEC y transicionar a **SPEC** (renombrar `[SPEC-…]`).
 
@@ -128,7 +129,7 @@ Comando: `Registrá en el backlog de Jira [ruta markdown]`.
 | **E** | Comentario tests; fail no retrocede |
 | **F1** | Comentario veredicto evidencia |
 | **F** | Comentario gaps; **no** Finalizado |
-| **G** | Epic+originales → Control calidad; label `update`; Bug si técnico |
+| **G** | Si el bloque CC no tiene `Jira:` → **A0 embebido** (Epic `[CC-{sigla}-#N]` + clave en el md); luego Epic+originales → **Control calidad**; label `update`; Bug si técnico. **No** crear Jira al registrar el hito. |
 | **H** | No mueve; comentario opcional |
 | **I** | Finalizado **solo** si usuario/metadato Finalizado |
 | **K** | Task + `deuda-openspec` |

@@ -3,7 +3,7 @@
 ## Objetivo
 Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (**A0** backlog Jira → SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad. Jira: regla **`09-jira-sdd.mdc`** (proyecto = **mismo nombre que el repo**).
 
-Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–T** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
+Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: **A0 embebido** si el bloque CC no tiene `Jira:` + volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** (**Estado: Especificado** bajo *Referencia del control*). El **registro del hito CC** (agente o a mano) es **solo markdown**; **no** crea Jira. **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–T** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
 
 ---
 
@@ -32,19 +32,21 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ### B) Modificaciones, mejoras y Control de Calidad
 
-**Camino feliz (cierre del bloque incluido en G):** **G** → **D** → **E** → **F** → **I**. Tras **G**, la cola operativa vive en `docs/.../updates/` y en metadatos de originales; **no** reabrir el CC para decidir ítem por ítem.
+**Camino feliz (cierre del bloque incluido en G):** registrar el hito en `docs/00-ControlCalidad/` (markdown, **sin** Jira) → **G** → **D** → **E** → **F** → **I**. Tras **G**, la cola operativa vive en `docs/.../updates/` y en metadatos de originales; **no** reabrir el CC para decidir ítem por ítem.
 
 **Fases:**
 
-1. **PARTE G** — Comando **«Corrige…»** (incluye **§0** y **L** cuando aplica): volcar **`00-ControlCalidad`** a **SPEC-update** / **HU-update** / **TR-update** (puntos **0–8**); el punto **8** cierra el bloque (**Especificado** bajo *Referencia del control*). **L** a secas si solo hace falta SPEC-update sin volcado masivo CC. Bugs puramente técnicos: sin SPEC-update (§0). **H** solo si hace falta cerrar sin re-volcar (ver **PARTE H**).
-2. **PARTE D** — Implementar según **TR-update** o TR vigente (**por ítem** / familia).
-3. **PARTE E** — Tests.
-4. **PARTE F** — `openspec-05` sobre el TR afectado.
-5. **PARTE I** — Unificar solo updates con **`Estado: Finalizado`**. **M** si solo SPEC.
+1. **Registro del hito CC** — Comando **«Generá un hito en Control de Calidad…»** o edición **manual** del archivo: solo markdown (**Pendiente**). **Prohibido** A0 / `createJiraIssue` en ese paso. Ver **Registro de un hito de Control de Calidad**.
+2. **PARTE G** — Comando **«Corrige…»** (incluye **A0 embebido** si falta `Jira:` en el bloque, **§0** y **L** cuando aplica): volcar **`00-ControlCalidad`** a **SPEC-update** / **HU-update** / **TR-update** (puntos **0–8**); el punto **8** cierra el bloque (**Especificado** bajo *Referencia del control*). **L** a secas si solo hace falta SPEC-update sin volcado masivo CC. Bugs puramente técnicos: sin SPEC-update (§0). **H** solo si hace falta cerrar sin re-volcar (ver **PARTE H**).
+3. **PARTE D** — Implementar según **TR-update** o TR vigente (**por ítem** / familia).
+4. **PARTE E** — Tests.
+5. **PARTE F** — `openspec-05` sobre el TR afectado.
+6. **PARTE I** — Unificar solo updates con **`Estado: Finalizado`**. **M** si solo SPEC.
 
 | Paso | Parte | Acción |
 |------|-------|--------|
-| 1 | **G** | «Corrige…» → volcado CC (**§0** + puntos 1–7) + **cierre** (punto **8**, **Especificado**). Opcional **H** si solo cierre. |
+| 0 | **Registro CC** | Markdown en `00-ControlCalidad-xx.md`. **Sin** Jira (el humano puede escribir el bloque a mano). |
+| 1 | **G** | «Corrige…» → **A0 embebido** si el bloque no tiene `Jira:` → volcado CC (**§0** + puntos 1–7) + **cierre** (punto **8**, **Especificado**) + Epic → **Control calidad**. Opcional **H** si solo cierre. |
 | 2 | **D** | Implementar según **TR-update** / TR. |
 | 3 | **E** | Tests. |
 | 4 | **F** | Verificación `openspec-05`. |
@@ -54,7 +56,7 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ## Índice alfabético (partes **A**–**T**)
 
-El orden de las filas **es el alfabético A–T** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–T** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–T** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** registro markdown (sin Jira) → **G→D→E→F→I** (**A0 embebido** + **§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–T** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
@@ -70,7 +72,7 @@ El orden de las filas **es el alfabético A–T** y coincide con el **orden de l
 | **E** | Tests | "Ejecutá los tests" / "Corré los tests" |
 | **F1** | Verificación del agente | `/agent-verification-guide` |
 | **F** | Verificación docs ↔ código (**openspec-05**) | Ver **PARTE F** |
-| **G** | CC (§0) + volcado a updates + **cierre bloque** → **Especificado** en *Referencia del control* | "Corrige los errores del dd/MM/yyyy de xx" … |
+| **G** | CC: **A0 embebido** si falta `Jira:` + §0 + volcado a updates + **cierre bloque** → **Especificado** + Epic → **Control calidad** | "Corrige los errores del dd/MM/yyyy de xx" … |
 | **H** | **Opcional:** cerrar bloque CC (**Especificado**) sin reejecutar volcado completo de **G** | "Finaliza el control de calidad …" |
 | **I** | Unificar SPEC (11) luego HU/TR + manuales | "Unifica las historias de usuario" … |
 | **J** | Desde **carpeta producto** (encadena **A→B** + modelo datos) | "Genera las historias de …" — Ver **PARTE J** |
@@ -83,8 +85,8 @@ El orden de las filas **es el alfabético A–T** y coincide con el **orden de l
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
 | **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
-| **S** | Cableado consumo SDK Framework (host) | "Adaptá el proyecto a consumir el SDK por labo repo" / "… por deploy" |
-| **T** | Desplegar preview (`develop`) o productiva (`main`) | "Desplegá la versión preview" / "… develop" / "… productiva" |
+| **S** | Cableado consumo SDK Framework (host) | "Adaptá el proyecto a consumir el SDK por repo labo" / "… por deploy" |
+| **T** | Actualizar preview (`develop`) o productiva (`main`) | "Actualizá la versión preview" / "… develop" / "… productiva" |
 
 ---
 
@@ -104,7 +106,10 @@ o *Paso A0 del Open-Spec con …*
 
 1. Ejecutar **`prompts/openspec-00-A0-backlog-jira.md`**.
 2. Crear Epic en **Backlog** (o reutilizar si ya hay `Jira:`). Grabar `Jira: KEY-n` en el origen.
-3. **No** crear SPEC. Si el origen es un CC sobre HU/SPEC existente → **PARTE G**, no A0.
+3. **No** crear SPEC.
+   - Pedido **A0 explícito** (`Registrá en el backlog de Jira …`) sobre un CC o carpeta producto: sí, es el comando de esta parte.
+   - Pedido **«generá / agregá un hito en Control de Calidad»** (o el humano editó el md a mano): **no** A0 aquí. Jira nace en **PARTE G** (A0 embebido si falta `Jira:`). Ver **Registro de un hito de Control de Calidad**.
+   - Volcado de un CC ya registrado (ítems sobre HU/SPEC existente o trabajo nuevo): **PARTE G**, no A0 a secas.
 4. MCP fail → informar; no abortar.
 
 ### Cierre Jira (MUST)
@@ -470,9 +475,36 @@ Comentario veredicto F1. Sigue **Verificando**. Regla **09**.
 
 ---
 
+## Registro de un hito de Control de Calidad (markdown only)
+
+**No es una parte letrada.** Es el paso **antes** de **G**. Aplica **igual en todos los hosts** (PedidosWeb, Partes, Framework, TANGO, …). El humano puede escribir el bloque a mano: el contrato de Jira no cambia.
+
+### Comando (agente)
+
+Cuando el usuario escriba algo como:
+
+> Generá un hito en Control de Calidad de xx …
+> Agregá un Control de Calidad en `00-ControlCalidad-xx.md` …
+> Registrá en CC: …
+
+el asistente debe:
+
+1. Localizar `docs/00-ControlCalidad/00-ControlCalidad-xx.md` (sigla de dos letras: PQ, KA, …).
+2. Crear el siguiente bloque `## Control de Calidad #N` (numeración incremental), *Referencia del control* con **Fecha** `dd/MM/yyyy`, **Estado: Pendiente**, hallazgos e ítems. Actualizar el índice del archivo.
+3. **Prohibido** en este paso: **A0**, `createJiraIssue`, transiciones, comentarios Jira, escribir `Jira:` “por las dudas”.
+4. Informar el comando de volcado: `Corrige los errores del dd/MM/yyyy de xx`.
+
+Si el bloque **ya existe** (lo cargó el humano): no inventar Jira; el siguiente paso sigue siendo **G**.
+
+### Por qué no A0 aquí
+
+El tablero nace al **corregir**, no al anotar. Así un CC escrito a mano y uno generado por el agente llegan a Jira por el **mismo** camino (**G**).
+
+---
+
 ## PARTE G - Procesar las correcciones y/o mejoras solicitadas
 
-En una misma corrida **«Corrige…»** el asistente **vuelca** el CC a updates y **cierra el bloque** (punto **8**): en *Referencia del control* queda **Especificado**; el seguimiento operativo pasa a `updates/` y metadatos HU/TR.
+En una misma corrida **«Corrige…»** el asistente **asegura Jira** (A0 embebido si el bloque no tiene `Jira:`), **vuelca** el CC a updates y **cierra el bloque** (punto **8**): en *Referencia del control* queda **Especificado**; el seguimiento operativo pasa a `updates/` y metadatos HU/TR. Da igual si el hito lo escribió el agente o el humano.
 
 ### Comando "Corregir las historias de las correcciones/mejoras"
 
@@ -485,13 +517,22 @@ Cuando el usuario escriba algo como:
 
 el asistente debe:
 
+Tras el punto **1** (localizar bloques por fecha), y **antes** del **§0** / volcado a updates, ejecutar el **A0 embebido** descrito más abajo. El **§0** (SPEC-update) conserva su número histórico.
+
+**A0 embebido (MUST, regla 09):** para **cada** bloque `Control de Calidad #N` de esa **fecha + sigla**:
+- Si *Referencia del control* ya tiene `Jira: KEY-n` → **reutilizar**; no duplicar.
+- Si no hay clave: buscar en Jira (JQL, proyecto = nombre del repo) un Epic de este CC (`[CC-{sigla}-#N]`, fecha, labels `SDD`); si existe, grabar `Jira:` en el bloque y reutilizar.
+- Si no existe: crear Epic en **Backlog**, summary `[CC-{sigla}-#N] {resumen corto del índice}`; descripción = puntero al md del bloque + 3–8 líneas + ledger; labels `SDD`, `update` (y `GEN-xx` / `host` / `framework` si aplican). Escribir `| **Jira** | KEY-n |` (o línea `Jira: KEY-n`) en *Referencia del control*. Comentario `A0 embebido G @ YYYY-MM-DD HH:mm ART`.
+- **No** abortar el volcado markdown si MCP falla: informar y seguir con §0 y puntos 1–8.
+- **No** hacer este A0 al registrar el hito (ver sección anterior).
+
 0. **Open-Spec — cambio de alcance (obligatorio si cambia el “qué”):** Si una solicitud del control altera comportamiento funcional, reglas de negocio, exclusiones, criterios de aceptación o mensajes pactados, **antes** de cualquier HU-update/TR-update el asistente debe:
    - **Localizar el SPEC base** de referencia (ruta `docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md` a partir del **HU** del ítem, enlaces en el CC, o texto explícito en el control).
    - Crear o actualizar el **SPEC-update** en **`docs/05-open-spec/updates/<subcarpeta>/`** con el **mismo nombre base** que el SPEC original más sufijo **`-update`**, **`-update-01`**, etc. (misma **`<subcarpeta>`** relativa que en ruta base; ver **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**). En metadatos del SPEC-update: **`Estado: Pendiente`** y enlace o campo **SPEC base** con la ruta del original; en **Origen**, trazabilidad **`00-ControlCalidad-{sigla}`** y **fecha** (dd/MM/yyyy) como en HU-update.
    - Actualizar el **SPEC original** en ruta base: en su tabla de metadatos, **`Estado: En revisión`** (valor permitido para SPEC en vuelo de CC / SPEC-update abierto; análogo documental a **En Control Calidad** en HU/TR durante este ciclo).
    - Luego derivar **HU-update** y **TR-update** coherentes con ese SPEC-update. Solo si el ítem es **estrictamente** técnico (bug de implementación sin cambio de alcance documental) puede omitirse SPEC-update **y** debe quedar explícito en la respuesta por qué.
 
-1. **Formato de fecha:** Usar dd/MM/yyyy en todo el flujo (entrada del usuario y en el archivo `docs/00-ControlCalidad/00-ControlCalidad-xx.md`). Buscar en `docs/00-ControlCalidad/00-ControlCalidad-xx.md` todos los bloques "Control de Calidad #N" cuya **Fecha** coincida con la fecha indicada. tener presente que en "ControlCalidad-xx" la sigla "xx" se reemplaza por lo que escribió el usuario en el prompt (siguiendo el ejemplo, PQ o KA)
+1. **Formato de fecha:** Usar dd/MM/yyyy en todo el flujo (entrada del usuario y en el archivo `docs/00-ControlCalidad/00-ControlCalidad-xx.md`). Buscar en `docs/00-ControlCalidad/00-ControlCalidad-xx.md` todos los bloques "Control de Calidad #N" cuya **Fecha** coincida con la fecha indicada. tener presente que en "ControlCalidad-xx" la sigla "xx" se reemplaza por lo que escribió el usuario en el prompt (siguiendo el ejemplo, PQ o KA). **Orden de esta corrida:** punto **1** (localizar) → **A0 embebido** (si falta `Jira:`) → **§0** (SPEC-update) → puntos **2–8** (volcado y cierre) → punto **9** (Epic → Control calidad).
 2. **Procesar todos los controles:** Si hay varios controles con la misma fecha, procesar las tareas de todos ellos que NO estén marcados como *Procesado*
 3. **Normalizar nombres de HU:** Si en el Control de Calidad el nombre de una HU está mal escrito (ej. doble guion, mayúsculas incorrectas), corregirlo en el archivo para que coincida con el nombre real del archivo en `docs/03-historias-usuario/`.
 4. **Por cada solicitud:**
@@ -507,7 +548,7 @@ el asistente debe:
    - **Caso C - HU ya existentes con el mismo nombre** si bajo la subcarpeta "update" ya existen versiones de la historia a generar, generar una nueva con el número siguiente (ej: ya existe la HU-001-layouts-grilla-update.md , generar una nueva como HU-001-layouts-grilla-update-01.md)
 7. **Actualizar estado de gestión del bloque:** Al terminar de recorrer todas las tareas de los controles con esa fecha: si **todas** las entradas de errores de esos controles están marcadas como `*Procesado*` (es decir, no queda ninguna entrada pendiente ni solo con sugerencias sin HU asociable), cambiar el estado de gestión del bloque a **"A Programar"** cuando la plantilla lo prevea. Si queda al menos una entrada donde solo fue posible dejar una sugerencia sin generar HU (por no poder determinar la HU asociada), mantener o establecer el estado en **"Con Sugerencias"**. Esto **no** sustituye el **Estado** bajo *Referencia del control* (véase punto **8**).
 8. **Cierre del bloque de control (handoff a especificaciones):** Para cada `Control de Calidad #N` de esa **fecha + sigla** cuyo volcado esté completo (ítems volcados con *Procesado* o *Sugerencia* explícita donde no hubo HU; aceptar CC “hueco” bien organizado), localizar **Referencia del control** y actualizar la línea de estado para que quede `- **Estado:** Especificado`. **Especificado** aquí significa: *volcado a SPEC-update / HU-update / TR-update según corresponda; triage documental cerrado; cola activa en `updates/`* — **no** implica código implementado ni **`Finalizado`** en metadatos de HU/TR (ese valor es **manual** en `07-estado-hu-tr.md`). No modificar listas de errores ni marcas `*Procesado*` / `*Sugerencia*`. Si no se encuentra ningún bloque con esa fecha, informar y no aplicar el punto 8.
-9. **Cierre Jira (MUST, regla 09):** Epic + originales → **Control calidad**; comentario CC (fecha, sigla, ítems); label `update` en issues de update; Bug si ítem técnico. MCP fail → no abortar.
+9. **Cierre Jira (MUST, regla 09):** la Epic del bloque (`Jira:` del paso A0 embebido) + originales / hijas del volcado (SPEC-update, HU, TR, Bug técnico) → columna **Control calidad**; comentario CC (fecha, sigla, #N, ítems); label `update` en issues de update; Bug si ítem técnico. Ledger: Salida Backlog + Entrada Control calidad. Si el A0 embebido falló, reintentar alta/transición aquí; si vuelve a fallar → informar y **no** abortar.
 
 ---
 
@@ -778,7 +819,7 @@ el asistente debe **en este orden** (no abrir el PR hasta completar los pasos pr
 6. **Recién entonces** crear el **Pull Request hacia `develop`** (`gh pr create`, base `develop`). Cuerpo del PR alineado a **N1** / `_PR-prompt.md` si existe o si conviene generarlo. Devolver la **URL** del PR.
 7. En la respuesta final, declarar **modo SDK** comprobado o aplicado (`deploy` / `no aplica: no es host`) y la URL del PR.
 
-**Must:** `develop` (Preview/Forge-dev) **nunca** debe recibir un PR cuyo `package.json` / `composer.json` / Vite apunten al labo repo. El modo **labo repo** queda solo en ramas de trabajo locales hasta este comando (o hasta **PARTE S** explícita «por deploy»).
+**Must:** `develop` (Preview/Forge-dev) **nunca** debe recibir un PR cuyo `package.json` / `composer.json` / Vite apunten al repo labo. El modo **repo labo** queda solo en ramas de trabajo locales hasta este comando (o hasta **PARTE S** explícita «por deploy»).
 
 8. **Cierre Jira (MUST, regla 09 — Parte N):** `git diff develop...HEAD`; recolectar `Jira:` / SPEC-HU-TR / commits; issues **Finalizado** → **Desplegado** + URL del PR; el resto solo comentario. Epic a Desplegado solo si no quedan hijas Finalizado pendientes. MCP fail → no abortar.
 
@@ -941,7 +982,7 @@ del proyecto. El asistente debe:
 
 Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
 
-**R vs T:** esta parte **configura** la plataforma (proyecto Vercel, sitios Forge, DNS, ruleset). Para **publicar una versión** (commit/PR/merge y comprobar el deploy) usar **PARTE T**.
+**R vs T:** esta parte **configura** la plataforma (proyecto Vercel, sitios Forge, DNS, ruleset). Para **actualizar una versión** (commit/PR/merge y comprobar Vercel/Forge) usar **PARTE T** («Actualizá la versión preview/productiva»).
 
 ### Skill asociada
 
@@ -958,7 +999,7 @@ Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
 Cuando el usuario escriba algo equivalente a:
 
 ```text
-Adaptá el proyecto a consumir el SDK por labo repo
+Adaptá el proyecto a consumir el SDK por repo labo
 ```
 
 ```text
@@ -969,10 +1010,10 @@ Adaptá el proyecto a consumir el SDK por deploy
 
 | Modo | Variantes aceptadas en el mensaje |
 |------|-----------------------------------|
-| **Labo repo** (checkout local) | `labo repo`, `repo-lab`, `modo repo-lab`, `lab local`, `path local`, `file:` |
+| **repo labo** (checkout local) | `repo labo`, `repo-lab`, `modo repo-lab`, `lab local`, `path local`, `file:` |
 | **Deploy** (artefactos empaquetados) | `deploy`, `registry`, `Satis`, `Verdaccio`, `producción`, `release empaquetado` |
 
-Si el mensaje no indica el modo, **pedir** explícitamente: *labo repo* o *deploy* (una sola opción por ejecución).
+Si el mensaje no indica el modo, **pedir** explícitamente: *repo labo* o *deploy* (una sola opción por ejecución).
 
 ### Alcance — solo proyectos **host**
 
@@ -991,7 +1032,7 @@ La Parte S no corresponde a este repositorio: no es un host del SDK Framework
 que adopten GEN vía laravel-core y react-core.
 ```
 
-### Ruta del Framework en disco (modo labo repo)
+### Ruta del Framework en disco (modo repo labo)
 
 Por defecto el checkout hermano del host vive en la misma carpeta padre que el producto, con nombre de carpeta **`PaqSuite-IA-FRAMEWORK`** (convención PaqSuite; el usuario puede decir «programacion-ia-framework» u otro alias verbal — resolver la ruta real en disco antes de cablear).
 
@@ -1015,7 +1056,7 @@ Si el directorio no existe, **informar** y no inventar paths en `composer.json` 
 
 **Deploy (MUST para PR a `develop` / Forge / Vercel):** Cloudsmith (`paqsystems/paqsuite-sdk`). Satis, Verdaccio, Tailscale y rutas `file:` **no** son modo deploy. Detalle de tokens y `.npmrc`/Composer: regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** y skill de despliegue (**PARTE R**).
 
-### Comportamiento — modo **labo repo**
+### Comportamiento — modo **repo labo**
 
 Objetivo: desarrollo local contra el **código fuente** del Framework en disco, sin depender de Satis/Verdaccio en el install diario.
 
@@ -1058,9 +1099,9 @@ Objetivo: consumir **versiones publicadas** (locks commiteables, builders Forge/
 
 ---
 
-## PARTE T — Desplegar versión preview (`develop`) o productiva (`main`)
+## PARTE T — Actualizar versión preview (`develop`) o productiva (`main`)
 
-Publica una versión: GitHub (commit/push/PR/**merge**) y después comprueba **Vercel** (frontend) y **Forge** (backend). **No** sustituye la **PARTE R** (alta/configuración de la plataforma) ni la **PARTE N** (solo abrir PR a `develop` sin merge).
+Actualiza una versión en los ambientes: GitHub (commit/push/PR/**merge**) y después comprueba **Vercel** (frontend) y **Forge** (backend). **No** sustituye la **PARTE R** (alta/configuración de la plataforma de despliegue) ni la **PARTE N** (solo abrir PR a `develop` sin merge).
 
 SoT de ambientes: `.cursor/docs/00-deploy-github-vercel-route53-forge.md` y `.cursor/docs/00-urls-deploy-proyecto.md`. Política de ramas: regla **18**. Aviso de versión/BD: regla **17**. Hosts SDK: **PARTE S** modo **deploy** antes de mergear a `develop`.
 
@@ -1068,17 +1109,19 @@ Este comando **autoriza** commit, push de la rama de trabajo, abrir PR y **fusio
 
 ### Comandos
 
-Cuando el usuario escriba algo equivalente a cualquiera de estas formas, elegir el **modo** y ejecutar esa rama (no mezclar preview y productiva en la misma corrida salvo que pida las dos en orden **preview → productiva**):
+Cuando el usuario escriba algo equivalente a cualquiera de estas formas, elegir el **modo** y ejecutar esa rama (no mezclar preview y productiva en la misma corrida salvo que pida las dos en orden **preview → productiva**).
+
+**Invocación canónica:** verbo **Actualizar** (no «Desplegar» ni «Configurar el despliegue» — esos no disparan la PARTE T; «Configura el despliegue estándar…» es **PARTE R**).
 
 **Modo Preview / develop** (pre-producción):
 
 ```text
-Desplegá la versión preview
-Desplegá la versión develop
-Desplegá preview
-Desplegá develop
-Despliega develop
-Despliega preview
+Actualizá la versión preview
+Actualizá la versión develop
+Actualizá preview
+Actualizá develop
+Actualiza develop
+Actualiza preview
 Publicá en preview
 Publicá en develop
 ```
@@ -1086,18 +1129,18 @@ Publicá en develop
 **Modo Productiva / main** (producción):
 
 ```text
-Desplegá la versión productiva
-Desplegá la versión de producción
-Desplegá producción
-Desplegá productiva
-Despliega producción
-Despliega main
-Despliega productiva
+Actualizá la versión productiva
+Actualizá la versión de producción
+Actualizá producción
+Actualizá productiva
+Actualiza producción
+Actualiza main
+Actualiza productiva
 Publicá en producción
 Publicá en main
 ```
 
-También debe interpretarse como equivalente cualquier instrucción que pida **publicar/desplegar** esa versión y **confirmar** el resultado en Vercel y Forge.
+También debe interpretarse como equivalente cualquier instrucción que pida **actualizar** esa versión (preview/develop o productiva/main) y **confirmar** el resultado en Vercel y Forge.
 
 ### Matriz de ambientes (MUST)
 
@@ -1126,7 +1169,7 @@ Si el repo **no** tiene Vercel/Forge (p. ej. este BASE), completar GitHub y decl
 ### Comportamiento — modo Preview (`develop`)
 
 1. **Rama actual:** `git status` / `git branch --show-current`. Si es `develop`, `main` o `master`: **no** push ni PR hacia sí misma. Informar la política **18**. Si hay cambios sin commitear en `develop`/`main`, **no** crear una rama por iniciativa propia: pedir que pasen a una rama de trabajo o que usen productiva si `develop` ya tiene lo deseado. Si el árbol está limpio y `origin/develop` ya contiene el trabajo, saltar a **verificación** (punto 7) e informar que no hubo PR nuevo.
-2. **Host SDK:** mismos puntos **2–4** de la **PARTE N** (criterio de host + modo **deploy** Cloudsmith). Si el host aún apunta a labo repo (`file:`, alias Vite, Composer `path`), adaptar, commitear y pushear **antes** del PR. Bloqueo de token Cloudsmith → **no** mergear.
+2. **Host SDK:** mismos puntos **2–4** de la **PARTE N** (criterio de host + modo **deploy** Cloudsmith). Si el host aún apunta a repo labo (`file:`, alias Vite, Composer `path`), adaptar, commitear y pushear **antes** del PR. Bloqueo de token Cloudsmith → **no** mergear.
 3. **Aviso regla 17:** antes del commit, avisar migrate/seed/`.env` si el diff lo exige.
 4. **Commit y push:** si hay cambios, commit + push de la rama de trabajo (`-u` si no trackea). Si no hay cambios locales pero la rama está ahead, solo push. No commitear secretos. Este comando **autoriza** commit y push (a diferencia de «Commiteá» a secas).
 5. **PR a `develop`:** reutilizar el PR abierto de esta rama si existe; si no, `gh pr create --base develop` (cuerpo **N1** / `_PR-prompt.md` si aplica). Destino **solo** `develop`. **Cierre Jira Parte N** al abrir el PR (regla **09**).
@@ -1140,7 +1183,7 @@ Si el merge está bloqueado (reviews, conversaciones, check `only-develop`, conf
 
 1. **Alcance:** promover **`origin/develop` → `main`**. **No** commitear ni pushear la rama de trabajo actual. **No** abrir PR de una feature a `main`.
 2. **Trabajo local no promovido:** `git fetch`. Si la rama actual tiene commits que **no** están en `origin/develop`, listarlos y **detener**: primero Preview (**este mismo comando** en modo develop). Cambios sin commitear: avisar que **no** entran en producción.
-3. **SDK en `origin/develop`:** mismas comprobaciones de modo **deploy** que la **PARTE N** punto 3 sobre el árbol de `develop` (no sobre un labo repo local). Si `develop` tiene `file:` / path Framework, **no** abrir PR a `main`.
+3. **SDK en `origin/develop`:** mismas comprobaciones de modo **deploy** que la **PARTE N** punto 3 sobre el árbol de `develop` (no sobre un repo labo local). Si `develop` tiene `file:` / path Framework, **no** abrir PR a `main`.
 4. **PR `develop` → `main`:** reutilizar PR abierto con `base=main` y `head=develop` si existe; si no, `gh pr create --base main --head develop`. Si GitHub rechaza porque `head` no es `develop`, **no** continuar (check `only-develop`).
 5. **Merge:** esperar checks; `gh pr merge <n>` con método permitido (**no** `--admin`; **no** borrar `develop`). Conflicto o reviews pendientes → informar y no bypassear.
 6. **Verificar Production** sobre `main` / target production / sitio `{proyecto}paqsystems`. SHA = merge commit en `origin/main`.
@@ -1160,7 +1203,7 @@ Tras el merge, **poll** (no un único wait largo). Tope orientativo **10–15 mi
 ### Plantilla de respuesta (MUST)
 
 ```text
-# Resultado del despliegue
+# Resultado de la actualización
 
 - Modo: Preview (develop) | Productiva (main)
 - Repo / rama origen → destino / PR URL / SHA
@@ -1196,12 +1239,13 @@ Incluir el aviso de **regla 17** si hay migrate/seed/`.env` que Forge **no** apl
 
 - **Preview:** al abrir el PR a `develop`, algoritmo **Parte N** (Finalizado → Desplegado). Tras verificar: comentario con veredicto Vercel/Forge.
 - **Productiva:** comentario en los issues del alcance (URL PR `develop` → `main` + veredicto). Sin nueva transición de columna salvo pedido explícito.
-- MCP fail → no abortar el despliegue ni el informe.
+- MCP fail → no abortar la actualización ni el informe.
 
 ---
 
 ## Reglas generales (aplican a todos los comandos)
 - No inventar prompts fuera de los definidos.
+- **Control de Calidad — Jira (MUST, todos los hosts):** registrar un hito (agente o a mano) = **solo markdown**. Crear/transicionar Jira **solo** en **PARTE G** (A0 embebido si falta `Jira:`). Prohibido A0 al «generá un hito en CC».
 - No modificar HU ni TR sin dejar trazabilidad.
 - El reemplazo de placeholders debe ser textual y completo.
 - Si el archivo indicado no existe o no es accesible,
@@ -1213,11 +1257,11 @@ Incluir el aviso de **regla 17** si hay migrate/seed/`.env` que Forge **no** apl
 ## Beneficio
 Esta regla define el flujo **Open-Spec completo** como **predeterminado**: **A** (`openspec-01`) → **A1** → **B** (`openspec-02`) → **B1** → **C** (`openspec-03`) → **D1** → **D** (`openspec-04-Ejecucion-de-una-TR`) → **E** → **F1** → **F** (`openspec-05`). La **Parte J** encadena **A+B** desde `docs/02-producto/`; la **Parte K** es **excepción** con deuda explícita hacia **A**.
 
-Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update; **G** incluye **cierre** del bloque CC → **Especificado** en *Referencia del control*) → **D** → **E** → **F** → **I** (punto **11** antes de HU/TR cuando exista SPEC-update). **H** opcional si solo hace falta **Especificado** sin volcado **G**. Atajo **M** si solo se unifica SPEC.
+Correcciones: registro CC (markdown, **sin** Jira) → **G** (**A0 embebido** si falta `Jira:`; **§0** cuando cambia el alcance; **L** si solo SPEC-update; **G** incluye **cierre** del bloque CC → **Especificado** en *Referencia del control* y Epic → **Control calidad**) → **D** → **E** → **F** → **I** (punto **11** antes de HU/TR cuando exista SPEC-update). **H** opcional si solo hace falta **Especificado** sin volcado **G**. Atajo **M** si solo se unifica SPEC.
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), publicar versión Preview/Productiva con merge + Vercel/Forge (**T**), modelo de datos vía **Parte J**.
+Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), actualizar versión Preview/Productiva con merge + Vercel/Forge (**T**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.
