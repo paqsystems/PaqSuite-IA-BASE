@@ -101,5 +101,8 @@ Fuente: `docs/_base/00-urls-deploy-proyecto.md`
 | [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md) | Redirect, `X-Paq-Cliente`, SQL |
 | [`00-inicio-arquitectura.md`](./00-inicio-arquitectura.md) §1.2 | Modo MONO |
 | [`_MANUAL-PROGRAMADOR.MD`](./_MANUAL-PROGRAMADOR.MD) | Onboarding programador |
-| Prompt `scaffold-fullstack-inicio-proyecto.md` | Ejecución scaffold |
-| Mobile | API = backend Forge; ver specs `01-mobile/` |
+| Prompt `scaffold-fullstack-inicio-proyecto.md` | Ejecución scaffold web |
+| Prompt `scaffold-mobile-nativo-inicio-proyecto.md` | Scaffold solo Flutter / híbrido |
+| Mobile Capacitor | API = backend Forge; `docs/_base/01-mobile/` |
+| Mobile Flutter (`mobile/`) | Misma API Forge; **no** requiere Vercel; CI/firma en `01-mobile/native/ci-firma-y-distribucion.md` |
+| Solo Flutter (sin `frontend/`) | Omitir filas Vercel del producto; backend del proveedor o Forge según perfil |

@@ -2,6 +2,8 @@
 
 Referencia operativa de comandos por **objetivo** (Capacitor sobre `frontend/`).
 
+**Flutter nativo (`mobile/`):** comandos `flutter run`, `flutter build`, firma y CI en [`native/ci-firma-y-distribucion.md`](./native/ci-firma-y-distribucion.md) — **no** usar `npx cap sync` en `mobile/`.
+
 **Estado PedidosWeb:** D1 v1 implementado (2026-06-30). Proyectos nativos en `frontend/android/` y `frontend/ios/`.
 
 **Norma:** `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc`

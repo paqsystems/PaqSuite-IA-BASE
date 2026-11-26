@@ -36,8 +36,10 @@ Antes de actuar, leer el SoT `.cursor/docs/00-deploy-github-vercel-route53-forge
    - producción: `https://{proyecto}-paqsystems.on-forge.com/api/v1/health`;
    - pre-producción: `https://{proyecto}-paqsystems-dev.on-forge.com/api/v1/health`.
    No dejar el health check en la URL predeterminada `/up` si la aplicación expone su endpoint de salud bajo `/api/v1/health`.
-   Activar en **cada** sitio backend la integración **Laravel Scheduler** de Forge (Site → Integrations → Laravel Scheduler → Enable). Debe quedar un Scheduled Job **Minutely** con usuario `forge` que ejecute `php artisan schedule:run` sobre el release activo. En hosts PaqSuite con zero-downtime y Laravel en `current/backend`, el comando debe apuntar a `…/current/backend/artisan` (Forge lo genera así al habilitar la integración). Es obligatorio para GEN-13 (`tasks:run-due` cada minuto en `app/Console/Kernel.php`) y para cualquier otro comando agendado en Laravel. Verificar que el job exista **por sitio**; un cron a nivel servidor de otro proyecto no alcanza.
+   Activar en **cada** sitio backend la integración **Laravel Scheduler** de Forge (Site → Integrations → Laravel Scheduler → Enable). Debe quedar un Scheduled Job **Minutely** con usuario `forge` que ejecute `php artisan schedule:run` sobre el release activo. En hosts PaqSuite con zero-downtime y Laravel en `current/backend`, el comando debe apuntar a `…/current/backend/artisan` (Forge lo genera así al habilitar la integración). Es obligatorio para GEN-13 (`pedidosweb:tasks-run-due` cada minuto en `app/Console/Kernel.php`) y para cualquier otro comando agendado en Laravel. Verificar que el job exista **por sitio**; un cron a nivel servidor de otro proyecto no alcanza.
 4. Configurar los environments de Vercel y Forge según el SoT, especialmente `VITE_API_BASE_URL`, `APP_URL`, `FRONTEND_URL`, `DB_*`, mail y flags.
+
+   En cada proyecto Vercel que se dé de alta (el único del `{proyecto}`, o uno adicional si el usuario pidió un desplegable separado), crear `VITE_DEVEXPRESS_LICENSE_KEY` en `Production` y `Preview`, y también en `Development` si ese environment se usa. El valor queda **vacío**. No copiar ni inventar la clave LCP. `VITE_DEVEXTREME_LICENSE` (JWT `eyJ` de DevExtreme 25.2) no licencia la 26.1: el build de producción la descarta y aborta el arranque si no hay clave LCP (`init-devextreme-license.ts`). El deploy puede quedar READY y el backend responder health, y el frontend igual queda en pantalla negra.
 
    Para proyectos PaqSuite que usan el esquema multiempresa de PAQSYSTEMS, si el repositorio o su `.env.example` indica `sqlsrv`, `PAQSUITE_DB_DRIVER_REFERENCE=sqlsrv` o `SqlInstalacionResolver`, configurar explícitamente la misma topología en producción y Preview:
 
@@ -219,6 +221,7 @@ Al generar un nuevo proyecto PaqSuite, completar esta matriz antes del primer de
 |---|---|---|---|
 | GitHub Host | `CLOUDSMITH_READ_TOKEN` | Secret de Actions | Entitlement token de lectura del Host |
 | Vercel | `CLOUDSMITH_READ_TOKEN` | `Production`, `Preview` y `Development` si se usa | Entitlement token de lectura del Host |
+| Vercel | `VITE_DEVEXPRESS_LICENSE_KEY` | `Production`, `Preview` y `Development` si se usa | Vacía al crear el proyecto. La completa el usuario con la clave LCP de DevExtreme 26.1 |
 | Forge Preview y Production | `CLOUDSMITH_READ_TOKEN` | Variable protegida del sitio | Entitlement token de lectura del Host |
 | Forge Preview y Production | `PAQSUITE_CLIENTE` | Environment del sitio | Código de `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`) |
 | Forge Preview y Production | `PAQSUITE_TASKS_BACKUP_BACKEND` | Environment del sitio | `rds` |
@@ -281,3 +284,5 @@ Antes de dar por terminado el alta, verificar que las cuatro plataformas tengan 
 ## Entregable
 
 Informar siempre la matriz final `{rama → ambiente → dominio Vercel → backend}`, el proyecto Vercel utilizado, los cambios DNS, el ruleset de GitHub, el workflow/check requerido, el estado de Laravel Scheduler (enabled + job minutely installed) en cada sitio Forge backend, y cualquier recurso antiguo que haya quedado pendiente de eliminar.
+
+Al terminar, avisar siempre al usuario que `VITE_DEVEXPRESS_LICENSE_KEY` quedó creada vacía en Vercel y que debe completarla con la clave LCP de DevExtreme 26.1 y redesplegar. Sin ese valor el frontend de producción no monta la aplicación.

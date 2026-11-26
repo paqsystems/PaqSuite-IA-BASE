@@ -1,7 +1,7 @@
 # Plan maestro de adaptación del ecosistema PaqSuite IA para mobile nativo con Flutter
 
-**Estado:** propuesta para revisión  
-**Fecha:** 2026-09-10  
+**Estado:** Etapa 1–2 contenido documental ejecutado (2026-11-26); Etapa 3 SPEC 33 borrador; Etapa 4 implementación pendiente  
+**Fecha:** 2026-09-10 · última ejecución plan: 2026-11-26  
 **Repositorios alcanzados:** PaqSuite-IA-BASE, PaqSuite-IA-MONO, PaqSuite-IA-MULTI y PaqSuite-IA-FRAMEWORK  
 **Ubicación canónica recomendada:** `C:\Programacion\PaqSuite-IA-BASE\.cursor\docs\00-plans\PLAN-adaptacion-ecosistema-mobile-nativo-flutter.md`
 
@@ -167,6 +167,8 @@ Cambios previstos:
 - Permitir criterios y evidencias diferenciadas por superficie.
 - Evitar que Vitest y Playwright sean obligatorios fuera de la superficie web.
 - Definir cómo dividir una HU común en tareas backend, web, mobile e integración.
+
+**Estado SDD (2026-11-26):** ítems anteriores aplicados en BASE (reglas 04/05/12/13/14/16, prompts openspec 01–05, dispatcher §E, skills D1/C1/B1/F1) + overlays MONO/MULTI en reglas 01/03/04/15 y contexto scaffold.
 
 #### Testing y reglas de frontend/mobile
 
@@ -571,6 +573,8 @@ Opciones:
 
 Recomendación: conservar la SPEC 22 como React/Capacitor y crear una nueva SPEC Flutter.
 
+**Cierre 2026-11-26:** aplicada — SPEC-001-33 borrador + cap. 22 actualizada en Framework.
+
 ### 11.4 Clientes OpenAPI
 
 Debe determinarse si cada producto genera su cliente o si el proveedor publica un paquete de contrato versionado.
@@ -649,22 +653,22 @@ Antes de comenzar la etapa de contenido se deberá:
 
 ## 14. Criterios de aceptación del plan documental
 
-- [ ] El scaffold web actual continúa funcionando sin cambios de significado.
-- [ ] Existe un scaffold específico para Flutter.
-- [ ] Se puede definir un proyecto exclusivamente Flutter sin backend local.
-- [ ] Se puede definir un proyecto con backend + web + Flutter.
-- [ ] MONO/MULTI es independiente de web/mobile.
-- [ ] `TR-BE` permanece genérica.
-- [ ] Las integraciones se representan mediante `TR-INT` y ownership explícito.
-- [ ] Las SPEC/HU/TR identifican superficie y repositorio propietario.
-- [ ] Testing web y Flutter tienen reglas separadas.
-- [ ] BASE contiene lo común y MONO/MULTI solo sus diferencias.
-- [ ] Framework cuenta con una SPEC propia para SDK Flutter.
-- [ ] Los componentes específicos de Tango no ingresan al core del Framework.
-- [ ] Se define una estrategia de versionado y distribución Dart.
-- [ ] Existe una aplicación smoke Flutter.
-- [ ] Android e iOS tienen evidencia de verificación definida.
-- [ ] Los proyectos piloto validan mobile-only y web+Flutter.
+- [x] El scaffold web actual continúa funcionando sin cambios de significado.
+- [x] Existe un scaffold específico para Flutter.
+- [x] Se puede definir un proyecto exclusivamente Flutter sin backend local.
+- [x] Se puede definir un proyecto con backend + web + Flutter.
+- [x] MONO/MULTI es independiente de web/mobile.
+- [x] `TR-BE` permanece genérica.
+- [x] Las integraciones se representan mediante `TR-INT` y ownership explícito.
+- [x] Las SPEC/HU/TR identifican superficie y repositorio propietario (prompt OpenSpec 03 + `tipos-tr-y-superficies.md`).
+- [x] Testing web y Flutter tienen reglas separadas.
+- [x] BASE contiene lo común y MONO/MULTI solo sus diferencias.
+- [x] Framework cuenta con una SPEC propia para SDK Flutter (borrador SPEC-001-33).
+- [x] Los componentes específicos de Tango no ingresan al core del Framework (documentado en 33).
+- [x] Se define una estrategia de versionado y distribución Dart (`distribucion-sdk-dart.md`).
+- [x] Existe una aplicación smoke Flutter (piloto `Framework/apps/smoke-flutter/` + TR-PQ-MOB-01; tests pendientes sin SDK en PATH).
+- [x] Android e iOS tienen evidencia de verificación definida (matriz + CI doc).
+- [ ] Los proyectos piloto validan mobile-only y web+Flutter (Etapa 5).
 
 ---
 

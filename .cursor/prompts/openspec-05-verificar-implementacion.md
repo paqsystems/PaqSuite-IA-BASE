@@ -26,6 +26,7 @@ Revisor técnico: contrastás código vs SPEC, HU y TR. Informás hallazgos; **n
 2. Extraer CA, requisitos verificables, tareas DoD.
 3. Buscar evidencia en el codebase.
 4. No reemplazar la **Parte E** del dispatcher (suite de tests).
+5. Si el TR es `TR-MOB` / superficie `MOBILE_NATIVE`: evidencia = `flutter test`, matriz [`matriz-verificacion-mobile.md`](../docs/01-mobile/native/templates/matriz-verificacion-mobile.md); **no** exigir Playwright.
 
 ---
 

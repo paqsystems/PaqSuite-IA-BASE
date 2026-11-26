@@ -6,6 +6,17 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 
 **Punto de arranque operativo recomendado para proyecto nuevo:** invocar primero el prompt **`prompts/scaffold-fullstack-inicio-proyecto.md`** (en PaqSuite-IA-BASE: `.cursor/prompts/scaffold-fullstack-inicio-proyecto.md`), declarando explícitamente **`MONO`** o **`MULTI`**. Ese prompt debe ejecutarse usando este documento como **fuente normativa obligatoria**.
 
+### Perfiles de proyecto (web, Capacitor, Flutter)
+
+| Perfil | Prompt / guía | Carpetas típicas |
+|--------|---------------|------------------|
+| `web-fullstack` | Este documento + `scaffold-fullstack-inicio-proyecto.md` | `backend/`, `frontend/` |
+| `web-capacitor` | Igual + [`01-mobile/README.md`](./01-mobile/README.md) | `backend/`, `frontend/` (+ Capacitor en `frontend/`) |
+| `mobile-flutter` | [`00-inicio-arquitectura-mobile-nativo.md`](./00-inicio-arquitectura-mobile-nativo.md) + `scaffold-mobile-nativo-inicio-proyecto.md` | `mobile/` (API externa o compartida) |
+| `fullstack-web-flutter` | Guía web + guía mobile nativo | `backend/`, `frontend/`, `mobile/` |
+
+**MONO / MULTI** es independiente del perfil (modalidad empresarial, no “web vs mobile”). Taxonomía TR y superficies: [`98-metodologia/tipos-tr-y-superficies.md`](./98-metodologia/tipos-tr-y-superficies.md).
+
 ---
 
 ## 1. Modo de instalación (obligatorio al usar este documento)
@@ -59,7 +70,7 @@ Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-e
 | Frontend web | **React 18** + **Vite 5** + **TypeScript** | Proxy típico de `/api` al backend en desarrollo. |
 | UI | **DevExtreme** + **devextreme-react** | Licencia vía `VITE_DEVEXTREME_LICENSE`; release con `npm run build:release`. |
 | i18n | **i18next** / **react-i18next** | Coherente con normas de test IDs y accesibilidad. |
-| Mobile (opcional mismo repo) | **Capacitor** (+ nativo futuro en `mobile/`) | Mismo build web empaquetado; guía [`01-mobile/README.md`](./01-mobile/README.md). |
+| Mobile (opcional mismo repo) | **Capacitor** en `frontend/` **o** **Flutter** en `mobile/` | Capacitor = mismo build web; Flutter = cliente nativo. Guías: [`01-mobile/README.md`](./01-mobile/README.md), [`01-mobile/native/README.md`](./01-mobile/native/README.md). |
 | Tests backend | **PHPUnit** | Integración API + BD con datos de prueba. |
 | Tests frontend | **Vitest** + **Playwright** | Por tarea/historia en frontend: unitarios en `src/` y E2E en `tests/e2e/`. |
 | Versión de producto | Archivo **`VERSION`** en la raíz | Fuente de verdad para `VITE_APP_VERSION` en Vite (ver `docs/06-operacion/deploy-infraestructura.md`). |
@@ -236,7 +247,9 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Shell y carpetas frontend | `docs/01-arquitectura/ui/` |
 | DevExtreme | `docs/frontend/devextreme-norms.md` |
 | Deploy y versión | `docs/06-operacion/deploy-infraestructura.md` |
-| Mobile (Capacitor, nativo, CI/tiendas) | [`01-mobile/README.md`](./01-mobile/README.md) |
+| Mobile Capacitor | [`01-mobile/README.md`](./01-mobile/README.md) |
+| Mobile nativo Flutter | [`01-mobile/native/README.md`](./01-mobile/native/README.md) · [`00-inicio-arquitectura-mobile-nativo.md`](./00-inicio-arquitectura-mobile-nativo.md) |
+| Tipos TR y superficies SDD | [`98-metodologia/tipos-tr-y-superficies.md`](./98-metodologia/tipos-tr-y-superficies.md) |
 | Guía agente / DoD | `AGENTS.md` |
 
 ---

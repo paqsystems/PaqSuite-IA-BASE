@@ -1,0 +1,41 @@
+---
+description: Flutter nativo — arquitectura, carpetas, API y exclusiones (BASE)
+globs:
+  - "**/mobile/**"
+alwaysApply: false
+---
+
+# Mobile nativo — Flutter (BASE)
+
+Complementa Capacitor (`80-mobile/00-mobile-especificaciones-programacion.mdc`). **No** aplica a `frontend/` salvo convivencia en monorepo.
+
+SoT documental: `docs/_base/01-mobile/native/` (BASE: `.cursor/docs/01-mobile/native/`).
+
+## MUST
+
+1. Código Flutter solo en `mobile/` (no mezclar con React).
+2. Misma API y envelope GEN-20 que web; headers según MONO/MULTI (overlays `16-mobile-native-mono` / `16-mobile-native-multi`).
+3. Consultas operativas en **kardex** (lista de tarjetas), no DataGrid desktop.
+4. Exclusiones: pivot, excel-import, admin seguridad, `openInNewTab` / navegador externo para procesos de menú.
+5. Config: URL API + test health; tenant en login (MONO); empresa en MULTI.
+6. Variables, propiedades y métodos en **camelCase**.
+7. TR de implementación: tipo `TR-MOB`; testing según regla `52-flutter-testing-rules.mdc`.
+
+## Prohibido
+
+- DevExtreme o WebView del shell web como UI principal.
+- Copiar paquetes GEN de `packages/js/react-core` al proyecto Flutter.
+- Modelos de negocio exclusivos de Tango/ERP dentro de un futuro `paqsuite_flutter_core` genérico.
+- `whereIn` masivo en cliente; respetar contratos API paginados.
+
+## Cuándo ramificar web vs Flutter
+
+Productos **fullstack-web-flutter**: dominio y OpenAPI compartidos; SPEC/HU de presentación pueden separarse por superficie.
+
+## Checklist merge (mobile/)
+
+- [ ] Headers y logout invalidan contexto local
+- [ ] i18n / keys estables en strings de usuario
+- [ ] `flutter analyze` sin errores nuevos
+- [ ] Tests según alcance TR
+- [ ] Documentación TR actualizada si cambia menú mobile policy

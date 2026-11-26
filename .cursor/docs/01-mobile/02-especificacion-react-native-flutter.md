@@ -1,8 +1,16 @@
-# Especificación de programación — React Native y Flutter (mobile nativo)
+# Especificación de programación — React Native y Flutter (índice)
 
 Contrato para un **cliente mobile nativo** en carpeta separada (`mobile/`), consumiendo la misma API Laravel que web y Capacitor.
 
-**Estado:** **NO IMPLEMENTAR** carpeta `mobile/`, dependencias ni pipelines hasta indicación explícita del usuario o TR mobile nativa autorizada.
+## Índice por stack
+
+| Stack | Documento canónico |
+|-------|-------------------|
+| **Flutter** (recomendado BASE) | [`native/README.md`](./native/README.md) → [`native/arquitectura-flutter.md`](./native/arquitectura-flutter.md) |
+| **React Native** | Secciones §3 en adelante **de este archivo** |
+| **Capacitor** (web empaquetada) | [`01-especificacion-capacitor.md`](./01-especificacion-capacitor.md) — **no** es nativo en `mobile/` |
+
+**Estado:** **NO IMPLEMENTAR** carpeta `mobile/`, dependencias ni pipelines hasta indicación explícita del usuario o TR `TR-MOB` autorizada.
 
 **Norma Cursor:** `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc`
 

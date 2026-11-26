@@ -383,7 +383,7 @@ El asistente debe:
 
 ---
 
-## PARTE E – Ejecución de tests (backend + unitarios + E2E)
+## PARTE E – Ejecución de tests (por superficie)
 
 ### Comando: "Ejecutá los tests" / "Corré los tests"
 
@@ -394,9 +394,10 @@ Cuando el usuario escriba algo como:
 
 el asistente debe:
 
-1. Asumir que el proyecto tiene:
-   - `Backend` en backend/ (Laravel, PHPUnit).
-   - `Frontend` en frontend/ (Vitest para unitarios, Playwright para E2E).
+1. Detectar superficie según TR o carpetas del repo:
+   - `backend/` → PHPUnit (`php artisan test`).
+   - `frontend/` → Vitest + Playwright (`51-testing.md`).
+   - `mobile/` → `flutter test` / `integration_test` (`52-flutter-testing-rules.mdc`) — **no** exigir npm si no hay `frontend/`.
 
 2. Indicar la ejecución de los siguientes comandos,
    **en terminales separadas** , en este orden:
@@ -409,10 +410,18 @@ php artisan test
 En otra terminal:
 cd frontend
 npm run test:run
-3) Tests E2E (frontend)
+3) Tests E2E (frontend) — solo si existe `frontend/` y la TR es web/Capacitor
 En otra terminal:
 cd frontend
 npm run test:e2e
+
+4) Tests Flutter — solo si existe `mobile/` y la TR es `TR-MOB`
+En otra terminal:
+cd mobile
+flutter test
+flutter test integration_test
+
+Taxonomía: `docs/_base/98-metodologia/tipos-tr-y-superficies.md`.
 
 ### Cierre Jira (MUST)
 

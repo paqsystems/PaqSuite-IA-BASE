@@ -10,9 +10,10 @@ Reglas generales:
 - Respetar las reglas del proyecto y de Cursor (.cursor/rules).
 
 Implementación:
-- Backend, Frontend, Tests y Documentación según lo indicado en la TR.
+- Backend, Frontend (`frontend/`), Mobile (`mobile/`), Tests y Documentación según lo indicado en la TR y el **Tipo TR** en metadatos (`TR-BE`, `TR-FE-WEB`, `TR-MOB`, …).
 - Usar el layout de carpetas definido en el proyecto.
 - Mantener consistencia con TRs ya implementadas.
+- **TR-MOB:** reglas `80-mobile/native/01-flutter-arquitectura.mdc` + overlay MONO/MULTI `16-mobile-native-*.mdc`.
 - Si la TR introduce o modifica **claves de `PQ_PARAMETROS_GRAL`** para un módulo: actualizar `docs/backend/seed/PQ_PARAMETROS_GRAL/PQ_PARAMETROS_GRAL.seed.json`, verificar `PqParametrosGralSeeder`, y en desarrollo ejecutar `php artisan db:seed --class=PqParametrosGralSeeder --database=company` (regla `.cursor/rules/28-plan-tareas-hu-parametros-generales.md` §6).
 
 Modelo de datos (MUST si la TR toca persistencia):
@@ -23,17 +24,15 @@ Modelo de datos (MUST si la TR toca persistencia):
 - Visual opcional: si el host mantiene **`database/modelo-datos.dbml`**, alinearlo con los `.md` actualizados (regla **`70-db/70-dbml-sync-rule`**).
 
 Documentación de librerías externas (solo si la TR lo exige en el DoD de una tarea):
-- Cuando el plan de la TR indique verificación con documentación actual de un paquete (p. ej. DevExtreme React, Playwright, Vitest), usar el MCP **user-context7** u otra fuente oficial alineada a la versión en `frontend/package.json`.
-- Priorizar siempre reglas y docs del repo (`.cursor/rules/`, `AGENTS.md`, `docs/frontend/devextreme-norms.md`); Context7 complementa dudas de API de terceros, no reemplaza el diseño interno.
+- **Web:** DevExtreme React, Playwright, Vitest — MCP **user-context7** alineado a `frontend/package.json`.
+- **Flutter:** documentación Flutter/Dart y paquetes del `mobile/pubspec.yaml` cuando la TR lo indique.
+- Priorizar siempre reglas y docs del repo (`.cursor/rules/`, `AGENTS.md`); Context7 complementa, no reemplaza diseño interno.
 
-Tests:
-- Implementar unit tests, integration tests y E2E Playwright si la TR lo indica.
-- Si la TR incluye cambios en frontend (servicios, componentes, utilidades): añadir también tests unitarios con Vitest en `frontend/src/` (p. ej. `*.test.ts` o `*.spec.ts` junto al código). Cubrir al menos servicios (llamadas API, transformación de datos) y, cuando aplique, utilidades o componentes aislados.
-- En E2E:
-  - Interacciones reales del usuario.
-  - Assertions con expect sobre estado visible.
-  - Prohibido usar waits ciegos (waitForTimeout, sleep, etc.).
-  - Usar selectores estables (data-testid, roles accesibles).
+Tests (según superficie de la TR):
+- **`TR-BE` / backend:** PHPUnit (`php artisan test`) según TR.
+- **`TR-FE-WEB` / web o Capacitor en `frontend/`:** Vitest + Playwright E2E si la TR lo indica (`51-testing.md`, `50-playwright-testing-rules.md`). E2E: interacciones reales, `expect` visible, sin waits ciegos, `data-testid`.
+- **`TR-MOB` / `mobile/`:** `flutter test`, widget tests, `integration_test` según TR — **no** añadir Playwright/Vitest por defecto (`52-flutter-testing-rules.mdc`).
+- **`TR-INT`:** tests de contrato o integración acordados en la TR (Postman, PHPUnit, `flutter test` con mocks HTTP).
 
 Seguridad y calidad:
 - Respetar validaciones, permisos y reglas de negocio.

@@ -33,6 +33,8 @@ SPEC gobierna HU
 HU enriquecida gobierna TR (junto con SPEC)
 ```
 
+Si el SPEC tiene varias superficies: etiquetar CA **común / web / mobile** antes de TR (ver `tipos-tr-y-superficies.md`).
+
 Solo agregar información que esté:
 
 - explícita en el SPEC;

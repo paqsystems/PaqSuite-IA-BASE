@@ -40,6 +40,7 @@ También puede ejecutarse como skill:
 - Archivos modificados.
 - Comandos ejecutados.
 - Resultado de tests.
+- **Superficie** del TR (`tipos-tr-y-superficies.md`): web → Vitest/Playwright; Flutter → `52-flutter-testing-rules.mdc` + matriz mobile.
 
 ---
 
@@ -68,11 +69,17 @@ También puede ejecutarse como skill:
 - ¿Validaciones, permisos y errores son consistentes?
 - ¿No se revela información sensible?
 
-### 5. Frontend
+### 5. Frontend web (`frontend/`)
 
 - ¿Estados loading/empty/error/success están cubiertos?
 - ¿Hay selectores estables para tests?
 - ¿Se mantiene accesibilidad mínima?
+
+### 5b. Mobile nativo (`mobile/`, TR-MOB)
+
+- ¿Kardex / exclusiones mobile (sin pivot, excel-import, admin)?
+- ¿Headers y storage según overlay MONO/MULTI?
+- ¿Evidencia `flutter test` / matriz verificación mobile?
 
 ### 6. Tests
 

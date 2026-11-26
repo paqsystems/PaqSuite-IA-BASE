@@ -48,11 +48,13 @@ Antes de tocar código, el agente debe producir un plan con:
 
 1. Resumen de alcance.
 2. Archivos o módulos probables a revisar.
-3. Impacto por capa:
+3. Impacto por capa (según **Tipo TR** / metadatos):
    - DB
-   - Backend
-   - Frontend
-   - Tests
+   - Backend (`TR-BE`)
+   - Frontend web (`TR-FE-WEB`, `frontend/`)
+   - Mobile Flutter (`TR-MOB`, `mobile/`)
+   - Integración (`TR-INT`)
+   - Tests (PHPUnit / Vitest+Playwright / `flutter test` — ver `tipos-tr-y-superficies.md`)
    - Docs
    - DevOps
 4. Riesgos.

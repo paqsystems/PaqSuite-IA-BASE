@@ -48,6 +48,8 @@ Cada proyecto referencia directamente:
 * **Opcional / recomendado:** `prompts` en la raíz → `PaqSuite-IA-BASE\.cursor\prompts`
 * **Opcional / recomendado:** `docs/_base` → `PaqSuite-IA-BASE\.cursor\docs`; `docs/_mono` **o** `docs/_multi` según tipo de producto
 * **Opcional / recomendado:** `docs/00-contexto/_mono` **o** `docs/00-contexto/_multi` → contexto de producto en `PaqSuite-IA-MONO\docs\00-contexto` o `PaqSuite-IA-MULTI\docs\00-contexto`
+* **Mobile nativo Flutter:** documentación común en `docs/_base/01-mobile/native/` (hereda al producto vía `docs/_base`); overlays tenancy en `docs/00-contexto/.../mobile-native/` del paquete MONO o MULTI — **sin** symlinks adicionales por archivo
+* Reglas Flutter en `docs/_base` → `.cursor/rules/base/80-mobile/native/` y `50-testing/52-flutter-testing-rules.mdc`; overlays `16-mobile-native-mono.mdc` / `16-mobile-native-multi.mdc` en paquetes MONO/MULTI
 * reglas propias del proyecto (archivos bajo `.cursor/rules` que no sean symlinks)
 
 Esto mejora:

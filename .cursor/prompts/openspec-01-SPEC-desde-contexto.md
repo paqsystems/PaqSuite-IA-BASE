@@ -54,8 +54,10 @@ Podés partir de:
 2. Si el alcance toca UI o capacidad transversal (login, shell, grilla, pivot, Excel, dashboard, emisión, chat, etc.): leer **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`**, nombrar **GEN-xx** + export, plantilla *adoptar GEN-xx; …; no reimplementar*; **prohibido** copiar carpetas GEN del Framework. Checklist = índice de esa regla; detalle en `PaqSuite-IA-FRAMEWORK`.
 3. Crear o actualizar **`docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md`** (subcarpeta alineada a épica/HU del proyecto).
 4. Metadatos: **`Estado: Pendiente`** hasta cerrar alcance; completar criterios verificables, fuera de alcance, riesgos.
-5. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
-6. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
+5. Metadatos de **plataforma** (cuando aplique): `superficie`, `stackCliente`, `modalidad` (MONO/MULTI), `backend` (PROPIO/API_COMPARTIDA/EXTERNO), `repositorioPropietario`. Referencia: [`tipos-tr-y-superficies.md`](../docs/98-metodologia/tipos-tr-y-superficies.md).
+6. Mobile: **SPEC-001-22 / GEN-22** = Capacitor; **Flutter** = SPEC/capacidad **33** separada. HU mixta web+Flutter: dominio común + anexo [`anexo-spec-mobile.md`](../docs/01-mobile/native/templates/anexo-spec-mobile.md) si la presentación diverge.
+7. Enlazar HU/TR en metadatos **cuando** ya existan; si no, dejar campos preparados.
+8. Si la fuente es insuficiente, listar **preguntas abiertas** en el SPEC antes de cerrar.
 
 ---
 

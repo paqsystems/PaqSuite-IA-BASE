@@ -22,8 +22,9 @@ Leé el SPEC completo. Si enlaza una HU existente, preguntá si **crear nueva HU
 
 1. **Ruta sugerida:** `docs/03-historias-usuario/<subcarpeta>/HU-XXX-titulo-slug.md`.
 2. **Contenido** mínimo: metadatos con referencias al SPEC; **Estado** **`Pendiente`** (`07-estado-hu-tr.md`); narrativa; alcance; CA alineados al SPEC; Gherkin solo si el proyecto lo exige en HU.
-3. Si el SPEC declara **GEN-xx**: conservar en la HU la adopción (*adoptar GEN-xx; no reimplementar*) sin inventar UI/motor propio; detalle técnico del export queda en TR.
-4. Foco **funcional**, sin detalle técnico del TR.
+3. Si el SPEC declara **superficie** o alcance multi-plataforma: marcar en metadatos qué CA son **comunes** y cuáles **solo web** / **solo mobile** (kardex, exclusiones mobile). Ver `tipos-tr-y-superficies.md`.
+4. Si el SPEC declara **GEN-xx**: conservar en la HU la adopción (*adoptar GEN-xx; no reimplementar*) sin inventar UI/motor propio; **GEN-22** = Capacitor; Flutter = **GEN-33** cuando exista. Detalle técnico del export queda en TR.
+5. Foco **funcional**, sin detalle técnico del TR.
 
 ---
 

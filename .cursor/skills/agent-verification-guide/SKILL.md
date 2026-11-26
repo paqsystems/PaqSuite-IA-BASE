@@ -43,7 +43,8 @@ Aplicar en detalle si hace falta:
 | 2 | Código | Archivos alineados al plan; sin hardcodes frágiles innecesarios |
 | 3 | Datos | Migraciones/seed/rollback si correspondía; **`docs/modelo-datos/`** al día (Framework: también **`docs/06-modelo-datos/`** si install/GEN) |
 | 4 | Backend | Validaciones, permisos, errores, sin filtrar datos sensibles |
-| 5 | Frontend | loading/empty/error/success; data-testid; a11y mínima |
+| 5 | Frontend web | loading/empty/error/success; data-testid; a11y mínima (`frontend/`) |
+| 5b | Mobile Flutter | kardex, headers tenancy, `flutter test` si `TR-MOB` (`mobile/`) |
 | 6 | Tests | Ejecutados con evidencia; faltantes declarados |
 | 7 | Documentación | OpenAPI/docs si hubo cambio de contrato o comportamiento (**MUST:** endpoint anotado; GET con diseño de `resultado`; POST/PUT con Body tipado + example — `10-openapi-documentacion`); modelado en **`docs/modelo-datos/`** coherente con el esquema entregado |
 | 8 | Trazabilidad | TR con archivos, comandos y pendientes claros |

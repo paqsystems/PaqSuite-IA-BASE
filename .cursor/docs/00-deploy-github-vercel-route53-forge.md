@@ -49,6 +49,9 @@ Configurar variables por environment, sin mezclar valores:
 |---|---|---|
 | `VITE_API_BASE_URL` | `https://{proyecto}paqsystems-dev.on-forge.com/api/v1` | `https://{proyecto}paqsystems.on-forge.com/api/v1` |
 | `VITE_APP_ENV` | `preview` | `production` |
+| `VITE_DEVEXPRESS_LICENSE_KEY` | vacía al crear el proyecto | vacía al crear el proyecto |
+
+`VITE_DEVEXPRESS_LICENSE_KEY` se crea vacía en cada proyecto Vercel nuevo (`Production`, `Preview` y `Development` si se usa). No copiar ni inventar la clave. El usuario debe completarla con la clave LCP de DevExtreme 26.1 y redesplegar. `VITE_DEVEXTREME_LICENSE` (JWT `eyJ` de 25.2) no licencia la 26.1: sin la clave LCP el build de producción aborta el arranque y el frontend queda en pantalla negra.
 
 Las variables sensibles o específicas del producto deben configurarse en Vercel con el mismo aislamiento.
 
@@ -72,7 +75,7 @@ TASKS_BACKUP_POLL_SECONDS=5
 TASKS_BACKUP_LOCK_LEASE_SECONDS=900
 ```
 
-`PAQSUITE_CLIENTE` es el código de `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`). Obligatorio para `tasks:run-due` porque el CLI no envía header HTTP. Debe mapearse en `config/paqsuite.php` (`clienteCodigo`) para sobrevivir a `config:cache`. El destino S3 es compartido: bucket `sql-amazon-basico`, carpeta `backups/`, para **todos** los proyectos. RDS escribe con su rol IAM; no usar `AWS_ACCESS_KEY_ID` / `AWS_BUCKET` de Laravel para este flujo. El bucket debe coincidir en región con el RDS.
+`PAQSUITE_CLIENTE` es el código de `EMPRESAS_CONEXION` (el mismo que `X-Paq-Cliente`). Obligatorio para el scheduler GEN-13 (`pedidosweb:tasks-run-due`) porque el CLI no envía header HTTP. Debe mapearse en `config/paqsuite.php` (`clienteCodigo`) para sobrevivir a `config:cache`. El destino S3 es compartido: bucket `sql-amazon-basico`, carpeta `backups/`, para **todos** los proyectos. RDS escribe con su rol IAM; no usar `AWS_ACCESS_KEY_ID` / `AWS_BUCKET` de Laravel para este flujo. El bucket debe coincidir en región con el RDS.
 
 La configuración se verifica antes del primer deploy y después de cada cambio de variables mediante `config:clear`/`config:cache` según corresponda.
 
@@ -143,8 +146,9 @@ El check debe pasar normalmente en Pull Requests hacia `develop` y fallar si un 
    - `https://{proyecto}.paqsystems.com` a Production.
    - `https://dev.{proyecto}.paqsystems.com` a Preview.
 5. Configurar `VITE_API_BASE_URL` según la matriz Vercel ↔ Forge.
-6. Separar todas las variables de entorno por ambiente.
-7. Verificar que `develop` genere Preview y `main` genere Production.
+6. Crear `VITE_DEVEXPRESS_LICENSE_KEY` vacía en `Production` y `Preview` (y `Development` si se usa). Al cerrar el alta, avisar al usuario que debe completarla con la clave LCP de DevExtreme 26.1 y redesplegar.
+7. Separar todas las variables de entorno por ambiente.
+8. Verificar que `develop` genere Preview y `main` genere Production.
 
 ## DNS en Route 53
 

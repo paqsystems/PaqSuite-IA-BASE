@@ -271,9 +271,9 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 | i18n host | Títulos de proceso vía `resolveMenuCaption` o `t()` (regla **42**); sin literales ES |
 | Wrapper host | Páginas de proceso envueltas en `ProcessPageLayout`. Auth: layouts SDK + `auth.css` del paquete |
 | Backend | N/A (presentación) |
-| Anti-patrones | CSS propio de login/forgot; `ChangePasswordPage` sin layout SDK; `<h1>` ES en chrome de proceso |
-| Checklist merge | Login/forgot/reset/cambio clave usan layout SDK; procesos de menú usan `ProcessPageLayout` |
-| Referencia | smoke `ShellPage`; `adopcion-auth-ui.md`; SPEC-001-01 |
+| Anti-patrones | CSS propio de login/forgot; `ChangePasswordPage` sin layout SDK; `<h1>` ES en chrome de proceso; truncar listas de confirmación con «Y N más»; paginar destinatarios cuando el patrón es 5 visibles + scroll (SPEC-001-01 §17) |
+| Checklist merge | Login/forgot/reset/cambio clave usan layout SDK; procesos de menú usan `ProcessPageLayout`; Popup de confirmación con lista larga: lista completa, ~5 visibles + scroll, pie fijo |
+| Referencia | smoke `ShellPage`; `adopcion-auth-ui.md`; SPEC-001-01 (§17 listas en confirmación) |
 
 ### GEN-02 — i18n
 
@@ -411,11 +411,11 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 | Campo | Valor |
 |-------|--------|
 | Estado ficha | **documentado** |
-| Exports | `TaskProcessesPage`, Definitions, Executions; `TaskProcessRegistry` en BE |
-| MUST | Títulos i18n (no `<h1>Tareas programadas</h1>`); chrome `ProcessPageLayout`; adoptar el proceso único `BACKUP_DATABASE` para Windows/RDS |
-| Backup | MONO sin picker; MULTI incluye empresas y diccionario con seleccionar/deseleccionar todas; Windows `INIT`/`NOINIT`; RDS sobreescribe siempre y usa polling `rds_task_status`; lock RDS global por instalación |
-| UI host | Usar la pantalla genérica de definiciones; no copiar formulario ni handler de backup al host |
-| Referencia backup | [SPEC-001-13-update — Backups Windows y RDS](../../../../docs/05-open-spec/updates/001-Generalidades/SPEC-001-13-update-backups-windows-rds.md) |
+| Exports | `TaskScheduledLayout` / `TaskScheduledTabs`; `TaskProcessesPage`, Definitions, Executions, monitor; `TaskProcessRegistry` en BE |
+| MUST | Chrome de pestañas **SDK** (`TaskScheduledLayout`): Procesos → Definiciones → **Ejecuciones** → Historial. Títulos i18n (no `<h1>` ES); adoptar `BACKUP_DATABASE` para Windows/RDS |
+| Backup | MONO sin picker; MULTI incluye empresas y diccionario con seleccionar/deseleccionar todas; Windows `INIT`/`NOINIT`; RDS sobreescribe siempre y usa polling `rds_task_status`; lock RDS global por instalación. Manual HTTP: `deferManualRdsPolling` (env) + poller en scheduler cada minuto; pin `laravel-core` ≥ **1.3.18-beta.32**; sin fork handler host |
+| UI host | Usar `TaskScheduledLayout` + pantallas genéricas; no copiar formulario, handler de backup ni NavLink de solapas al host |
+| Referencia backup | [SPEC-001-13-update — Backups Windows y RDS](../../../../docs/05-open-spec/updates/001-Generalidades/SPEC-001-13-update-backups-windows-rds.md) · [defer manual RDS 2026-11-11](../../../../docs/05-open-spec/updates/001-Generalidades/SPEC-001-13-update-defer-manual-rds-polling-2026-11-11.md) |
 | Gap | Host puede no montarlo (Partes hoy: gap aceptable si el producto no lo ofrece) |
 | Referencia | smoke tareas |
 
@@ -436,9 +436,10 @@ El host **no** debe enviar stock DX en PUT (el SDK envía `paqsuite.*`). Si la A
 | Campo | Valor |
 |-------|--------|
 | Estado ficha | **borrador** — SPEC en **redefinir**; UI smoke `EmissionReportDesignerPage` / diálogo emitir |
-| MUST | No reimplementar diseñador DX; comunicación dirigida = GEN-30 |
-| Host | `consultaId` / proceso + persistencia artefacto del producto |
-| Referencia | `15-reportes-emisiones-update.md`; F Framework pendiente |
+| MUST | No reimplementar diseñador DX; comunicación dirigida = GEN-30. **Reporte estándar / de base** de cada proceso: `name = '<Original>'` (`EmissionStandardReportNames::ORIGINAL`); el nombre del proceso va en `pq_emission_processes.name`, nunca en el reporte base. |
+| Host | `consultaId` / proceso + persistencia artefacto del producto; seed del reporte estándar con `<Original>` |
+| Anti-patrones | Nombrar el reporte de base como el proceso (rompe el SelectBox de reportes y, si el host usa el nombre del reporte como caption de proceso, también el selector de procesos) |
+| Referencia | `15-reportes-emisiones-update.md`; regla **62**; F Framework pendiente |
 
 ### GEN-16 — BYOK (`LlmPreferencesPanel`)
 

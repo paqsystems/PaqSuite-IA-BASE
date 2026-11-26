@@ -37,6 +37,7 @@ También puede ejecutarse como skill:
 - **HU** y **SPEC** enlazadas en metadatos de la TR.
 - Normas transversales del producto (`_NORMAS-TRANSVERSALES-TR.md`, envelope MONO, tenancy).
 - Contexto `_mono` / `_multi` cuando la TR toque API o UI.
+- **Tipo TR** y **Superficie** en metadatos ([`tipos-tr-y-superficies.md`](../../docs/98-metodologia/tipos-tr-y-superficies.md)).
 
 Opcional: decisiones humanas recientes (ej. D-01) no aún volcadas a la TR.
 
@@ -81,8 +82,11 @@ Opcional: decisiones humanas recientes (ej. D-01) no aún volcadas a la TR.
 
 ### 7. Tests planificados
 
-- ¿Unit / integration / E2E acordes a AC?
+- ¿Unit / integration / E2E acordes a AC **y a la superficie**?
+- Web: Vitest + Playwright solo si `TR-FE-WEB` / `WEB` / `CAPACITOR`.
+- Flutter: `flutter test` / `integration_test` si `TR-MOB` — **no** exigir Playwright.
 - ¿Casos 401, 403, 400 tenant, envelope?
+- ¿Evidencia F1 mobile definida (matriz verificación) si aplica?
 
 ### 8. Decisiones humanas
 

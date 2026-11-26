@@ -17,6 +17,8 @@ SPEC gobierna HU
 HU enriquecida gobierna TR junto con SPEC
 ```
 
+Si el SPEC declara **varias superficies** (web + Flutter): enriquecer CA marcando qué aplica a **común**, **solo web** o **solo mobile** (kardex, navegación in-app). Ver `tipos-tr-y-superficies.md`.
+
 ---
 
 ## Momento de aplicación
