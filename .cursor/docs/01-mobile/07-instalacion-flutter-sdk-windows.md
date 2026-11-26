@@ -4,16 +4,31 @@ Runbook **TR-PQ-MOB-07** · complementa emulador Android (`06-instalacion-emulad
 
 ## 1) SDK Flutter
 
-1. Descargar **stable** desde [flutter.dev](https://docs.flutter.dev/get-started/install/windows).
-2. Descomprimir o clonar en ruta fija, ej. `C:\tools\flutter` (recomendado en PCs Paq) o `C:\src\flutter`.
-3. **Variables de entorno (usuario):** agregar `C:\tools\flutter\bin` (o la ruta elegida) al **PATH**.
+**Importante — “como el usuario que programa”:** en Windows el **PATH es por usuario**. Pablo y **Sebastian** (`C:\Users\Sebastian`, usuario `sebastian`) tienen variables distintas. Cada uno debe abrir PowerShell **logueado en su propia cuenta** (no “Ejecutar como administrador” en nombre de otro). El SDK puede vivir **una sola vez** en `C:\tools\flutter` (carpeta compartida en el disco); lo que hay que repetir por persona es **agregar `C:\tools\flutter\bin` al PATH de ese usuario**.
 
-Alternativa clone:
+### Opción A — Script (recomendado)
+
+Desde la cuenta de Sebastian (o cualquier dev):
+
+```powershell
+cd C:\Programacion\PaqSuite-IA-FRAMEWORK\apps\smoke-flutter
+git pull
+.\scripts\setup-flutter-windows.ps1
+```
+
+Si Pablo ya clonó en `C:\tools\flutter`, Sebastian solo actualiza **su** PATH y corre `flutter --version`.
+
+### Opción B — Manual
+
+1. Descargar **stable** desde [flutter.dev](https://docs.flutter.dev/get-started/install/windows) o clonar solo si no existe `C:\tools\flutter`:
 
 ```powershell
 git clone https://github.com/flutter/flutter.git -b stable --depth 1 C:\tools\flutter
 ```
-4. Cerrar y reabrir **Cursor**, PowerShell y Android Studio.
+
+2. **Variables de entorno → usuario `sebastian`:** PATH → agregar `C:\tools\flutter\bin`.
+
+3. Cerrar y reabrir **Cursor**, PowerShell y Android Studio.
 
 Comprobar:
 
@@ -46,9 +61,10 @@ Backend smoke para E2E manual:
 php artisan test --filter=KardexArticulos
 ```
 
-## 4) Checklist programador
+## 4) Checklist (Sebastian / cada dev)
 
-- [ ] Flutter stable ≥ 3.24 en PATH
+- [ ] PowerShell abierto como `sebastian` → `echo $env:USERNAME` muestra `sebastian`
+- [ ] Flutter stable ≥ 3.24 en **PATH de ese usuario**
 - [ ] `flutter doctor` sin bloqueantes Android
 - [ ] `verify.ps1` o `flutter test` verde
 - [ ] Emulador o dispositivo (matriz M-08) — fase posterior F1
