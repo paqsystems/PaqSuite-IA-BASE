@@ -19,4 +19,4 @@ Primer circuito **SPEC → HU → TR** con metadatos `TR-MOB` / superficie `MOBI
 | Instalación Flutter | [../../01-mobile/07-instalacion-flutter-sdk-windows.md](../../01-mobile/07-instalacion-flutter-sdk-windows.md) |
 | SPEC | `PaqSuite-IA-FRAMEWORK/docs/05-open-spec/001-Generalidades/SPEC-001-33-sdk-flutter.md` |
 
-**F1 piloto:** **M-07 OK** (2026-11-26, `verify.ps1` en 2 PCs) — ver [matriz](../../01-mobile/native/templates/matriz-verificacion-mobile.md) y [TR-07](TR-PQ-MOB-07-runbook-instalacion-flutter.md). Pendiente: M-08 Android, cierre formal F1 (parte F del dispatcher), PR `PQ-MOBILE` → `develop`.
+**F1 piloto:** **M-07** y **M-08 OK** (2026-11-26) — ver [matriz](../../01-mobile/native/templates/matriz-verificacion-mobile.md), [TR-07](TR-PQ-MOB-07-runbook-instalacion-flutter.md). Evidencia M-08: `apps/smoke-flutter/docs/evidence-m08-emulator-*.png`. Pendiente: **M-09** iOS, cierre formal F1 (parte F), commit evidencia/código pendiente, PR `PQ-MOBILE` → `develop`.
