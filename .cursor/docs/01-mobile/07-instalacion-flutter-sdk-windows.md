@@ -5,8 +5,14 @@ Runbook **TR-PQ-MOB-07** · complementa emulador Android (`06-instalacion-emulad
 ## 1) SDK Flutter
 
 1. Descargar **stable** desde [flutter.dev](https://docs.flutter.dev/get-started/install/windows).
-2. Descomprimir en ruta fija, ej. `C:\src\flutter` (sin espacios raros).
-3. **Variables de entorno (usuario):** agregar `C:\src\flutter\bin` al **PATH**.
+2. Descomprimir o clonar en ruta fija, ej. `C:\tools\flutter` (recomendado en PCs Paq) o `C:\src\flutter`.
+3. **Variables de entorno (usuario):** agregar `C:\tools\flutter\bin` (o la ruta elegida) al **PATH**.
+
+Alternativa clone:
+
+```powershell
+git clone https://github.com/flutter/flutter.git -b stable --depth 1 C:\tools\flutter
+```
 4. Cerrar y reabrir **Cursor**, PowerShell y Android Studio.
 
 Comprobar:
