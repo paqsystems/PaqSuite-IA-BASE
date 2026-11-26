@@ -1,0 +1,46 @@
+---
+alwaysApply: true
+description: PARTE O — sync GEN-34 antes de levantar dev (todos los hosts PaqSuite IA)
+---
+
+# Entorno de desarrollo — sync SQL (GEN-34, PARTE O)
+
+Aplica a **todo host** PaqSuite IA (Partes, TANGO, PedidosWeb, template, …) cuando el usuario pida **«Iniciá / inicia el entorno de desarrollo»** o variantes de la PARTE **O** del dispatcher (salvo **«sin tocar la BD»** / **«solo levantá la app»**).
+
+Complementa **§O.4–O.5** en `.cursor/rules/base/00-arquitectura/01-prompts-programados-dispatcher.md`.
+
+## MUST — sync antes de `serve` / `npm run dev`
+
+1. Resolver **`PAQSUITE_CLIENTE`** + **`PAQSUITE_PROYECTO`** desde `backend/.env` (o preguntar si faltan).
+2. **Preferir script del host** (misma secuencia que Forge post-deploy cuando exista):
+   - `.\scripts\dev\sync-installation-sql.ps1` (raíz del repo), o
+   - `php backend/scripts/dev/run-local-gen34-sync.php`, o
+   - equivalente documentado en `docs/06-operacion/runbook-desarrollo-local-gen34.md` del producto.
+3. Si **no** hay script: en `backend/`, tras aplicar tenant/bootstrap documentado del host (p. ej. `scripts/forge/bootstrap-tenant-sqlsrv.php` cuando exista), ejecutar:
+   - `php artisan migrate --force`
+   - `php artisan paqsuite:installation:update --cliente={cliente} --proyecto={proyecto} --non-interactive`
+   - `php artisan paqsuite:installation:status --cliente={cliente} --proyecto={proyecto}`
+   - SP de dominio host si el runbook lo indica (`deploy-sp.php`, etc.).
+4. **`migrate` solo no sustituye `installation:update`**.
+
+## Modo gateway vs SQL directo
+
+| Situación | SQL local | Levantar dev (serve + Vite) |
+|-----------|-----------|-----------------------------|
+| Instalación **directa** (sin `agent_id`+`client_id` en `EMPRESAS_CONEXION`) | **Sí** | **Sí** |
+| Instalación **gateway** | **No** (omitir update/deploy directo) | **Sí** — continuar; SQL del cliente vía agente/Forge |
+
+Convención de scripts que implementen gateway: exit **0** = OK · **1** = error · **2** = gateway (omitir SQL, **no** bloquear arranque del stack). Si el host usa `start-dev.ps1 -All`, debe tratar exit **2** como aviso y seguir.
+
+Si exit **1**: informar error completo y preguntar si levantar app para depurar (dispatcher §O.4).
+
+## Levantar aplicación
+
+Tras sync (o omitido por gateway / «sin tocar BD»): backend + frontend en terminales separadas, o script del host (`start-dev.ps1 -All`, etc.). Informar URLs (frontend, backend, OpenAPI según config del host).
+
+## Prohibido
+
+- Solo `npm run dev` + `php artisan serve` sin sync GEN-34 cuando el usuario no pidió omitir BD.
+- Simular éxito si `paqsuite:installation:update` no está en `artisan list` (indicar bump `laravel-core` + runbook Framework).
+
+SoT producto: Framework `docs/02-producto/34-instalacion-actualizacion-proyecto.md` §5.5 · runbook host en `docs/06-operacion/` cuando exista.

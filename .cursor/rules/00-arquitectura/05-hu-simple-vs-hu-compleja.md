@@ -38,8 +38,8 @@ Reglas obligatorias:
 - Incluir tareas de:
   - Base de Datos
   - Backend
-  - Frontend
-  - Tests (unit, integration, ≥1 E2E Playwright si aplica)
+  - Frontend web (`TR-FE-WEB`) y/o Mobile Flutter (`TR-MOB`) **solo si la HU/SPEC lo declara**
+  - Tests según superficie (`51-testing.md` web; `52-flutter-testing-rules.mdc` mobile) — **no** exigir Playwright en alcance solo Flutter
   - Documentación
 - Mantener consistencia con las reglas del proyecto y `.cursor/rules`.
 
@@ -123,17 +123,16 @@ Cobertura mínima obligatoria:
   - endpoints
   - validaciones
   - manejo de errores
-- Frontend:
-  - pantallas/componentes
+- Frontend web (si aplica):
+  - pantallas/componentes en `frontend/`
   - estados (loading, error, empty)
   - validaciones
-- Tests:
-  - unit tests
-  - integration tests
-  - ≥1 flujo E2E con Playwright
-    - interacciones reales
-    - assertions con `expect`
-    - prohibido usar waits ciegos
+- Mobile Flutter (si aplica):
+  - widgets/pantallas en `mobile/`, kardex, navegación in-app
+- Tests (según metadatos **Superficie** de la TR):
+  - backend: PHPUnit
+  - web: Vitest + Playwright E2E si hay flujo UI web
+  - Flutter: `flutter test` + `integration_test` si AC mobile
 - Documentación:
   - OpenAPI / Swagger si aplica
   - actualización de documentación afectada

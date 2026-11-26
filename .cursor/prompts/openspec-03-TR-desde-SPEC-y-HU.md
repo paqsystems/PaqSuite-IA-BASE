@@ -23,12 +23,20 @@ Si hay contradicción, **priorizá el SPEC** para alcance y la **HU** para redac
 
 **`.cursor/rules/base/00-arquitectura/04-user-story-to-task-breakdown.md`**
 
+Si el SPEC/HU tocan capacidad transversal: cumplir **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`** — plantilla *adoptar GEN-xx; UI/motor = [export]; no reimplementar*; **prohibido** copiar carpetas GEN. Checklist de componentes = índice de esa regla.
+
+**Una HU, varias TR:** si el SPEC declara web + Flutter, generar **TR hermanas** (`TR-BE` compartido, `TR-FE-WEB`, `TR-MOB`, `TR-INT` si API externa) con dependencias explícitas; no mezclar Playwright y `integration_test` en una sola TR salvo `MIXTA` documentada.
+
 Tabla de metadatos del TR:
 
 | Campo | Instrucción |
 |-------|-------------|
 | HU relacionada | Enlace a `rutaHu`. |
 | **SPEC relacionada** | Enlace a `rutaSpec` (obligatorio en Open-Spec completo). |
+| **Tipo TR** | `TR-BE`, `TR-FE-WEB`, `TR-MOB`, `TR-INT`, `TR-DATA`, `TR-QA`, `TR-DEVOPS` — ver [`tipos-tr-y-superficies.md`](../docs/98-metodologia/tipos-tr-y-superficies.md). |
+| **Superficie** | `BACKEND`, `WEB`, `CAPACITOR`, `MOBILE_NATIVE`, `MIXTA`. |
+| **Repositorio propietario** | Repo donde se implementa (si difiere del SPEC). |
+| **Contrato API** | OpenAPI / proveedor si aplica (`TR-INT`, `TR-MOB` con API externa). |
 | Estado | **`Pendiente`** al generar. |
 | Origen | Enlaces a HU y SPEC. |
 
@@ -48,3 +56,9 @@ Tabla de metadatos del TR:
 ```
 
 Actualizá metadatos del **SPEC** y de la **HU** con enlace al TR.
+
+---
+
+## Cierre Jira (MUST)
+
+Regla **09**. Una **Task** por TR: summary `[TR-…]`, parent Story (o Epic + enlace HU), `Jira:` en el TR. Epic sigue **HU / TR** hasta C1. MCP fail → no abortar.

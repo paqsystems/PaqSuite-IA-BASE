@@ -21,6 +21,12 @@ Guía para instalar **Integración Continua** en productos PaqSuite (`backend/` 
 - PHPUnit integración con SQL Server — requiere servicio BD en CI o runner self-hosted
 - Gate de cobertura ≥ 70 % en `app/Services/**` — ver TR de hardening del producto
 
+### Proyecto con `mobile/` (Flutter)
+
+- Job opcional **`mobile-flutter`**: `flutter analyze`, `flutter test` (no requiere `frontend/` ni Vercel).
+- Firma y artefactos store: ver [`01-mobile/native/ci-firma-y-distribucion.md`](./01-mobile/native/ci-firma-y-distribucion.md).
+- Proyecto **solo mobile** puede omitir job `frontend` si no existe carpeta `frontend/`.
+
 ---
 
 ## 2) Ubicación de archivos en BASE

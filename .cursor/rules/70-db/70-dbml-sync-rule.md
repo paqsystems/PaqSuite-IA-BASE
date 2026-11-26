@@ -5,26 +5,26 @@ alwaysApply: true
 
 ## Objetivo
 
-Mantener el archivo `database/modelo-datos.dbml` sincronizado con `docs/modelo-datos.md` para garantizar que la visualización gráfica del modelo de datos refleje siempre la documentación actualizada.
+Mantener **`database/modelo-datos.dbml`** alineado con la documentación canónica del modelo en **`docs/modelo-datos/`** (carpeta por tema/módulo/GEN). El archivo monolítico **`docs/modelo-datos.md`** sigue siendo válido en repos legados; preferir la **carpeta** en hosts y Framework nuevos (dispatcher **PARTE J §d**, `openspec-04`).
 
 ## Alcance
 
 Esta regla aplica a:
-- Modificaciones en `docs/modelo-datos.md`
+- Modificaciones en **`docs/modelo-datos/**/*.md`** o en **`docs/modelo-datos.md`** (legado)
 - Cambios en entidades, relaciones o restricciones del modelo de datos
 - Actualización del archivo `.dbml` para dbdiagram.io
 
 ## Regla Obligatoria
 
-**SIEMPRE que se modifique `docs/modelo-datos.md`, se DEBE actualizar:**
+**SIEMPRE que se modifique el modelado documentado** (carpeta `docs/modelo-datos/` o `docs/modelo-datos.md` legado), **si el repo mantiene DBML**, se DEBE actualizar:
 1. `database/modelo-datos.dbml` - Archivo DBML para dbdiagram.io
-2. Diagrama Mermaid en `docs/modelo-datos.md` - Para visualización en Cursor
+2. Diagrama Mermaid en el `.md` afectado (o en `docs/modelo-datos.md` legado) - Para visualización en Cursor
 
-**Nota:** El diagrama Mermaid se actualiza manualmente, pero debe reflejar las mismas relaciones que el DBML.
+**Nota:** El diagrama Mermaid se actualiza manualmente, pero debe reflejar las mismas relaciones que el DBML. La obligación de **contenido tabular** (función, campos, significado, índices) vive en el circuito SDD (**PARTE D**, **openspec-04**, **14-agent-verification-guide**), no en esta regla.
 
 ### Proceso de Actualización
 
-1. **Detectar cambios en `docs/modelo-datos.md`:**
+1. **Detectar cambios en `docs/modelo-datos/` (o `docs/modelo-datos.md` legado):**
    - Nuevas entidades
    - Nuevos campos en entidades existentes
    - Cambios en tipos de datos
@@ -103,7 +103,7 @@ Table Usuario {
 
 ## Checklist de Sincronización
 
-Al modificar `docs/modelo-datos.md`, verificar:
+Al modificar documentación de modelo (`docs/modelo-datos/**` o legado `docs/modelo-datos.md`), verificar:
 
 - [ ] ¿Se agregó/modificó/eliminó alguna entidad? → Actualizar tabla en .dbml
 - [ ] ¿Se agregaron/modificaron campos? → Actualizar campos en tabla correspondiente
@@ -118,6 +118,6 @@ Al modificar `docs/modelo-datos.md`, verificar:
 
 ## Referencias
 
-- Documentación del modelo: `docs/modelo-datos.md`
+- Documentación del modelo: `docs/modelo-datos/` (índice `README.md`; legado: `docs/modelo-datos.md`)
 - Archivo DBML: `database/modelo-datos.dbml`
 - Sintaxis DBML: https://dbdiagram.io/docs

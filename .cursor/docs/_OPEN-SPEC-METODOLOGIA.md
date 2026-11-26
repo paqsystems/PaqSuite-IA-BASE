@@ -65,7 +65,7 @@ Definidos en **`.cursor/rules/base/00-arquitectura/01-prompts-programados-dispat
 
 | Parte | Tema | Ejemplos de comando |
 |-------|------|----------------------|
-| **G** | CC → **§0** (SPEC-update si cambia el «qué») + HU-update / TR-update (**antes** de **D**) | `Corrige los errores del dd/MM/yyyy de xx` / `Realiza las mejoras del …` |
+| **G** | CC → **A0 embebido** si falta `Jira:` + **§0** (SPEC-update si cambia el «qué») + HU-update / TR-update (**antes** de **D**). El **registro** del hito CC es markdown only (sin Jira). | `Corrige los errores del dd/MM/yyyy de xx` / `Realiza las mejoras del …` |
 | **H** | Cerrar bloque de control | `Finaliza el control de calidad de la fecha dd/MM/yyyy de xx` |
 | **I** | Unificar SPEC (**11**) luego HU-update / TR-update + manuales | `Unifica las historias de usuario` (o con sigla y fecha) |
 | **J** | Generar desde carpeta en `docs/02-producto/` (encadena **A→B** + modelo datos) | `Genera las historias de "NombreCarpeta" (SubcarpetaDestinoHU)` |
@@ -80,7 +80,7 @@ Definidos en **`.cursor/rules/base/00-arquitectura/01-prompts-programados-dispat
 ### 4.3 Orden típico al leer este tópico
 
 1. **A** → **B** → **C** → **D** → **E** → **F** (nueva especificación: el prefijo **A–F** coincide en orden alfabético con el de ejecución). **F** es recomendada antes de pasar a **Pendiente de Revisión** o CC.
-2. Correcciones: **G** → **D** → **E** → **F** → **H** → **I** (dispatcher **§ 2**): **Parte G** incluye **§0** (SPEC-update obligatorio si cambia el alcance) y el volcado del CC a HU-update/TR-update; **L** si solo se redacta SPEC-update sin comando *Corrige…*.
+2. Correcciones: registro CC (markdown, sin Jira) → **G** → **D** → **E** → **F** → **H** → **I** (dispatcher **§ 2**): **Parte G** incluye **A0 embebido** si el bloque no tiene `Jira:`, **§0** (SPEC-update obligatorio si cambia el alcance) y el volcado del CC a HU-update/TR-update; **L** si solo se redacta SPEC-update sin comando *Corrige…*.
 3. **M** / **I §11:** unificar SPEC-update **Finalizado** en el SPEC base **antes** que HU/TR en la misma familia cuando exista SPEC-update.
 
 ---
@@ -112,7 +112,7 @@ Principio: **primero el alcance (SPEC), después la ejecución documentada (HU/T
 - La **Parte I** del dispatcher (y el atajo **M**) **fusionan** cada SPEC-update **`Finalizado`** con su SPEC original en ruta base, **eliminan** el archivo update incorporado y ajustan metadatos del SPEC según **`08-open-spec-gobernanza.md`**. Misma regla que HU/TR: **solo fusionar** si el update tiene **`Estado: Finalizado`** en metadatos.
 - Orden recomendado al cerrar un ciclo: cuando proceda unificar documentación, conviene **unificar primero (o en el mismo paso coordinado) los SPEC-update**, luego aplicar la **Parte I** habitual sobre HU-update y TR-update, para que el texto unificado de HU/TR no quede desalineado respecto de un SPEC que todavía está partido en base + update.
 
-1. **Parte G** (`Corrige…`): **§0** — SPEC-update y derivación **HU-update** / **TR-update** cuando cambia el alcance; puntos 1–7 — volcado desde `docs/00-ControlCalidad/`. **L** si solo redactás SPEC-update sin comando masivo de corrección.
+1. **Parte G** (`Corrige…`): **A0 embebido** si el bloque CC no tiene `Jira:` (el registro del hito, a mano o por agente, no crea tablero); **§0** — SPEC-update y derivación **HU-update** / **TR-update** cuando cambia el alcance; puntos 1–7 — volcado desde `docs/00-ControlCalidad/`. **L** si solo redactás SPEC-update sin comando masivo de corrección.
 2. **Implementar** (**D**) según TR-update o TR vigente.
 3. **Tests** (**E**) y verificación documental (**F**, `openspec-05`).
 4. **Parte H** (comando *Finaliza el control…*) cuando corresponda.

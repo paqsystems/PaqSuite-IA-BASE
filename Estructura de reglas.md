@@ -10,6 +10,9 @@
 17-orquestador-hu-tr.md
 17-commit-push-revision-version.mdc
 18-git-flujo-main-desde-develop.mdc
+09-jira-sdd.mdc
+19-framework-gen-capacidades-adopcion.mdc
+45-host-sdk-cloudsmith.mdc
 31-estado-hu-tr.md
 Carpeta sugerida
 BASE
@@ -34,6 +37,7 @@ BASE
 26-devextreme-prefer-native-behavior.md
 28-ui-grilla-acciones-iconos-tooltip.md
 29-devextreme-grid-standards.md
+33-devextreme-mcp-dxdocs.md
 31-ui-entrada-horarios-hhmm.md
 35-ui-formularios-carga-caption-izquierda.md
 Carpeta sugerida

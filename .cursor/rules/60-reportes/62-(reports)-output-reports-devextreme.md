@@ -96,6 +96,11 @@ Características:
 - no debe eliminarse
 - no debe editarse directamente
 - puede copiarse
+- **nombre visible MUST ser `<Original>`** (paridad con layouts de grilla GEN-11)
+- **prohibido** llamarlo como el proceso (`pq_emission_processes.name`)
+- `report_code` puede ser técnico (`{slug}_principal`); el nombre del proceso vive solo en `pq_emission_processes.name`
+
+Al seedear un proceso emisible (create-app, host, smoke): el reporte de base se crea con `name = '<Original>'`, `is_standard = true`. Copias / Save As llevan el nombre que elija el usuario. Helper SDK: `EmissionStandardReportNames::ORIGINAL`.
 
 ### 6.2. Reporte personalizado
 Características:

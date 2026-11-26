@@ -9,14 +9,14 @@ import html2text
 
 
 SEED_URLS = [
-    "https://ayudas.axoft.com/25ar/documentos/",
+    "https://ayudas.axoft.com/26ar/documentos/",
 ]
 
 ALLOWED_PREFIXES = [
-    "https://ayudas.axoft.com/25ar/documentos/",
+    "https://ayudas.axoft.com/26ar/documentos/",
 ]
 
-OUTPUT_DIR = "axoft_md/25ar/"
+OUTPUT_DIR = "axoft_md/26ar/"
 MAX_PAGES = 35000
 PAUSE_SECONDS = 1
 MIN_URL_DEPTH = 5
@@ -122,11 +122,8 @@ def detectar_metadata(url: str):
     if "/25ar/" in url:
         version = "25AR"
 
-    if "/guias/" in url:
-        categoria = "Guía"
-
-    if "/operacion/" in url:
-        categoria = "Operación"
+    if "/26ar/" in url:
+        version = "26AR"
 
     modulos = {
         "_gv": "Ventas",

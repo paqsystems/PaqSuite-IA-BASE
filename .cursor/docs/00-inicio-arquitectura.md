@@ -6,6 +6,17 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 
 **Punto de arranque operativo recomendado para proyecto nuevo:** invocar primero el prompt **`prompts/scaffold-fullstack-inicio-proyecto.md`** (en PaqSuite-IA-BASE: `.cursor/prompts/scaffold-fullstack-inicio-proyecto.md`), declarando explícitamente **`MONO`** o **`MULTI`**. Ese prompt debe ejecutarse usando este documento como **fuente normativa obligatoria**.
 
+### Perfiles de proyecto (web, Capacitor, Flutter)
+
+| Perfil | Prompt / guía | Carpetas típicas |
+|--------|---------------|------------------|
+| `web-fullstack` | Este documento + `scaffold-fullstack-inicio-proyecto.md` | `backend/`, `frontend/` |
+| `web-capacitor` | Igual + [`01-mobile/README.md`](./01-mobile/README.md) | `backend/`, `frontend/` (+ Capacitor en `frontend/`) |
+| `mobile-flutter` | [`00-inicio-arquitectura-mobile-nativo.md`](./00-inicio-arquitectura-mobile-nativo.md) + `scaffold-mobile-nativo-inicio-proyecto.md` | `mobile/` (API externa o compartida) |
+| `fullstack-web-flutter` | Guía web + guía mobile nativo | `backend/`, `frontend/`, `mobile/` |
+
+**MONO / MULTI** es independiente del perfil (modalidad empresarial, no “web vs mobile”). Taxonomía TR y superficies: [`98-metodologia/tipos-tr-y-superficies.md`](./98-metodologia/tipos-tr-y-superficies.md).
+
 ---
 
 ## 1. Modo de instalación (obligatorio al usar este documento)
@@ -15,7 +26,7 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 | Modo | Significado |
 |------|-------------|
 | **MULTI** | **Multi-empresa:** varias empresas (tenant), varias bases operativas o el modelo Dictionary / Company descrito en la arquitectura ERP de este repo. |
-| **MONO** | **Un deploy de frontend y un deploy de backend** por producto; varios **clientes** con URL `{cliente}.{proyecto}` → redirect a `frontend.{proyecto}` y conexión SQL por registro (ver §1.2). |
+| **MONO** | **Deploys de plataforma por producto** (FE Vercel + BE Forge, prod/dev); varios **clientes** con URL `{cliente}.{proyecto}` → redirect al FE Vercel de producción y conexión SQL por registro (ver §1.2). |
 
 ### 1.1 Modo MULTI (multi-empresa)
 
@@ -25,18 +36,25 @@ No sustituye las reglas detalladas; enlaza a ellas para que el equipo las apliqu
 
 ### 1.2 Modo MONO (deploy único + clientes por URL)
 
-**Fuente de verdad:** [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).
+**Fuente de verdad:** [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md).  
+**Nombres de hosts de plataforma:** [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
 
 Resumen:
 
-- **Dos deploys por `{proyecto}`** (artefactos separados): **`https://frontend.{proyecto}.paqsystems.com`** y **`https://backend.{proyecto}.paqsystems.com`** (ej. `frontend.pedidosweb`, `backend.pedidosweb`).
-- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que **redirige** a **`frontend.{proyecto}`** indicando el **`{cliente}`** activo (header `X-Paq-Cliente`, cookie o mecanismo documentado en el producto).
+- **Deploys por `{proyecto}`** (artefactos separados):
+  - Frontend prod: `https://{proyecto}.paqsystems.com/` (Vercel, rama `main`)
+  - Frontend pre-producción: `https://dev.{proyecto}.paqsystems.com/` (Vercel, rama `develop`)
+  - Backend prod: `https://{proyecto}paqsystems.on-forge.com/`
+  - Backend pre-producción: `https://{proyecto}paqsystems-dev.on-forge.com/`
+  - Ej. (`{proyecto}` = `tango`): `tango.paqsystems.com`, `tangopaqsystems.on-forge.com`, etc.
+- Los usuarios entran por **`https://{cliente}.{proyecto}.paqsystems.com`**, que redirige al dominio Vercel del ambiente correspondiente con query **MUST** `?cliente={cliente}` (raíz: `https://{proyecto}.paqsystems.com/?cliente={cliente}`). La SPA persiste ese código **antes** del React Router; si el 302 no lleva query, el SDK cae a **`DEMO`**. Detalle: [`resolucion-host-cliente-sql-mono.md`](./resolucion-host-cliente-sql-mono.md), [`00-deploy-github-vercel-route53-forge.md`](./00-deploy-github-vercel-route53-forge.md) y regla `.cursor/rules/base/20-frontend/34-cliente-bridge-spa.mdc`.
 - **Asociación por `{cliente}`:** registro (tabla/config/secrets) con host o DNS SQL, instancia opcional, nombre de base y credenciales.
-- **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local).
+- **Desarrollo:** forzar **`cliente = demo`** y usar la misma asociación SQL que el cliente DEMO (sin depender del subdominio local); deploys de plataforma de desarrollo usan los hosts `*-dev` / `backenddev*`.
 - El **esquema de seguridad** (usuarios, roles, permisos, menú) vive en la base SQL del cliente resuelto; no hay selector de **empresa** en UI ni **`X-Company-Id`** (eso es **MULTI**).
 - **Branding:** el mismo `{cliente}` determina logo (`15-host-subdominio-base-datos-y-branding.md`).
+- **Scaffold MUST:** persistir el slug `{proyecto}` y las cuatro URLs + patrón de cliente en **`docs/06-operacion/urls-deploy.md`** del producto (ver [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md) §4).
 
-**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect a `frontend.{proyecto}` y registro de asociación (ver regla 15, apartado MONO).
+**No** aplicar en MONO la regla «un subdominio = un nombre de BD distinto en el mismo deploy» de la sección 3.1 de la regla 15 **sin** pasar por redirect al FE Vercel y registro de asociación (ver regla 15, apartado MONO).
 
 Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-empresa en sesión (MULTI).
 
@@ -52,7 +70,7 @@ Las reglas de producto, UI, DevExtreme y tests siguen válidas **salvo** multi-e
 | Frontend web | **React 18** + **Vite 5** + **TypeScript** | Proxy típico de `/api` al backend en desarrollo. |
 | UI | **DevExtreme** + **devextreme-react** | Licencia vía `VITE_DEVEXTREME_LICENSE`; release con `npm run build:release`. |
 | i18n | **i18next** / **react-i18next** | Coherente con normas de test IDs y accesibilidad. |
-| Mobile (opcional mismo repo) | **Capacitor** (+ nativo futuro en `mobile/`) | Mismo build web empaquetado; guía [`01-mobile/README.md`](./01-mobile/README.md). |
+| Mobile (opcional mismo repo) | **Capacitor** en `frontend/` **o** **Flutter** en `mobile/` | Capacitor = mismo build web; Flutter = cliente nativo. Guías: [`01-mobile/README.md`](./01-mobile/README.md), [`01-mobile/native/README.md`](./01-mobile/native/README.md). |
 | Tests backend | **PHPUnit** | Integración API + BD con datos de prueba. |
 | Tests frontend | **Vitest** + **Playwright** | Por tarea/historia en frontend: unitarios en `src/` y E2E en `tests/e2e/`. |
 | Versión de producto | Archivo **`VERSION`** en la raíz | Fuente de verdad para `VITE_APP_VERSION` en Vite (ver `docs/06-operacion/deploy-infraestructura.md`). |
@@ -104,8 +122,9 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 
 **Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §3 (symlink `docs/00-contexto/_mono` en cada producto).
 
+- **MUST SDK:** dependencia **`paqsuite/laravel-core`** en scaffold (regla **`.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc`** — checklist GEN). Envelope/auth base vía SDK; **no** copiar carpetas GEN del Framework.
 - Proyecto **Laravel 10** con API versionada (`/api/v1/*`: prefijo `api` en `RouteServiceProvider` + `v1` en `routes/api.php`).
-- **Envelope** obligatorio: `App\Http\Responses\ApiResponse` (`error`, `respuesta`, `resultado`) — spec [`envelope-respuestas.md`](../00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md).
+- **Envelope** obligatorio alineado al SDK (`error`, `respuesta`, `resultado`) — spec [`envelope-respuestas.md`](../00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md).
 - **Sanctum** para autenticación Bearer.
 - **Capas:** controllers delgados → **application services** → dominio / repositorios; sin lógica de negocio pesada en controllers (ver `docs/01-arquitectura/01-arquitectura-proyecto.md`).
 - **Autorización** por operación; menú refleja permisos pero la **seguridad real es en servidor** (ver README de `docs/01-arquitectura/`).
@@ -124,12 +143,13 @@ Tras crear los enlaces, este mismo repo podrá consumir `docs/_base/00-inicio-ar
 
 **Guía detallada MONO:** [`docs/00-contexto/_mono/00-instalacion-scaffold-fullstack.md`](../00-contexto/_mono/00-instalacion-scaffold-fullstack.md) §4.
 
+- **MUST SDK:** dependencia **`@paqsuite/react-core`** en scaffold; login, shell, menú, i18n y grillas de proceso desde exports GEN (regla **19**); **no** reimplementar UI base ni copiar carpetas GEN.
 - **React 18** + **Vite 5** + **TypeScript**; dependencias transversales: `react-router-dom`, `i18next`, `react-i18next`, `devextreme`, `devextreme-react`, **Vitest**, **Playwright** (comandos `npm install` en la guía).
-- **Modelo estético UI (tokens, auth, shell):** **`docs/_base/00-modelo-estetica-ui-base.md`** — gradiente de marca en pantallas públicas, variables `--app-shell-*` post-login, convenciones CSS/DevExtreme.
-- **Shell post-login** (cuatro zonas: header, sidebar, content, footer): **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: docs de contexto `_mono` / `_multi`, no otra spec de layout.
-- **Cliente HTTP** centralizado (interceptores, token; **MULTI:** header de compañía si aplica).
-- **Rutas** protegidas; **MULTI:** pantalla de selección de empresa cuando el producto lo defina.
-- Componentes DevExtreme siguiendo **`docs/frontend/devextreme-norms.md`** y grillas con **`DataGridDX`** cuando corresponda.
+- **Modelo estético UI (tokens, auth, shell):** GEN-01 + **`docs/_base/00-modelo-estetica-ui-base.md`** — gradiente de marca en pantallas públicas, variables `--app-shell-*` post-login, convenciones CSS/DevExtreme.
+- **Shell post-login** (cuatro zonas: header, sidebar, content, footer): exports GEN + **`docs/_base/shell-layout-principal.md`** (referencia visual `Bosquejo-pantalla-principal.jpg`). Complemento técnico si existe en el producto: `docs/01-arquitectura/ui/01_MainLayout_PostLogin_Specification.md`. Opciones del menú avatar: GEN-08 / docs de contexto `_mono` / `_multi`.
+- **Cliente HTTP** centralizado del SDK (interceptores, token; **MULTI:** header de compañía si aplica).
+- **Rutas** protegidas; **MULTI:** selector de empresa GEN-05 cuando el producto lo defina.
+- Componentes DevExtreme siguiendo normas del producto y grillas **`ProcessDataGrid`** / layouts GEN-11.
 
 ### 4.4 Calidad, observabilidad y entrega
 
@@ -173,6 +193,7 @@ Las siguientes son **obligatorias o muy recomendadas** alineadas a este reposito
 - Desglose HU → tareas: `.cursor/rules/13-user-story-to-task-breakdown.md`.
 - Estado de HU/TR: `.cursor/rules/31-estado-hu-tr.md`.
 - Entregables MVP: `.cursor/rules/02-mvp-entregables.md`.
+- **Adoptar GEN (no reinventar):** `.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc` — plantilla en SPEC/HU/TR; checklist de componentes = índice de esa regla; detalle en `PaqSuite-IA-FRAMEWORK`.
 
 ### 5.6 Contexto institucional (si aplica)
 
@@ -194,7 +215,10 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 ## 7. Checklist rápido antes de considerar “arquitectura alineada”
 
 - [ ] **Symlinks de herencia** ya configurados (prerrequisito) y verificados según MONO, MULTI o FRAMEWORK (`docs/_base/symlinks_paqsuite_ia.md`, §4.0). El scaffold no los crea.
+- [ ] **SDK Framework** en scaffold: `paqsuite/laravel-core` + `@paqsuite/react-core`; wire GEN día 0; checklist en regla **19** (`19-framework-gen-capacidades-adopcion.mdc`). Sin carpetas GEN copiadas al host.
 - [ ] **Modo MONO o MULTI declarado** y decisiones de BD / seguridad coherentes con ese modo.
+- [ ] **URLs de deploy** (MONO/producto): slug `{proyecto}` + `docs/06-operacion/urls-deploy.md` con FE Vercel (prod/dev) y BE Forge (prod/dev) según [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md).
+- [ ] Infraestructura externa configurada y verificada ejecutando la skill `vercel-github-deployment-standard` con `{proyecto}` y `{repositorio}`; asociación Vercel ↔ Forge, environments, DNS y ruleset documentados.
 - [ ] **`PAQSUITE_TENANCY` / `PAQSUITE_DB`** (y headers) en `.env.example` + `backend/config/paqsuite.php` (canónico: MONO → `single`/`unified`; MULTI → `multi`/`split`).
 - [ ] Flujo E2E documentado y reflejado en historias/tareas.
 - [ ] Backend en capas; **MULTI:** tenant y permisos por empresa; **MONO:** perfil single/unified (empresa única; `X-Company-Id` auto-inyectable).
@@ -212,6 +236,9 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Necesidad | Documento |
 |-----------|-----------|
 | Symlinks entre repos (BASE / MONO / MULTI) | `docs/_base/symlinks_paqsuite_ia.md` (`.cursor/docs/` en **PaqSuite-IA-BASE**) |
+| Checklist GEN / adoptar Framework | `.cursor/rules/base/00-arquitectura/19-framework-gen-capacidades-adopcion.mdc` (+ SoT en `PaqSuite-IA-FRAMEWORK`) |
+| URLs deploy FE/BE (Vercel / Forge) | [`00-urls-deploy-proyecto.md`](./00-urls-deploy-proyecto.md) |
+| Configuración de infraestructura de despliegue | [`00-deploy-github-vercel-route53-forge.md`](./00-deploy-github-vercel-route53-forge.md) + skill `vercel-github-deployment-standard` |
 | Contrato API / OpenAPI scaffold | [`00-openapi-l5-swagger-scaffold.md`](./00-openapi-l5-swagger-scaffold.md) |
 | CI GitHub Actions (monorepo) | [`00-github-actions-ci-scaffold.md`](./00-github-actions-ci-scaffold.md) |
 | Arquitectura backend; multi-DB (**MULTI**) | `docs/01-arquitectura/README.md` |
@@ -220,7 +247,9 @@ Regla operativa opcional en equipo: dispatcher en `.cursor/rules/00-prompts-prog
 | Shell y carpetas frontend | `docs/01-arquitectura/ui/` |
 | DevExtreme | `docs/frontend/devextreme-norms.md` |
 | Deploy y versión | `docs/06-operacion/deploy-infraestructura.md` |
-| Mobile (Capacitor, nativo, CI/tiendas) | [`01-mobile/README.md`](./01-mobile/README.md) |
+| Mobile Capacitor | [`01-mobile/README.md`](./01-mobile/README.md) |
+| Mobile nativo Flutter | [`01-mobile/native/README.md`](./01-mobile/native/README.md) · [`00-inicio-arquitectura-mobile-nativo.md`](./00-inicio-arquitectura-mobile-nativo.md) |
+| Tipos TR y superficies SDD | [`98-metodologia/tipos-tr-y-superficies.md`](./98-metodologia/tipos-tr-y-superficies.md) |
 | Guía agente / DoD | `AGENTS.md` |
 
 ---

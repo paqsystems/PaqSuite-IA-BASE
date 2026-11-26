@@ -31,6 +31,11 @@ Incluir **antes** de "1) HU Refinada" una tabla con:
 | Roles              | Rol(es) involucrados                        |
 | Dependencias       | HUs o TRs de los que depende               |
 | Clasificación      | HU SIMPLE / HU COMPLEJA                    |
+| **Tipo TR**        | `TR-BE`, `TR-FE-WEB`, `TR-MOB`, `TR-INT`, `TR-DATA`, `TR-QA`, `TR-DEVOPS` — ver [`tipos-tr-y-superficies.md`](../../docs/98-metodologia/tipos-tr-y-superficies.md) |
+| **Superficie**     | `BACKEND`, `WEB`, `CAPACITOR`, `MOBILE_NATIVE`, `MIXTA` |
+| **Stack cliente**  | `REACT`, `FLUTTER`, `REACT_NATIVE`, `NINGUNO` (si solo backend) |
+| **Repositorio propietario** | Repo donde se implementa esta TR (si difiere del SPEC) |
+| **Contrato API**   | OpenAPI / proveedor (`TR-INT`, `TR-MOB` con API externa) |
 | Última actualización | YYYY-MM-DD                               |
 | Estado             | Ver **`.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md`**. Al generar el TR: **Pendiente**. |
 
@@ -86,45 +91,56 @@ Feature: Nombre del feature
 - Códigos de error (400/401/403/404/409/422/500 según corresponda)
 - Autenticación/autorización (qué rol accede)
 
-### 6) Cambios Frontend (si aplica)
+### 6) Cambios Frontend web / Capacitor (TR-FE-WEB — si aplica)
+- Carpeta `frontend/`; DevExtreme donde corresponda
 - Pantallas/componentes afectados
 - Estados UI (loading/empty/error/success)
 - Validaciones en UI
 - Accesibilidad mínima (roles/labels)
 - Selectores de test: agregar `data-testid` en elementos clave
+- Capacitor: rama `isNativeApp()` / kardex según regla `80-mobile`
+
+### 6b) Cambios Mobile nativo (TR-MOB — si aplica)
+- Carpeta `mobile/` (Flutter); **sin** DevExtreme ni Playwright
+- Pantallas/widgets, navegación in-app, consultas kardex
+- Config API + health; headers MONO/MULTI (overlays `mobile-native/`)
+- Evidencia: `flutter test`, `integration_test`; matriz `matriz-verificacion-mobile.md`
+- Anexo SPEC: plantilla `01-mobile/native/templates/anexo-spec-mobile.md` cuando la HU sea común web+mobile
 
 ### 7) Plan de Tareas / Tickets
 Generar una lista de tareas con:
 - ID (T1, T2, …)
-- Tipo: DB / Backend / Frontend / Tests / Docs / DevOps
+- Tipo: DB / Backend / Frontend / Mobile / Tests / Docs / DevOps (alinear con **Tipo TR** cuando corresponda)
 - Descripción breve
 - DoD específico
 - Dependencias (si aplica)
 - Estimación relativa (S/M/L) opcional
 
-**Cobertura mínima obligatoria por HU (si aplica):**
-- DB: migración + seed
-- Backend: endpoints + validaciones + manejo de errores
-- Frontend: UI + validaciones + estados
-- Tests:
-  - unit tests (negocio/servicios)
-  - integration tests (API)
-  - al menos 1 E2E Playwright para el flujo
+**Cobertura mínima obligatoria por HU (según superficies en alcance):**
+
+| Superficie | Capas obligatorias |
+|------------|-------------------|
+| Dominio / API | DB + `TR-BE` + tests PHPUnit + OpenAPI |
+| Web / Capacitor | `TR-FE-WEB` + Vitest + ≥1 Playwright si hay flujo UI web |
+| Flutter | `TR-MOB` + `flutter_test` + integration_test si AC lo exigen |
+
+- **No** exigir Playwright en HU cuyo alcance sea solo `MOBILE_NATIVE`.
+- HU **mixta** (web + Flutter): descomponer en TR hermanas (`TR-FE-WEB` + `TR-MOB` + `TR-BE` compartido) con dependencias explícitas.
 - Docs:
   - OpenAPI/Swagger actualizado si hay endpoints
   - README o docs/actualizadas si cambia comportamiento
 - DevOps:
   - si impacta despliegue/secretos/config: ajustar CI/CD o variables
 
-### 8) Estrategia de Tests (Playwright y otros)
-- Unit: qué funciones/reglas cubrir
-- Integration: qué endpoints y casos (success + errores)
-- E2E: flujo real, sin waits ciegos:
-  - navegar al punto inicial
-  - interacciones reales (click/type/select)
-  - `expect(...)` sobre estados visibles
-  - selectores estables (data-testid / roles)
-  - evidencias en fallos (screenshot/trace/video según config)
+### 8) Estrategia de Tests (por superficie)
+- **Backend:** PHPUnit unit + feature/API
+- **Web / Capacitor** (`51-testing.md`, `50-playwright-testing-rules.md`):
+  - Vitest en `frontend/src/`
+  - E2E Playwright: flujo real, sin waits ciegos; `data-testid` / roles
+- **Flutter** (`52-flutter-testing-rules.mdc`, `testing-flutter.md`):
+  - `flutter_test` (unit/widget)
+  - `integration_test` / Patrol según TR
+  - matriz verificación mobile para F1
 
 ### 9) Riesgos y Edge Cases
 - Concurrencia/duplicados
@@ -140,7 +156,7 @@ Generar una lista de tareas con:
 - [ ] Frontend listo + estados UI
 - [ ] Unit tests ok
 - [ ] Integration tests ok
-- [ ] ≥1 E2E Playwright ok (sin waits ciegos)
+- [ ] Tests UI según superficie (Playwright web **o** Flutter integration, no ambos por obligación genérica)
 - [ ] Docs/OpenAPI actualizados
 - [ ] IA log actualizado
 - [ ] CI/CD pasa
@@ -155,3 +171,4 @@ Generar una lista de tareas con:
 
 - `.cursor/rules/base/00-arquitectura/08-open-spec-gobernanza.md` — SPEC, trazabilidad, updates.
 - `.cursor/rules/base/00-arquitectura/07-estado-hu-tr.md` — campo **Estado** (incluye **Especificado**).
+- `.cursor/docs/98-metodologia/tipos-tr-y-superficies.md` — taxonomía TR y metadatos de plataforma.

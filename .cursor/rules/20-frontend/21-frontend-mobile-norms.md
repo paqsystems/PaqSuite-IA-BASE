@@ -1,13 +1,15 @@
 ---
 alwaysApply: true
 ---
-# description: Normas y Convenciones de Frontend Mobile (Capacitor)
+# description: Normas y Convenciones de Frontend Mobile (Capacitor) — no Flutter
 
 > **Capacitor activo** en PedidosWeb (v1–v3). Regla canónica: `.cursor/rules/base/80-mobile/00-mobile-especificaciones-programacion.mdc` y `docs/_base/01-mobile/`.
+>
+> **Flutter nativo** (`mobile/`) **no** usa este archivo. Ver `docs/_base/01-mobile/native/` y `.cursor/rules/base/80-mobile/native/01-flutter-arquitectura.mdc`.
 
 ## Alcance
 
-Este documento complementa `.cursor/rules/base/20-frontend/20-frontend-norms.md` con reglas específicas para el frontend mobile empaquetado con Capacitor.
+Este documento complementa `.cursor/rules/base/20-frontend/20-frontend-norms.md` con reglas específicas para el frontend mobile empaquetado con **Capacitor** (React + Vite en `frontend/`).
 
 **Modelo:** Un solo código base (`frontend/`) sirve web y mobile. Capacitor empaqueta el build (`dist/`) como app nativa iOS/Android.
 

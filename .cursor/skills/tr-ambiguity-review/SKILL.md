@@ -26,6 +26,7 @@ SPEC → A1 → HU → B1 → TR → [C1 tr-ambiguity-review] → D1 → D → E
 - **HU** y **SPEC** referenciadas en la TR.
 - `docs/04-tareas/_NORMAS-TRANSVERSALES-TR.md` (si existe en el producto).
 - Envelope MONO: `docs/00-contexto/_mono/00-arquitectura-api/envelope-respuestas.md`.
+- **Superficie / Tipo TR** en metadatos: `docs/_base/98-metodologia/tipos-tr-y-superficies.md`.
 
 ## Principio rector
 

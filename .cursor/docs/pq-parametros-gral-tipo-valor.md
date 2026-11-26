@@ -72,6 +72,67 @@ Estos campos **no** sustituyen a `tipo_valor`; definen presentación. El PUT de 
 
 ---
 
+## Parámetros con lookup
+
+Un parámetro puede representar el identificador de un registro de una tabla de
+sistema o catálogo dinámico. En ese caso, la definición del parámetro debe
+declarar metadatos `lookup`; no se debe codificar una excepción en la página
+general de parámetros por combinación de `Programa` + `Clave`.
+
+Ejemplo conceptual de la definición/API:
+
+```json
+{
+  "programa": "Acopios",
+  "clave": "GrupoEmpresario",
+  "tipoValor": "I",
+  "caption": "Grupo empresario",
+  "lookup": {
+    "lookupId": "gruposEmpresarios",
+    "valueField": "id",
+    "labelField": "descripcion",
+    "searchable": true
+  }
+}
+```
+
+### Reglas
+
+1. `tipoValor` continúa describiendo el tipo persistido del identificador
+   (`I`, `S`, u otro tipo compatible); `lookup` describe cómo seleccionarlo y
+   presentarlo.
+2. `lookupId` identifica el catálogo de forma estable. No debe derivarse de
+   `Programa` o `Clave` ni quedar hardcodeado en el componente visual.
+3. El SDK procesa el editor, búsqueda, estados de carga, vacío, error y
+   selección. El host aporta el resolver o cliente de datos del catálogo.
+4. Las opciones deben tener, como mínimo, una propiedad de valor y una etiqueta
+   legible (`value` y `label` después de la normalización del SDK).
+5. El valor persistido es el identificador (`value`); la etiqueta sólo es una
+   representación de UI.
+6. Si el valor guardado ya no aparece en la consulta actual del catálogo, la UI
+   debe conservar una representación de ese valor y no ocultar silenciosamente
+   el dato existente.
+7. Para catálogos pequeños, estáticos y completamente conocidos puede utilizarse
+   `meta.enum`. Para tablas de sistema, catálogos dinámicos o listados que
+   requieren búsqueda debe utilizarse `meta.lookup`.
+8. Un renderer específico por parámetro es una extensión excepcional y
+   temporal; no reemplaza el contrato general de `lookup`.
+
+### Responsabilidades por capa
+
+| Capa | Responsabilidad |
+|------|-----------------|
+| Definición del proceso/módulo | Declarar que el parámetro usa `lookup` y su `lookupId` |
+| Backend/host | Resolver el catálogo respetando autenticación, tenancy y permisos |
+| SDK | Renderizar el selector y procesar carga, búsqueda, errores y selección |
+| API de parámetros | Persistir únicamente el identificador seleccionado |
+
+Cada host puede registrar resolvers distintos para el mismo contrato de
+`lookupId`, pero la pantalla transversal no debe conocer tablas, módulos ni
+claves concretas.
+
+---
+
 ## Referencias por capa
 
 | Capa | Documento |

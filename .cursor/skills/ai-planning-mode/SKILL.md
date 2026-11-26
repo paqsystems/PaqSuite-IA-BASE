@@ -35,10 +35,10 @@ El plan debe incluir:
 
 1. Resumen de alcance entendido.
 2. Archivos o módulos a revisar/tocar.
-3. Impacto por capa: DB, Backend, Frontend, Tests, Docs, DevOps.
+3. Impacto por capa: DB, Backend, Frontend web, Mobile (`TR-MOB`), Integración, Tests (por superficie), Docs, DevOps — ver TR **Tipo** / `tipos-tr-y-superficies.md`.
 4. Riesgos.
 5. Orden de implementación sugerido.
-6. Estrategia de tests (unit, integration, E2E según TR).
+6. Estrategia de tests según TR: PHPUnit; Vitest/Playwright solo web; `flutter test` / integration_test solo `TR-MOB`.
 7. Decisiones pendientes.
 8. Confirmación explícita de que **no se amplía alcance** respecto SPEC/HU/TR.
 

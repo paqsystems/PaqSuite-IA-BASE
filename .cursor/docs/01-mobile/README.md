@@ -14,7 +14,8 @@ Guía **compartida (BASE)** para productos PaqSuite con stack **Laravel API + Re
 | **Este README** | Visión general, arquitectura, tiendas |
 | [`04-patron-login-tenant-mobile-mono.md`](./04-patron-login-tenant-mobile-mono.md) | **Login tenant-first (MONO mobile)** |
 | [`01-especificacion-capacitor.md`](./01-especificacion-capacitor.md) | Spec programación Capacitor |
-| [`02-especificacion-react-native-flutter.md`](./02-especificacion-react-native-flutter.md) | Spec React Native / Flutter |
+| [`02-especificacion-react-native-flutter.md`](./02-especificacion-react-native-flutter.md) | Índice RN / Flutter (detalle Flutter en `native/`) |
+| [`native/README.md`](./native/README.md) | **Flutter nativo** — arquitectura, testing, CI, templates |
 | [`03-comandos-generacion-aplicaciones.md`](./03-comandos-generacion-aplicaciones.md) | Comandos por objetivo (teléfono, release, CI, Play, TestFlight) |
 | [`05-runbook-primera-prueba-android-emulador.md`](./05-runbook-primera-prueba-android-emulador.md) | **Primera prueba: smoke app, backend, API, troubleshooting** |
 | [`06-instalacion-emulador-android-studio.md`](./06-instalacion-emulador-android-studio.md) | **Instalación emulador Android: Studio, SDK, AVD, Device Manager, API 34** |
@@ -127,7 +128,7 @@ En desarrollo web, Vite hace proxy de `/api` al backend. **En mobile no existe e
 El cliente HTTP debe usar URL absoluta vía `VITE_API_BASE_URL`:
 
 ```env
-VITE_API_BASE_URL=https://backend.{proyecto}.paqsystems.com/api/v1
+VITE_API_BASE_URL=https://{proyecto}paqsystems.on-forge.com/api/v1
 VITE_TENANT_DEFAULT_CLIENT=desarrollo
 VITE_DEVEXTREME_LICENSE=...
 ```

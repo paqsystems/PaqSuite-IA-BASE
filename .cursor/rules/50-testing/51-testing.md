@@ -7,11 +7,21 @@ alwaysApply: false
 Garantizar que el flujo E2E principal funcione correctamente y que la lógica
 de negocio básica sea confiable, sin sobre–dimensionar la estrategia de testing.
 
+Este archivo es el **dispatcher** de testing por superficie. Metadatos TR: [`tipos-tr-y-superficies.md`](../../docs/98-metodologia/tipos-tr-y-superficies.md).
+
+| Superficie | Regla / documento |
+|------------|-------------------|
+| `WEB`, `CAPACITOR` (en `frontend/`) | Esta regla + `50-playwright-testing-rules.md` |
+| `MOBILE_NATIVE` (`mobile/` Flutter) | **`52-flutter-testing-rules.mdc`** + `docs/_base/01-mobile/native/testing-flutter.md` |
+| `BACKEND` | PHPUnit (`backend/tests/`) |
+
+No exigir Playwright/Vitest en TR `TR-MOB`.
+
 ---
 
-## Convención: dos tipos de test por tarea/historia
+## Convención: dos tipos de test por tarea/historia (superficie WEB / CAPACITOR)
 
-**Cada vez que se implemente una tarea o historia (TR/HU), se deben añadir los dos tipos de test en frontend:**
+**Cada vez que se implemente una tarea o historia (TR-FE-WEB o equivalente en `frontend/`), se deben añadir los dos tipos de test en frontend:**
 
 | Tipo | Herramienta | Ubicación | Qué valida |
 |------|-------------|-----------|------------|

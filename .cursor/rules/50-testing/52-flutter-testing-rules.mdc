@@ -1,0 +1,43 @@
+---
+description: Testing Flutter — TR-MOB (no Playwright)
+globs:
+  - "**/mobile/**"
+alwaysApply: false
+---
+
+# Testing — Flutter (`TR-MOB`)
+
+Dispatcher general: `51-testing.md`. **Playwright y Vitest son solo superficie web.**
+
+SoT: `.cursor/docs/01-mobile/native/testing-flutter.md`
+
+## MUST por TR-MOB
+
+1. **Unit/widget** (`flutter_test`) para lógica y UI tocada.
+2. **integration_test** cuando la TR cubra flujo usuario crítico (login, consulta MVP).
+3. Evidencia F1 en [matriz-verificacion-mobile.md](../../docs/01-mobile/native/templates/matriz-verificacion-mobile.md).
+4. No exigir `npm run test:all` ni specs Playwright para cerrar TR mobile.
+
+## Capas
+
+| Capa | Herramienta |
+|------|-------------|
+| Lógica | `flutter_test` |
+| Widgets | `flutter_test` |
+| App | `integration_test` |
+| Nativo opcional | Patrol |
+| Black-box opcional | Maestro |
+
+## Comandos
+
+```bash
+cd mobile
+flutter test
+flutter test integration_test
+```
+
+## Anti-patrones
+
+- Un solo test de smoke manual sin automatización en TR que declare cobertura.
+- Duplicar E2E Playwright del mismo flujo en Flutter sin justificación.
+- CI que falla el pipeline web por ausencia de `mobile/` en proyecto solo web.

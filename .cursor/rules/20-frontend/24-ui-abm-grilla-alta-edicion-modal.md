@@ -48,5 +48,6 @@ Salvo excepción en **HU/TR**, no se navega a otra ruta **solo** para ese formul
 
 - Estándar DataGrid (alta `plus` en toolbar): `.cursor/rules/base/20-frontend/29-devextreme-grid-standards.md`
 - Catálogos y etiquetas (código/descripción): `.cursor/rules/base/20-frontend/23-ui-catalogos-fk-codigo-descripcion.md`
+- **Errores de guardado con modal abierto:** `.cursor/rules/base/20-frontend/36-ui-errores-validacion-contexto-carga.mdc` (MUST — alerta dentro del Popup, no solo en la página de fondo)
 - Normas frontend: `.cursor/rules/base/20-frontend/20-frontend-norms.md`
 - **Helper de referencia (frontend):** `ModalPortal` en `frontend/src/shared/ui/ModalPortal.tsx` — portal a `document.body` + bloqueo de scroll del documento.

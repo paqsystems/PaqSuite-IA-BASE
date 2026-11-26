@@ -1,9 +1,9 @@
 # Regla: Dispatcher de Prompts — **Open-Spec completo** + ejecución HU/TR
 
 ## Objetivo
-Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad.
+Esta regla define el flujo **oficial** del proyecto: **siempre Open-Spec completo** (**A0** backlog Jira → SPEC → HU → TR → ejecución → tests → verificación), con **puntos de apoyo metodológicos** antes y después de la implementación cuando corresponda. Los comandos abreviados evitan copy/paste y aseguran trazabilidad. Jira: regla **`09-jira-sdd.mdc`** (proyecto = **mismo nombre que el repo**).
 
-Las partes **A–F** son el **núcleo** en orden **alfabético igual al cronológico** de ejecución. **G** cubre **Control de Calidad**: volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** en el archivo CC (**Estado: Especificado** bajo *Referencia del control*). **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–Q** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
+Las partes **A0** y **A–F** son el **núcleo** (A0 promociona el markdown a Epic Backlog; A sigue siendo el SPEC). **A–F** conservan el orden **alfabético igual al cronológico** de ejecución del alcance. **G** cubre **Control de Calidad**: **A0 embebido** si el bloque CC no tiene `Jira:` + volcado a SPEC-update / HU-update / TR-update (**§0** incluido) **y en el mismo flujo el cierre del bloque** (**Estado: Especificado** bajo *Referencia del control*). El **registro del hito CC** (agente o a mano) es **solo markdown**; **no** crea Jira. **I** es **unificación** cuando los updates están **Finalizado** en metadatos. **H** queda como **atajo opcional** (solo cerrar un bloque sin reejecutar el volcado completo de **G**). **J–M** son otros atajos; **N–T** transversales. La **Parte K** (TR sin SPEC) es **excepción** con deuda hacia **A**.
 
 ---
 
@@ -15,6 +15,7 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 | Paso | Parte | Acción |
 |------|-------|--------|
+| 0 | **A0** | **Backlog Jira:** `openspec-00-A0-backlog-jira.md` — Epic en columna Backlog desde markdown; clave `Jira:` en el origen. Si se pide **A** sin A0: **A0 embebido**. |
 | 1 | **A** | **SPEC** desde contexto: `openspec-01` — `docs/02-producto/…`, ticket o notas. **Forma corta** (*Creá el SPEC … según …*): ver **PARTE A**. |
 | 2 | **A1** | Revisar ambigüedad del SPEC antes de pasar a HU. |
 | 3 | **B** | **HU** **solo** desde SPEC: `prompts/openspec-02-HU-desde-SPEC.md`. |
@@ -31,19 +32,21 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ### B) Modificaciones, mejoras y Control de Calidad
 
-**Camino feliz (cierre del bloque incluido en G):** **G** → **D** → **E** → **F** → **I**. Tras **G**, la cola operativa vive en `docs/.../updates/` y en metadatos de originales; **no** reabrir el CC para decidir ítem por ítem.
+**Camino feliz (cierre del bloque incluido en G):** registrar el hito en `docs/00-ControlCalidad/` (markdown, **sin** Jira) → **G** → **D** → **E** → **F** → **I**. Tras **G**, la cola operativa vive en `docs/.../updates/` y en metadatos de originales; **no** reabrir el CC para decidir ítem por ítem.
 
 **Fases:**
 
-1. **PARTE G** — Comando **«Corrige…»** (incluye **§0** y **L** cuando aplica): volcar **`00-ControlCalidad`** a **SPEC-update** / **HU-update** / **TR-update** (puntos **0–8**); el punto **8** cierra el bloque (**Especificado** bajo *Referencia del control*). **L** a secas si solo hace falta SPEC-update sin volcado masivo CC. Bugs puramente técnicos: sin SPEC-update (§0). **H** solo si hace falta cerrar sin re-volcar (ver **PARTE H**).
-2. **PARTE D** — Implementar según **TR-update** o TR vigente (**por ítem** / familia).
-3. **PARTE E** — Tests.
-4. **PARTE F** — `openspec-05` sobre el TR afectado.
-5. **PARTE I** — Unificar solo updates con **`Estado: Finalizado`**. **M** si solo SPEC.
+1. **Registro del hito CC** — Comando **«Generá un hito en Control de Calidad…»** o edición **manual** del archivo: solo markdown (**Pendiente**). **Prohibido** A0 / `createJiraIssue` en ese paso. Ver **Registro de un hito de Control de Calidad**.
+2. **PARTE G** — Comando **«Corrige…»** (incluye **A0 embebido** si falta `Jira:` en el bloque, **§0** y **L** cuando aplica): volcar **`00-ControlCalidad`** a **SPEC-update** / **HU-update** / **TR-update** (puntos **0–8**); el punto **8** cierra el bloque (**Especificado** bajo *Referencia del control*). **L** a secas si solo hace falta SPEC-update sin volcado masivo CC. Bugs puramente técnicos: sin SPEC-update (§0). **H** solo si hace falta cerrar sin re-volcar (ver **PARTE H**).
+3. **PARTE D** — Implementar según **TR-update** o TR vigente (**por ítem** / familia).
+4. **PARTE E** — Tests.
+5. **PARTE F** — `openspec-05` sobre el TR afectado.
+6. **PARTE I** — Unificar solo updates con **`Estado: Finalizado`**. **M** si solo SPEC.
 
 | Paso | Parte | Acción |
 |------|-------|--------|
-| 1 | **G** | «Corrige…» → volcado CC (**§0** + puntos 1–7) + **cierre** (punto **8**, **Especificado**). Opcional **H** si solo cierre. |
+| 0 | **Registro CC** | Markdown en `00-ControlCalidad-xx.md`. **Sin** Jira (el humano puede escribir el bloque a mano). |
+| 1 | **G** | «Corrige…» → **A0 embebido** si el bloque no tiene `Jira:` → volcado CC (**§0** + puntos 1–7) + **cierre** (punto **8**, **Especificado**) + Epic → **Control calidad**. Opcional **H** si solo cierre. |
 | 2 | **D** | Implementar según **TR-update** / TR. |
 | 3 | **E** | Tests. |
 | 4 | **F** | Verificación `openspec-05`. |
@@ -51,12 +54,13 @@ Ejecutar **en este orden** (prompts Open-Spec + skills de apoyo):
 
 ---
 
-## Índice alfabético (partes **A**–**Q**)
+## Índice alfabético (partes **A**–**T**)
 
-El orden de las filas **es el alfabético A–Q** y coincide con el **orden de lectura** de las secciones siguientes. El **núcleo Open-Spec** **A→B→C→D→E→F** es a la vez **alfabético y cronológico**. **Correcciones / CC:** **G→D→E→F→I** (**§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–Q** no imponen secuencia única respecto del núcleo.
+El orden de las filas **es el alfabético A–T** y coincide con el **orden de lectura** de las secciones siguientes (A0 va **antes** de A). El **núcleo Open-Spec** **A0→A→B→C→D→E→F** es cronológico; **A→B→C→D→E→F** sigue siendo alfabético. **Correcciones / CC:** registro markdown (sin Jira) → **G→D→E→F→I** (**A0 embebido** + **§0** dentro de **G**; **G** incluye cierre del bloque CC como **Especificado**). **H** es **opcional** (solo cierre sin volcado completo). **D**/**E**/**F** se aplican **por ítem** o entrega. **J** encadena **A→B** desde producto. **Transversales** **N–T** no imponen secuencia única respecto del núcleo.
 
 | Parte | Tema | Comando / prompt |
 |-------|------|------------------|
+| **A0** | Backlog Jira (Epic, sin SPEC) | Ver **PARTE A0** · `openspec-00-A0-backlog-jira.md` |
 | **A** | SPEC desde contexto (**openspec-01**) | Ver **PARTE A** |
 | **A1** | Revisión de ambigüedad del SPEC | `/spec-ambiguity-review` |
 | **B** | HU desde SPEC (**openspec-02**) | Ver **PARTE B** |
@@ -68,7 +72,7 @@ El orden de las filas **es el alfabético A–Q** y coincide con el **orden de l
 | **E** | Tests | "Ejecutá los tests" / "Corré los tests" |
 | **F1** | Verificación del agente | `/agent-verification-guide` |
 | **F** | Verificación docs ↔ código (**openspec-05**) | Ver **PARTE F** |
-| **G** | CC (§0) + volcado a updates + **cierre bloque** → **Especificado** en *Referencia del control* | "Corrige los errores del dd/MM/yyyy de xx" … |
+| **G** | CC: **A0 embebido** si falta `Jira:` + §0 + volcado a updates + **cierre bloque** → **Especificado** + Epic → **Control calidad** | "Corrige los errores del dd/MM/yyyy de xx" … |
 | **H** | **Opcional:** cerrar bloque CC (**Especificado**) sin reejecutar volcado completo de **G** | "Finaliza el control de calidad …" |
 | **I** | Unificar SPEC (11) luego HU/TR + manuales | "Unifica las historias de usuario" … |
 | **J** | Desde **carpeta producto** (encadena **A→B** + modelo datos) | "Genera las historias de …" — Ver **PARTE J** |
@@ -76,10 +80,41 @@ El orden de las filas **es el alfabético A–Q** y coincide con el **orden de l
 | **L** | SPEC-update solo redacción / alcance (sin volcado CC) | Ver **PARTE L** |
 | **M** | Solo unificar SPEC-update | Ver **PARTE M** |
 | **N1** | Reporte PR | `/write-pr-report` / "Generá el reporte de PR" |
-| **N** | Commit / PR | "Commiteá" … |
-| **O** | Entorno de desarrollo | "Iniciá el entorno de desarrollo" |
+| **N** | Commit / push / PR a `develop` | "Commiteá" … / "Hacé PR a develop" |
+| **O** | Entorno de desarrollo (+ sync GEN-34 local) | "Iniciá el entorno de desarrollo" · "… sin tocar la BD" · "… con BD descartable" |
 | **P** | Idioma i18n | "Agrega el idioma …" |
 | **Q** | Manual de usuario | "Genera el manual de usuario sobre …" |
+| **R** | Despliegue estándar GitHub/Vercel/Forge | "Configura el despliegue estándar de [NOMBRE_PROYECTO]" |
+| **S** | Cableado consumo SDK Framework (host) | "Adaptá el proyecto a consumir el SDK por repo labo" / "… por deploy" |
+| **T** | Actualizar preview (`develop`) o productiva (`main`) | "Actualizá la versión preview" / "… develop" / "… productiva" |
+
+---
+
+## PARTE A0 — Backlog Jira (sin SPEC)
+
+**Jira:** proyecto = **mismo nombre que el repo** (regla **09**, runbook `.cursor/docs/00-jira-sdd.md`). Markdown sigue siendo SoT.
+
+### Comando
+
+```text
+Registrá en el backlog de Jira [ruta markdown]
+```
+
+o *Paso A0 del Open-Spec con …*
+
+### Comportamiento
+
+1. Ejecutar **`prompts/openspec-00-A0-backlog-jira.md`**.
+2. Crear Epic en **Backlog** (o reutilizar si ya hay `Jira:`). Grabar `Jira: KEY-n` en el origen.
+3. **No** crear SPEC.
+   - Pedido **A0 explícito** (`Registrá en el backlog de Jira …`) sobre un CC o carpeta producto: sí, es el comando de esta parte.
+   - Pedido **«generá / agregá un hito en Control de Calidad»** (o el humano editó el md a mano): **no** A0 aquí. Jira nace en **PARTE G** (A0 embebido si falta `Jira:`). Ver **Registro de un hito de Control de Calidad**.
+   - Volcado de un CC ya registrado (ítems sobre HU/SPEC existente o trabajo nuevo): **PARTE G**, no A0 a secas.
+4. MCP fail → informar; no abortar.
+
+### Cierre Jira (MUST)
+
+Regla **09**: ledger Backlog, labels `SDD`, resumen 3–8 líneas (no copiar el md).
 
 ---
 
@@ -108,7 +143,8 @@ Siguen siendo válidas las **rutas completas** u otros orígenes (ticket, HU, ar
 
 1. Ejecutar el prompt **`prompts/openspec-01-SPEC-desde-contexto.md`** (o ruta equivalente bajo `docs/prompts/`). Si el mensaje usa la **forma corta**, expandir **`docs/05-open-spec/`** y **`docs/02-producto/`** según la tabla de rutas base.
 2. Cumplir **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`** y **`docs/05-open-spec/_template-spec.md`** si existe.
-3. **A** es siempre el **primer** artefacto de alcance de un trabajo nuevo; no crear HU/TR con alcance nuevo antes de **A**.
+3. **A** es el **primer** artefacto de **alcance** (SPEC) de un trabajo nuevo; no crear HU/TR con alcance nuevo antes de **A**. El **tablero** nace en **A0** (o A0 embebido en este paso si falta `Jira:`).
+4. **Cierre Jira (MUST, regla 09):** si no hay clave → A0 embebido (Epic Backlog + `Jira:` + comentario); luego Epic → **SPEC**, summary `[SPEC-…]`. MCP fail → no abortar.
 
 ---
 
@@ -149,6 +185,10 @@ Verificar que el SPEC sea suficientemente claro antes de generar HU.
 
 Si dos programadores podrían implementar cosas distintas, no generar HU todavía.
 
+### Cierre Jira (MUST)
+
+Comentario en la Epic con el veredicto. **No apto:** no crear Stories. Columna **SPEC**. Regla **09**.
+
 ---
 
 ## PARTE B — HU desde SPEC (**openspec-02**)
@@ -161,6 +201,7 @@ Si dos programadores podrían implementar cosas distintas, no generar HU todaví
 
 1. Ejecutar **`prompts/openspec-02-HU-desde-SPEC.md`**.
 2. La HU debe reflejar **solo** el SPEC; actualizar metadatos del SPEC con enlace a la HU.
+3. **Cierre Jira (MUST, regla 09):** Epic → **HU / TR**; Story `[HU-…]` por HU; `Jira:` en el md. MCP fail → no abortar.
 
 ---
 
@@ -196,6 +237,10 @@ Optimizar la HU para que sea más clara, verificable y menos ambigua antes de ge
 - Lo no definido debe quedar como duda, supuesto o decisión pendiente.
 - No modificar implementación.
 
+### Cierre Jira (MUST)
+
+Comentario en la Story: enriquecida / dudas abiertas. Sin cambio de columna. Regla **09**.
+
 ---
 
 ## PARTE C — TR desde SPEC + HU (**openspec-03**)
@@ -209,6 +254,7 @@ Optimizar la HU para que sea más clara, verificable y menos ambigua antes de ge
 1. Ejecutar **`prompts/openspec-03-TR-desde-SPEC-y-HU.md`**.
 2. Exigir **SPEC relacionada** en metadatos del TR (regla **04**).
 3. Posible **`Estado: Especificado`** en HU/TR al cerrar alcance (`07-estado-hu-tr.md` §2).
+4. **Cierre Jira (MUST, regla 09):** Task `[TR-…]` por TR; Epic sigue **HU / TR**. MCP fail → no abortar.
 
 ---
 
@@ -246,6 +292,10 @@ Confirmar que la TR es **implementable sin interpretar** (contratos API, envelop
 ### Salida mínima
 
 Informe con veredicto **Apto / Apto con observaciones / No apto** y **Puede pasar a D1/D: Sí/No** (plantilla en regla 16).
+
+### Cierre Jira (MUST)
+
+Si **Apto**: Stories + Tasks + Epic → **Especificado**. No apto: no transicionar. Comentario veredicto. Regla **09**.
 
 ---
 
@@ -302,6 +352,10 @@ SPEC
 ## Confirmación de alcance
 ```
 
+### Cierre Jira (MUST)
+
+Epic + Task TR → **Implementando**. Comentario: plan (impacto, orden, riesgos). Regla **09**.
+
 ---
 
 ## PARTE D – Ejecución de una TR
@@ -325,10 +379,11 @@ El asistente debe:
 6. Ejecutar el prompt resultante como si hubiera sido pegado explícitamente por el usuario.
 7. Tratar la TR como **FUENTE DE VERDAD del alcance**.
 8. Al **finalizar** la implementación y la trazabilidad en el archivo TR (secciones de cierre), actualizar el campo **Estado** de ese TR a **`Pendiente de Revisión`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
+9. **Cierre Jira (MUST, regla 09):** comentario archivos tocados; TR → **Verificando**; Epic por agregación. MCP fail → no abortar.
 
 ---
 
-## PARTE E – Ejecución de tests (backend + unitarios + E2E)
+## PARTE E – Ejecución de tests (por superficie)
 
 ### Comando: "Ejecutá los tests" / "Corré los tests"
 
@@ -339,9 +394,10 @@ Cuando el usuario escriba algo como:
 
 el asistente debe:
 
-1. Asumir que el proyecto tiene:
-   - `Backend` en backend/ (Laravel, PHPUnit).
-   - `Frontend` en frontend/ (Vitest para unitarios, Playwright para E2E).
+1. Detectar superficie según TR o carpetas del repo:
+   - `backend/` → PHPUnit (`php artisan test`).
+   - `frontend/` → Vitest + Playwright (`51-testing.md`).
+   - `mobile/` → `flutter test` / `integration_test` (`52-flutter-testing-rules.mdc`) — **no** exigir npm si no hay `frontend/`.
 
 2. Indicar la ejecución de los siguientes comandos,
    **en terminales separadas** , en este orden:
@@ -354,10 +410,22 @@ php artisan test
 En otra terminal:
 cd frontend
 npm run test:run
-3) Tests E2E (frontend)
+3) Tests E2E (frontend) — solo si existe `frontend/` y la TR es web/Capacitor
 En otra terminal:
 cd frontend
 npm run test:e2e
+
+4) Tests Flutter — solo si existe `mobile/` y la TR es `TR-MOB`
+En otra terminal:
+cd mobile
+flutter test
+flutter test integration_test
+
+Taxonomía: `docs/_base/98-metodologia/tipos-tr-y-superficies.md`.
+
+### Cierre Jira (MUST)
+
+Comentario en la Task: resultado pass/fail + comando. Fail **no** retrocede columna. Regla **09**.
 
 ---
 
@@ -394,6 +462,10 @@ Verificar evidencia antes de afirmar que algo está terminado.
 | Aprobado con observaciones | Evaluar pendientes |
 | No aprobado | Corregir antes de cerrar |
 
+### Cierre Jira (MUST)
+
+Comentario veredicto F1. Sigue **Verificando**. Regla **09**.
+
 ---
 
 ## PARTE F — Verificación implementación (**openspec-05**)
@@ -408,12 +480,40 @@ Verificar evidencia antes de afirmar que algo está terminado.
 1. Ejecutar **`prompts/openspec-05-verificar-implementacion.md`** con la ruta del **TR** (obligatoria); SPEC/HU desde enlaces del TR si existen.
 2. **No** reemplaza la **Parte E**; se usa después de **D** y idealmente después de **E** en el ciclo de entrega.
 3. En el ciclo de **correcciones**, ejecutar **F** sobre el TR o TR-update afectado antes de cerrar revisión o tras cambios sustanciales.
+4. **Cierre Jira (MUST, regla 09):** comentario cierre documental + gaps. **No** pasar a Finalizado. MCP fail → no abortar.
+
+---
+
+## Registro de un hito de Control de Calidad (markdown only)
+
+**No es una parte letrada.** Es el paso **antes** de **G**. Aplica **igual en todos los hosts** (PedidosWeb, Partes, Framework, TANGO, …). El humano puede escribir el bloque a mano: el contrato de Jira no cambia.
+
+### Comando (agente)
+
+Cuando el usuario escriba algo como:
+
+> Generá un hito en Control de Calidad de xx …
+> Agregá un Control de Calidad en `00-ControlCalidad-xx.md` …
+> Registrá en CC: …
+
+el asistente debe:
+
+1. Localizar `docs/00-ControlCalidad/00-ControlCalidad-xx.md` (sigla de dos letras: PQ, KA, …).
+2. Crear el siguiente bloque `## Control de Calidad #N` (numeración incremental), *Referencia del control* con **Fecha** `dd/MM/yyyy`, **Estado: Pendiente**, hallazgos e ítems. Actualizar el índice del archivo.
+3. **Prohibido** en este paso: **A0**, `createJiraIssue`, transiciones, comentarios Jira, escribir `Jira:` “por las dudas”.
+4. Informar el comando de volcado: `Corrige los errores del dd/MM/yyyy de xx`.
+
+Si el bloque **ya existe** (lo cargó el humano): no inventar Jira; el siguiente paso sigue siendo **G**.
+
+### Por qué no A0 aquí
+
+El tablero nace al **corregir**, no al anotar. Así un CC escrito a mano y uno generado por el agente llegan a Jira por el **mismo** camino (**G**).
 
 ---
 
 ## PARTE G - Procesar las correcciones y/o mejoras solicitadas
 
-En una misma corrida **«Corrige…»** el asistente **vuelca** el CC a updates y **cierra el bloque** (punto **8**): en *Referencia del control* queda **Especificado**; el seguimiento operativo pasa a `updates/` y metadatos HU/TR.
+En una misma corrida **«Corrige…»** el asistente **asegura Jira** (A0 embebido si el bloque no tiene `Jira:`), **vuelca** el CC a updates y **cierra el bloque** (punto **8**): en *Referencia del control* queda **Especificado**; el seguimiento operativo pasa a `updates/` y metadatos HU/TR. Da igual si el hito lo escribió el agente o el humano.
 
 ### Comando "Corregir las historias de las correcciones/mejoras"
 
@@ -426,13 +526,22 @@ Cuando el usuario escriba algo como:
 
 el asistente debe:
 
+Tras el punto **1** (localizar bloques por fecha), y **antes** del **§0** / volcado a updates, ejecutar el **A0 embebido** descrito más abajo. El **§0** (SPEC-update) conserva su número histórico.
+
+**A0 embebido (MUST, regla 09):** para **cada** bloque `Control de Calidad #N` de esa **fecha + sigla**:
+- Si *Referencia del control* ya tiene `Jira: KEY-n` → **reutilizar**; no duplicar.
+- Si no hay clave: buscar en Jira (JQL, proyecto = nombre del repo) un Epic de este CC (`[CC-{sigla}-#N]`, fecha, labels `SDD`); si existe, grabar `Jira:` en el bloque y reutilizar.
+- Si no existe: crear Epic en **Backlog**, summary `[CC-{sigla}-#N] {resumen corto del índice}`; descripción = puntero al md del bloque + 3–8 líneas + ledger; labels `SDD`, `update` (y `GEN-xx` / `host` / `framework` si aplican). Escribir `| **Jira** | KEY-n |` (o línea `Jira: KEY-n`) en *Referencia del control*. Comentario `A0 embebido G @ YYYY-MM-DD HH:mm ART`.
+- **No** abortar el volcado markdown si MCP falla: informar y seguir con §0 y puntos 1–8.
+- **No** hacer este A0 al registrar el hito (ver sección anterior).
+
 0. **Open-Spec — cambio de alcance (obligatorio si cambia el “qué”):** Si una solicitud del control altera comportamiento funcional, reglas de negocio, exclusiones, criterios de aceptación o mensajes pactados, **antes** de cualquier HU-update/TR-update el asistente debe:
    - **Localizar el SPEC base** de referencia (ruta `docs/05-open-spec/<subcarpeta>/SPEC-XXX-slug.md` a partir del **HU** del ítem, enlaces en el CC, o texto explícito en el control).
    - Crear o actualizar el **SPEC-update** en **`docs/05-open-spec/updates/<subcarpeta>/`** con el **mismo nombre base** que el SPEC original más sufijo **`-update`**, **`-update-01`**, etc. (misma **`<subcarpeta>`** relativa que en ruta base; ver **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**). En metadatos del SPEC-update: **`Estado: Pendiente`** y enlace o campo **SPEC base** con la ruta del original; en **Origen**, trazabilidad **`00-ControlCalidad-{sigla}`** y **fecha** (dd/MM/yyyy) como en HU-update.
    - Actualizar el **SPEC original** en ruta base: en su tabla de metadatos, **`Estado: En revisión`** (valor permitido para SPEC en vuelo de CC / SPEC-update abierto; análogo documental a **En Control Calidad** en HU/TR durante este ciclo).
    - Luego derivar **HU-update** y **TR-update** coherentes con ese SPEC-update. Solo si el ítem es **estrictamente** técnico (bug de implementación sin cambio de alcance documental) puede omitirse SPEC-update **y** debe quedar explícito en la respuesta por qué.
 
-1. **Formato de fecha:** Usar dd/MM/yyyy en todo el flujo (entrada del usuario y en el archivo `docs/00-ControlCalidad/00-ControlCalidad-xx.md`). Buscar en `docs/00-ControlCalidad/00-ControlCalidad-xx.md` todos los bloques "Control de Calidad #N" cuya **Fecha** coincida con la fecha indicada. tener presente que en "ControlCalidad-xx" la sigla "xx" se reemplaza por lo que escribió el usuario en el prompt (siguiendo el ejemplo, PQ o KA)
+1. **Formato de fecha:** Usar dd/MM/yyyy en todo el flujo (entrada del usuario y en el archivo `docs/00-ControlCalidad/00-ControlCalidad-xx.md`). Buscar en `docs/00-ControlCalidad/00-ControlCalidad-xx.md` todos los bloques "Control de Calidad #N" cuya **Fecha** coincida con la fecha indicada. tener presente que en "ControlCalidad-xx" la sigla "xx" se reemplaza por lo que escribió el usuario en el prompt (siguiendo el ejemplo, PQ o KA). **Orden de esta corrida:** punto **1** (localizar) → **A0 embebido** (si falta `Jira:`) → **§0** (SPEC-update) → puntos **2–8** (volcado y cierre) → punto **9** (Epic → Control calidad).
 2. **Procesar todos los controles:** Si hay varios controles con la misma fecha, procesar las tareas de todos ellos que NO estén marcados como *Procesado*
 3. **Normalizar nombres de HU:** Si en el Control de Calidad el nombre de una HU está mal escrito (ej. doble guion, mayúsculas incorrectas), corregirlo en el archivo para que coincida con el nombre real del archivo en `docs/03-historias-usuario/`.
 4. **Por cada solicitud:**
@@ -448,6 +557,7 @@ el asistente debe:
    - **Caso C - HU ya existentes con el mismo nombre** si bajo la subcarpeta "update" ya existen versiones de la historia a generar, generar una nueva con el número siguiente (ej: ya existe la HU-001-layouts-grilla-update.md , generar una nueva como HU-001-layouts-grilla-update-01.md)
 7. **Actualizar estado de gestión del bloque:** Al terminar de recorrer todas las tareas de los controles con esa fecha: si **todas** las entradas de errores de esos controles están marcadas como `*Procesado*` (es decir, no queda ninguna entrada pendiente ni solo con sugerencias sin HU asociable), cambiar el estado de gestión del bloque a **"A Programar"** cuando la plantilla lo prevea. Si queda al menos una entrada donde solo fue posible dejar una sugerencia sin generar HU (por no poder determinar la HU asociada), mantener o establecer el estado en **"Con Sugerencias"**. Esto **no** sustituye el **Estado** bajo *Referencia del control* (véase punto **8**).
 8. **Cierre del bloque de control (handoff a especificaciones):** Para cada `Control de Calidad #N` de esa **fecha + sigla** cuyo volcado esté completo (ítems volcados con *Procesado* o *Sugerencia* explícita donde no hubo HU; aceptar CC “hueco” bien organizado), localizar **Referencia del control** y actualizar la línea de estado para que quede `- **Estado:** Especificado`. **Especificado** aquí significa: *volcado a SPEC-update / HU-update / TR-update según corresponda; triage documental cerrado; cola activa en `updates/`* — **no** implica código implementado ni **`Finalizado`** en metadatos de HU/TR (ese valor es **manual** en `07-estado-hu-tr.md`). No modificar listas de errores ni marcas `*Procesado*` / `*Sugerencia*`. Si no se encuentra ningún bloque con esa fecha, informar y no aplicar el punto 8.
+9. **Cierre Jira (MUST, regla 09):** la Epic del bloque (`Jira:` del paso A0 embebido) + originales / hijas del volcado (SPEC-update, HU, TR, Bug técnico) → columna **Control calidad**; comentario CC (fecha, sigla, #N, ítems); label `update` en issues de update; Bug si ítem técnico. Ledger: Salida Backlog + Entrada Control calidad. Si el A0 embebido falló, reintentar alta/transición aquí; si vuelve a fallar → informar y **no** abortar.
 
 ---
 
@@ -468,6 +578,7 @@ Cuando el usuario escriba algo como:
    - `- **Estado:** Especificado`
 4. No modificar las listas de errores ni las marcas `*Procesado*` / `*Sugerencia*`; solo cambiar el estado bajo *Referencia del control*.
 5. Si no se encuentra ningún control con esa fecha, informar al usuario y no realizar cambios.
+6. **Jira:** no mueve columna. Comentario opcional “bloque CC Especificado”. Regla **09**.
 
 ---
 
@@ -536,13 +647,15 @@ Cuando el usuario escriba algo como:
 
 7. **Sin coincidencias:** Si no hay ningún bloque con esa fecha en `00-ControlCalidad-{XX}.md`, informar y **no** modificar documentación.
 
+8. **Cierre Jira (MUST, regla 09):** transicionar a **Finalizado** **solo** si el usuario pidió cierre o el metadato ya es `Finalizado` y no quedan updates abiertos. Comentario de unificación. MCP fail → no abortar.
+
 ---
 
 ## PARTE J – Desde carpeta de producto (**Open-Spec completo obligatorio**)
 
 ### Comando: "Genera las historias de \"xxxxxxxxxx\" (zzzzzzzzzz)"
 
-Cuando el usuario use el comando histórico de **Parte J**, el asistente **no** debe volcar HU primero sin SPEC. Debe ejecutar la cadena **A → B** (y dejar indicado **C**):
+Cuando el usuario use el comando histórico de **Parte J**, el asistente **no** debe volcar HU primero sin SPEC. Debe ejecutar la cadena **A0 → A → B** (y dejar indicado **C**): si falta `Jira:` en el origen, **A0** primero.
 
 **a) SPEC (Parte A / openspec-01)**
 
@@ -597,6 +710,7 @@ El asistente debe:
 8. Generar el archivo TR según las reglas del prompt; en la tabla de metadatos incluir **`Estado: Pendiente`** (ver `.cursor/rules/00-arquitectura/07-estado-hu-tr.md`).
 9. Si existe ambigüedad en la clasificación, solicitar confirmación explícita antes de continuar.
 10. **Deuda Open-Spec:** En la respuesta, indicar que es **obligatorio** ejecutar después **Parte A** (`openspec-01`) para crear el SPEC que cubra la HU/TR, enlazar metadatos (**SPEC relacionada** en el TR cuando se actualice) y alinear con **Parte B** si la HU debe rederivarse del SPEC.
+11. **Cierre Jira (MUST, regla 09):** Task + label `deuda-openspec`. MCP fail → no abortar.
 
 
 ---
@@ -684,6 +798,42 @@ el asistente debe:
 2. consultar al usuario si quiere hacer el push. en caso afirmativo, proceder a hacerlo.
 3. Generar el texto para el PR en el archivo `_PR-prompt.md`, borrando el contenido anterior
 
+### Comando: "Hacé PR a develop"
+
+Cuando el usuario escriba algo equivalente a:
+
+```text
+Hacé PR a develop
+Hacé el PR a develop
+Creá el PR a develop
+Abrí PR a develop
+```
+
+el asistente debe **en este orden** (no abrir el PR hasta completar los pasos previos):
+
+1. **Política de ramas** (regla **18**): el destino del PR es **`develop`**, desde la **rama de trabajo actual**. **Prohibido** PR a `main` con este comando, push directo a `develop`/`main`, o PR a `develop` si la rama actual ya **es** `develop` o `main` (en ese caso informar y no continuar).
+2. **¿Es un host del SDK?** Aplicar el **criterio de host** de la **PARTE S**. Si **no** es host, saltar al punto **5** (commit/push/PR sin adaptar SDK).
+3. **¿Ya consume el SDK por deploy?** Comprobar en el workspace actual (sin asumir el modo por el nombre de la rama):
+   - `frontend/package.json`: `@paqsuite/react-core` (y otros `@paqsuite/*` del Framework) **no** usan `file:`; pin **semver**.
+   - `frontend/vite.config.ts` (u homólogo): **sin** alias al checkout `PaqSuite-IA-FRAMEWORK` / `packages/js/react-core`.
+   - `frontend/.npmrc` versionado: registry **Cloudsmith** (`@paqsuite:registry=https://npm.cloudsmith.io/paqsystems/paqsuite-sdk/`) **sin** token.
+   - `backend/composer.json`: `paqsuite/laravel-core` por **semver**; repositorio Composer **Cloudsmith**; **sin** `type: path` al monorepo Framework.
+   - Locks (`package-lock.json` / `composer.lock`): **sin** rutas locales al Framework.
+   Si **todas** las comprobaciones aplicables al host pasan, el modo ya es **deploy** → saltar al punto **5**.
+4. **Adaptar a deploy (obligatorio si el punto 3 falla):** ejecutar la **PARTE S — modo deploy** (Cloudsmith; no dejar Satis/Verdaccio/`file:` para el SDK). Esta frase **autoriza** commit y push de esa adaptación. Tras adaptar:
+   - hacer **commit** de los archivos de pins/locks/config tocados (mensaje que explique el porqué: el PR a `develop` debe instalar el SDK empaquetado);
+   - **push** de la rama de trabajo (`-u` si aún no trackea remoto).
+   Si la adaptación no se puede completar (token Cloudsmith ausente, pin no publicado, path Framework inventado), **no** abrir el PR; informar el bloqueo.
+5. **Commit y push del trabajo restante:** si hay cambios sin commitear (feature + adaptación, o solo feature), **commit** y **push** de la rama de trabajo. Este comando **autoriza** commit y push (a diferencia de «Commiteá» a secas, que pide confirmación del push).
+6. **Recién entonces** crear el **Pull Request hacia `develop`** (`gh pr create`, base `develop`). Cuerpo del PR alineado a **N1** / `_PR-prompt.md` si existe o si conviene generarlo. Devolver la **URL** del PR.
+7. En la respuesta final, declarar **modo SDK** comprobado o aplicado (`deploy` / `no aplica: no es host`) y la URL del PR.
+
+**Must:** `develop` (Preview/Forge-dev) **nunca** debe recibir un PR cuyo `package.json` / `composer.json` / Vite apunten al repo labo. El modo **repo labo** queda solo en ramas de trabajo locales hasta este comando (o hasta **PARTE S** explícita «por deploy»).
+
+8. **Cierre Jira (MUST, regla 09 — Parte N):** `git diff develop...HEAD`; recolectar `Jira:` / SPEC-HU-TR / commits; issues **Finalizado** → **Desplegado** + URL del PR; el resto solo comentario. Epic a Desplegado solo si no quedan hijas Finalizado pendientes. MCP fail → no abortar.
+
+**N vs T:** esta parte **abre** el PR a `develop` y **no** lo fusiona ni espera Vercel/Forge. Para merge + verificación de Preview usar **PARTE T**.
+
 ---
 
 ## PARTE O – Inicialización del entorno de desarrollo
@@ -693,40 +843,72 @@ el asistente debe:
 Cuando el usuario escriba:
 > Iniciá el entorno de desarrollo
 
+Variantes (misma PARTE O):
+
+| Frase del usuario | Sync GEN-34 |
+|-------------------|-------------|
+| (solo el comando base) | **Sí** — escenario §5.5 producto GEN-34 «conservar datos» (§O.4) |
+| «… **sin tocar la BD**» / «solo levantá la app» | **No** — solo túnel (si aplica) + `serve` + `dev` |
+| «… **BD descartable**» / «con migrate fresh» | **Sí** — escenario descartable (§O.4); **confirmar** si la conexión apunta a RDS/Forge compartido |
+
+**Contrato GEN-34:** «Iniciar entorno de desarrollo» = **aplicación en marcha + instalación alineada al código** cuando la fila de prueba es **modo directo** (SQL local/RDS alcanzable desde el PC). No es solo `npm run dev`. SoT: Framework `docs/02-producto/34-instalacion-actualizacion-proyecto.md` §5.5 · `docs/06-operacion/guia-humana-instalacion-actualizacion-operativa.md` §3.
+
 El asistente debe:
 
 1. Asumir que el proyecto sigue la siguiente estructura:
    - `backend/` (Laravel)
    - `frontend/` (Vite / React)
 
-2. Indicar la ejecución de los siguientes comandos,
-   **en terminales separadas**:
+2. **SDK Cloudsmith (GEN-35):** si el host consume `paqsuite/laravel-core` / `@paqsuite/react-core` desde Cloudsmith, comprobar (sin imprimir el valor) que exista `CLOUDSMITH_READ_TOKEN` en el entorno. Si falta, **no** arrancar `npm install` / `composer install` a ciegas: indicar la regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** (variable de usuario Windows + `auth.json` Composer). Composer no lee `backend/.env` para el registry.
 
-1) Si el backend es mysql, abrir el túnel SSH
-En una terminal (mantener abierta):
+3. **Túnel / conectividad SQL (si aplica):** si el backend usa MySQL remoto vía túnel, abrirlo **antes** del sync y del `serve`, en terminal aparte (mantener abierta). Ejemplo documentado ERP:
+
 ```powershell
 cd "C:\Programacion\PaqSuite-IA-ERP"
 .\scripts\ssh-tunnel-mysql.ps1
 ```
-O directamente:
-```bash
-ssh -i "C:\Users\PabloQ\pablo-notebook" -o StrictHostKeyChecking=no -L 3306:127.0.0.1:3306 -N forge@18.218.140.170
-```
 
-2) Backend
-en nueva terminal
+O equivalente SSH documentado en el host. Si la BD es SQL Server/RDS directo desde `.env`, omitir túnel.
+
+### O.4 — Sincronización de instalación (GEN-34), antes de `php artisan serve`
+
+Ejecutar **en `backend/`** salvo que el usuario pidió **sin tocar la BD**.
+
+1. **Resolver instalación de prueba:** leer `PAQSUITE_CLIENTE` y `PAQSUITE_PROYECTO` de `backend/.env` (o variables documentadas del host). Si faltan, **preguntar** `{cliente}` + `{proyecto}` antes de continuar.
+2. **Modo de ejecución:** si la fila `EMPRESAS_CONEXION` de esa instalación tiene **`agent_id` y `client_id` informados** (modo **gateway**), **no** ejecutar `installation:install` / `installation:update` / `sql:sync-dev` en local (el host no debe aplicar SQL directo al cliente). Informar que el SQL se actualiza vía agente (Forge/ops) y **continuar levantando** backend/frontend local salvo que el usuario pidió otra cosa (UI/API local; datos vía gateway). Alternativa: fila **directo** de dev documentada en el runbook del host.
+3. **Comprobar CLI:** `php artisan list` debe incluir `paqsuite:installation:update` (y relacionados). Si *command not defined*, indicar bump de `paqsuite/laravel-core` (GEN-34 / GEN-35) y seguir `docs/06-operacion/runbook-install-update.md` transitorio; **no** simular éxito.
+4. **Elegir escenario** (producto 34 §5.5):
+
+   | Escenario | Cuándo | Comandos (orden) |
+   |-----------|--------|------------------|
+   | **Conservar datos** (default) | Comando base «Iniciá el entorno…» | `php artisan migrate` → `php artisan paqsuite:installation:update --cliente={cliente} --proyecto={proyecto} --non-interactive` |
+   | **BD descartable** | Usuario lo pidió explícitamente y la BD no es prod/compartida sin confirmación | `php artisan migrate:fresh --seed` → (opcional complemento SP diccionario) `php artisan paqsuite:sql:sync-dev` si `PAQSUITE_ALLOW_SQL_SYNC_DEV=true` → si no hay manifiesto aplicado, `paqsuite:installation:install --cliente=… --proyecto=… --non-interactive` |
+   | **Solo SP diccionario en SQLite/local mínimo** | Host documenta sync dev sin ciclo completo | `PAQSUITE_ALLOW_SQL_SYNC_DEV=true` + `php artisan paqsuite:sql:sync-dev` (no sustituye `update` en RDS con datos) |
+
+   **`migrate` solo no sustituye `installation:update`** (misma norma que Forge §5.3 GEN-34).
+
+   **Script del host (recomendado):** si existe `scripts/dev/sync-installation-sql.ps1` o `backend/scripts/dev/run-local-gen34-sync.php`, usarlo en lugar de encadenar artisan a mano (tenant bootstrap + SP host). Regla **`.cursor/rules/base/00-arquitectura/16-entorno-desarrollo-gen34.mdc`**.
+
+5. **Evidencia:** tras sync exitoso, `php artisan paqsuite:installation:status --cliente={cliente} --proyecto={proyecto}` y resumir en chat (último run / manifiesto). Si el update falla (**exit 1**), **informar el error** y preguntar si igualmente levantar frontend/backend para depurar. **Exit 2 (gateway):** omitir SQL local y **seguir** con §O.5.
+6. **Aviso regla 17:** si el working tree tiene migraciones/SP/manifiesto no aplicados aún en la BD usada, mencionarlo aunque el update haya corrido.
+
+### O.5 — Levantar aplicación (terminales separadas)
+
+1. **Backend** (nueva terminal):
+
 ```bash
 cd backend
 php artisan serve
 ```
-3) Frontend
-en otra terminal
-```bash 
+
+2. **Frontend** (otra terminal):
+
+```bash
 cd frontend
 npm run dev
 ```
 
-4) Al **mostrar en el chat** las URLs del entorno ya levantado, incluir **siempre tres enlaces**:
+3. Al **mostrar en el chat** las URLs del entorno ya levantado, incluir **siempre tres enlaces**:
    - **Frontend** (Vite; p. ej. `http://localhost:3000/` según `frontend/vite.config.ts`).
    - **Backend** (Laravel; p. ej. `http://127.0.0.1:8000` si `php artisan serve` usa host y puerto por defecto).
    - **OpenAPI (Swagger UI):** misma base URL que el backend + la ruta configurada en `backend/config/l5-swagger.php` (`documentations.default.routes.api`, actualmente **`/api/documentation`**). Ejemplo con backend en `127.0.0.1:8000`: `http://127.0.0.1:8000/api/documentation`. Si el usuario arranca el backend en otro host o puerto, ajustar la base en consecuencia.
@@ -772,11 +954,307 @@ El asistente debe:
 2. Tomar del mensaje del usuario el valor de **[TEMA]** (y, si el usuario lo indicó, **[NOMBRE_ARCHIVO]**; si no lo indicó, aplicar la convención de nomenclatura que defina **`.cursor/rules/90-documentacion/90-manual-usuario.md`** para el nombre del archivo).
 3. **Ejecutar** el flujo descrito en esa regla: investigar en código y UI lo necesario, redactar en el tono y estructura allí definidos, y crear o actualizar el documento resultante en la ruta que **`.cursor/rules/90-documentacion/90-manual-usuario.md`** indique (p. ej. carpeta bajo `docs/99-manual-usuario/`), usando **[TEMA]** como foco del contenido y **[NOMBRE_ARCHIVO]** cuando corresponda al nombre del archivo.
 4. Si faltara **[TEMA]** o hubiera ambigüedad sobre el alcance, **pedir aclaración** antes de generar el manual.
+5. **Jira (regla 09):** comentario “manual actualizado” + ruta. **Sin** cambio de columna. MCP fail → no abortar.
+
+---
+
+## PARTE R – Despliegue estándar GitHub/Vercel/Forge
+
+### Prompt simplificado
+
+```text
+Ejecutá la skill `.cursor/skills/Github-deployment-standard/SKILL.md`
+para el proyecto `[NOMBRE_PROYECTO]`.
+```
+
+También debe interpretarse como equivalente:
+
+```text
+Configurá el despliegue estándar de `[NOMBRE_PROYECTO]`.
+```
+
+El valor entre corchetes es obligatorio y debe reemplazarse por el nombre real
+del proyecto. El asistente debe:
+
+1. Leer y seguir la skill `.cursor/skills/Github-deployment-standard/SKILL.md`
+   y su documento SoT de despliegue.
+2. Usar `[NOMBRE_PROYECTO]` para resolver los nombres de Vercel, Forge,
+   dominios y backends definidos por el estándar.
+3. Verificar primero el estado actual de GitHub, Vercel, Forge/EC2 y Route 53
+   antes de modificar recursos.
+4. No solicitar ni copiar credenciales, tokens o códigos de verificación en el
+   chat; el usuario debe ingresarlos directamente cuando corresponda.
+5. Pedir confirmación explícita antes de eliminar o modificar recursos de forma
+   destructiva.
+6. Entregar la matriz final de ramas, ambientes, dominios, backends y cambios
+   realizados o pendientes.
+
+Si no se informa `[NOMBRE_PROYECTO]`, pedirlo antes de ejecutar la skill.
+
+**R vs T:** esta parte **configura** la plataforma (proyecto Vercel, sitios Forge, DNS, ruleset). Para **actualizar una versión** (commit/PR/merge y comprobar Vercel/Forge) usar **PARTE T** («Actualizá la versión preview/productiva»).
+
+### Skill asociada
+
+```text
+.cursor/skills/Github-deployment-standard/SKILL.md
+```
+
+---
+
+## PARTE S — Adaptar host al modo de consumo del SDK Framework
+
+### Comando (variantes)
+
+Cuando el usuario escriba algo equivalente a:
+
+```text
+Adaptá el proyecto a consumir el SDK por repo labo
+```
+
+```text
+Adaptá el proyecto a consumir el SDK por deploy
+```
+
+**También** debe interpretarse como equivalente (sinónimos del modo):
+
+| Modo | Variantes aceptadas en el mensaje |
+|------|-----------------------------------|
+| **repo labo** (checkout local) | `repo labo`, `repo-lab`, `modo repo-lab`, `lab local`, `path local`, `file:` |
+| **Deploy** (artefactos empaquetados) | `deploy`, `registry`, `Satis`, `Verdaccio`, `producción`, `release empaquetado` |
+
+Si el mensaje no indica el modo, **pedir** explícitamente: *repo labo* o *deploy* (una sola opción por ejecución).
+
+### Alcance — solo proyectos **host**
+
+Esta parte aplica **únicamente** a repositorios **producto host** que consumen el SDK PaqSuite Framework (`paqsuite/laravel-core` + `@paqsuite/react-core`), no al monorepo Framework ni a repos sin esas dependencias.
+
+**Criterio de host (comprobar en el workspace actual):**
+
+1. Existe carpeta `backend/` con `composer.json` que declara `paqsuite/laravel-core` en `require`, **o**
+2. Existe carpeta `frontend/` con `package.json` que declara `@paqsuite/react-core` en `dependencies` / `devDependencies`.
+
+Si **ninguna** condición se cumple, responder de forma clara y **no** modificar archivos:
+
+```text
+La Parte S no corresponde a este repositorio: no es un host del SDK Framework
+(paqsuite/laravel-core / @paqsuite/react-core). Usá esta parte solo en productos
+que adopten GEN vía laravel-core y react-core.
+```
+
+### Ruta del Framework en disco (modo repo labo)
+
+Por defecto el checkout hermano del host vive en la misma carpeta padre que el producto, con nombre de carpeta **`PaqSuite-IA-FRAMEWORK`** (convención PaqSuite; el usuario puede decir «programacion-ia-framework» u otro alias verbal — resolver la ruta real en disco antes de cablear).
+
+Rutas relativas típicas **desde la raíz del host** (ajustar si el sibling tiene otro nombre pero existe):
+
+| Capa | Ruta relativa al host |
+|------|------------------------|
+| Frontend (`react-core`) | `../PaqSuite-IA-FRAMEWORK/packages/js/react-core` |
+| Backend (`laravel-core`) | `../PaqSuite-IA-FRAMEWORK/packages/php/laravel-core` |
+
+Si el directorio no existe, **informar** y no inventar paths en `composer.json` / `package.json` hasta que el usuario confirme la ubicación del monorepo Framework.
+
+### Documentación SoT (leer antes de tocar pins)
+
+| Documento | Uso |
+|-----------|-----|
+| `docs/01-arquitectura/deploy-sdk-package-repos.md` | Contrato deploy vs repo-lab |
+| `docs/01-arquitectura/ritual-bump-sdk.md` | Pins, locks, smoke tras cambio de modo |
+| `frontend/MODO-REPO-LAB.md` (si existe en el host) | Resumen FE/BE lab |
+| Framework `docs/06-operacion/adopcion-sdk-registry.md` | Registries y `sdk-link` |
+
+**Deploy (MUST para PR a `develop` / Forge / Vercel):** Cloudsmith (`paqsystems/paqsuite-sdk`). Satis, Verdaccio, Tailscale y rutas `file:` **no** son modo deploy. Detalle de tokens y `.npmrc`/Composer: regla **`.cursor/rules/base/00-arquitectura/45-host-sdk-cloudsmith.mdc`** y skill de despliegue (**PARTE R**).
+
+### Comportamiento — modo **repo labo**
+
+Objetivo: desarrollo local contra el **código fuente** del Framework en disco, sin depender de Satis/Verdaccio en el install diario.
+
+1. **Verificar** que el sibling Framework existe y contiene `packages/js/react-core` y `packages/php/laravel-core`.
+2. **Frontend** (si el host tiene `frontend/`):
+   - En `package.json`, pin `"@paqsuite/react-core": "file:../PaqSuite-IA-FRAMEWORK/packages/js/react-core"` (o ruta relativa correcta desde `frontend/` → suele ser `file:../../PaqSuite-IA-FRAMEWORK/packages/js/react-core`).
+   - En `vite.config.ts`, alias de desarrollo hacia el **source** del paquete (`src/index.ts`, `auth.css`, `shell.css`) apuntando al mismo checkout — patrón de referencia: `frontend/MODO-REPO-LAB.md` y el host Partes.
+   - Ejecutar `npm install` en `frontend/` y dejar constancia en el resumen (no commitear salvo autorización del usuario).
+3. **Backend** (si el host tiene `backend/`):
+   - **Preferido:** mantener `composer.json` con repositorio **Satis** (sin repo `path` commiteado) y enlazar vendor local con el script del Framework `tools/sdk/sdk-link.ps1` (o equivalente documentado en adopción SDK) apuntando al checkout sibling.
+   - **Alternativa solo lab** (si la TR del producto lo permite): repositorio Composer `type: path` temporal — **advertir** que no debe mezclarse con deploy Forge/Vercel; revertir **antes** de «Hacé PR a develop» (**PARTE N**).
+   - Ejecutar `composer install` / link según el script y verificar `composer show paqsuite/laravel-core`.
+4. **Documentar** en el mensaje final: modo activo, rutas usadas, comandos ejecutados, y recordatorio de volver a **deploy** antes de release (ver checklist en `deploy-sdk-package-repos.md` § «Modo repo-lab local»).
+5. **No** hacer commit ni push salvo autorización explícita del usuario.
+
+### Comportamiento — modo **deploy**
+
+Objetivo: consumir **versiones publicadas** (locks commiteables, builders Forge/Vercel/CI sin checkout Framework).
+
+1. **Frontend** (si aplica):
+   - Quitar alias `vite.config.ts` que apunten al monorepo Framework (resolver solo vía `node_modules` / paquete instalado).
+   - En `package.json`, reemplazar `file:` por versión **semver** pinneada acorde al host (`ritual-bump-sdk.md` o el pin ya publicado en Cloudsmith).
+   - Asegurar `frontend/.npmrc` versionado **solo** con `@paqsuite:registry=https://npm.cloudsmith.io/paqsystems/paqsuite-sdk/` y `always-auth=true` (**sin** token).
+   - `npm install` en `frontend/` con `CLOUDSMITH_READ_TOKEN` en el entorno (no imprimir el valor); regenerar lock si hace falta.
+2. **Backend** (si aplica):
+   - En `composer.json`, repositorio Composer Cloudsmith (`https://composer.cloudsmith.io/basic/paqsystems/paqsuite-sdk/`); **eliminar** repos `path` al Framework y URLs Satis si estuvieran commiteados.
+   - Desvincular link local (`sdk-link` inverso o `composer install` limpio) y actualizar `paqsuite/laravel-core` con autenticación runtime (`COMPOSER_AUTH`), sin escribir el token en el repo.
+   - Verificar que `composer.lock` no referencia rutas locales al monorepo.
+3. **Smoke mínimo** sugerido al cerrar: `composer show paqsuite/laravel-core`, `npm list @paqsuite/react-core`, health/login si el entorno está disponible.
+4. **Commit / push:** no, salvo autorización explícita — **excepción:** el comando **«Hacé PR a develop»** (**PARTE N**) **sí** autoriza adaptar a deploy, commitear, pushear y abrir el PR.
+
+### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| Aplicar Parte S en `PaqSuite-IA-FRAMEWORK` | No es host; confunde origen del SDK |
+| Abrir PR a `develop` con `file:` / alias Vite / Composer `path` | Preview y Forge no tienen el checkout Framework; el build falla |
+| Commitear repo Composer `path` al Framework «por comodidad» | Forge deploy rompe; viola contrato empaquetado |
+| Cambiar modo sin regenerar lock | Drift entre dev y CI |
+
+---
+
+## PARTE T — Actualizar versión preview (`develop`) o productiva (`main`)
+
+Actualiza una versión en los ambientes: GitHub (commit/push/PR/**merge**) y después comprueba **Vercel** (frontend) y **Forge** (backend). **No** sustituye la **PARTE R** (alta/configuración de la plataforma de despliegue) ni la **PARTE N** (solo abrir PR a `develop` sin merge).
+
+SoT de ambientes: `.cursor/docs/00-deploy-github-vercel-route53-forge.md` y `.cursor/docs/00-urls-deploy-proyecto.md`. Política de ramas: regla **18**. Aviso de versión/BD: regla **17**. Hosts SDK: **PARTE S** modo **deploy** antes de mergear a `develop`.
+
+Este comando **autoriza** commit, push de la rama de trabajo, abrir PR y **fusionar el PR en GitHub**. **Prohibido:** push directo a `develop`/`main`, `--force`, `--admin`, merge local + push a protegidas.
+
+### Comandos
+
+Cuando el usuario escriba algo equivalente a cualquiera de estas formas, elegir el **modo** y ejecutar esa rama (no mezclar preview y productiva en la misma corrida salvo que pida las dos en orden **preview → productiva**).
+
+**Invocación canónica:** verbo **Actualizar** (no «Desplegar» ni «Configurar el despliegue» — esos no disparan la PARTE T; «Configura el despliegue estándar…» es **PARTE R**).
+
+**Modo Preview / develop** (pre-producción):
+
+```text
+Actualizá la versión preview
+Actualizá la versión develop
+Actualizá preview
+Actualizá develop
+Actualiza develop
+Actualiza preview
+Publicá en preview
+Publicá en develop
+```
+
+**Modo Productiva / main** (producción):
+
+```text
+Actualizá la versión productiva
+Actualizá la versión de producción
+Actualizá producción
+Actualizá productiva
+Actualiza producción
+Actualiza main
+Actualiza productiva
+Publicá en producción
+Publicá en main
+```
+
+También debe interpretarse como equivalente cualquier instrucción que pida **actualizar** esa versión (preview/develop o productiva/main) y **confirmar** el resultado en Vercel y Forge.
+
+### Matriz de ambientes (MUST)
+
+Resolver `{proyecto}` desde `docs/06-operacion/urls-deploy.md` del workspace; si no existe, desde el registro BASE `.cursor/docs/00-urls-deploy-registro.md` o los nombres reales de Vercel/Forge. No inventar el slug.
+
+| Modo | Rama GitHub | Frontend Vercel | Backend Forge | Health |
+|------|-------------|-----------------|---------------|--------|
+| **Preview** | `develop` | `https://dev.{proyecto}.paqsystems.com/` | sitio `{proyecto}paqsystems-dev` → `https://{proyecto}paqsystems-dev.on-forge.com/` | `GET /api/v1/health` |
+| **Productiva** | `main` | `https://{proyecto}.paqsystems.com/` | sitio `{proyecto}paqsystems` → `https://{proyecto}paqsystems.on-forge.com/` | `GET /api/v1/health` |
+
+Preview **nunca** debe apuntar al backend de producción ni al revés.
+
+Si el repo **no** tiene Vercel/Forge (p. ej. este BASE), completar GitHub y declarar esas capas **no aplica** — no simular un deploy.
+
+### Herramientas
+
+| Capa | Cómo |
+|------|------|
+| Git / PR / merge | `gh` (`pr create`, `pr view`, `pr checks`, `pr merge`) + git local. User rule de PRs. |
+| Vercel | MCP `user-vercel`: `list_projects`, `list_deployments` (`branch`, `sha`, `target`), `get_deployment`, `get_deployment_events`, `get_runtime_errors`. CLI `vercel` solo si MCP falla. |
+| Forge | MCP `user-laravel-forge-mcp`: `list-sites` / `list-organization-sites`, `list-deployments`, `get-deployment-status`, `get-deployment`, `get-deployment-log`, `get-site-healthcheck`; `create-deployment` **solo** si el merge no disparó deploy (ver **Verificación post-merge**). |
+| Health HTTP | `GET` del health y del dominio Vercel (código, no secretos). |
+
+**No** imprimir tokens, `.env`, logs con credenciales ni cuerpos de environment.
+
+### Comportamiento — modo Preview (`develop`)
+
+1. **Rama actual:** `git status` / `git branch --show-current`. Si es `develop`, `main` o `master`: **no** push ni PR hacia sí misma. Informar la política **18**. Si hay cambios sin commitear en `develop`/`main`, **no** crear una rama por iniciativa propia: pedir que pasen a una rama de trabajo o que usen productiva si `develop` ya tiene lo deseado. Si el árbol está limpio y `origin/develop` ya contiene el trabajo, saltar a **verificación** (punto 7) e informar que no hubo PR nuevo.
+2. **Host SDK:** mismos puntos **2–4** de la **PARTE N** (criterio de host + modo **deploy** Cloudsmith). Si el host aún apunta a repo labo (`file:`, alias Vite, Composer `path`), adaptar, commitear y pushear **antes** del PR. Bloqueo de token Cloudsmith → **no** mergear.
+3. **Aviso regla 17:** antes del commit, avisar migrate/seed/`.env` si el diff lo exige.
+4. **Commit y push:** si hay cambios, commit + push de la rama de trabajo (`-u` si no trackea). Si no hay cambios locales pero la rama está ahead, solo push. No commitear secretos. Este comando **autoriza** commit y push (a diferencia de «Commiteá» a secas).
+5. **PR a `develop`:** reutilizar el PR abierto de esta rama si existe; si no, `gh pr create --base develop` (cuerpo **N1** / `_PR-prompt.md` si aplica). Destino **solo** `develop`. **Cierre Jira Parte N** al abrir el PR (regla **09**).
+6. **Esperar checks y merge:** `gh pr checks` / `gh pr view --json mergeable,mergeStateStatus,statusCheckRollup`. Cuando el PR sea mergeable y los checks requeridos pasen: `gh pr merge <n>` con un método **permitido** por el repo (`--squash` típico en feature → `develop`). **`--delete-branch`** solo para la rama de trabajo (nunca borrar `develop`/`main`). **Prohibido** `--admin`, `--force` y merge local + push a `develop`.
+7. **Verificar Preview** (punto común **Verificación post-merge** más abajo) sobre `develop` / target preview / sitio `{proyecto}paqsystems-dev`. SHA = merge commit en `origin/develop`.
+8. **Respuesta final** con la plantilla de veredicto.
+
+Si el merge está bloqueado (reviews, conversaciones, check `only-develop`, conflicto): **no** bypassear; informar el bloqueo y el veredicto **ERROR** / no fusionado.
+
+### Comportamiento — modo Productiva (`main`)
+
+1. **Alcance:** promover **`origin/develop` → `main`**. **No** commitear ni pushear la rama de trabajo actual. **No** abrir PR de una feature a `main`.
+2. **Trabajo local no promovido:** `git fetch`. Si la rama actual tiene commits que **no** están en `origin/develop`, listarlos y **detener**: primero Preview (**este mismo comando** en modo develop). Cambios sin commitear: avisar que **no** entran en producción.
+3. **SDK en `origin/develop`:** mismas comprobaciones de modo **deploy** que la **PARTE N** punto 3 sobre el árbol de `develop` (no sobre un repo labo local). Si `develop` tiene `file:` / path Framework, **no** abrir PR a `main`.
+4. **PR `develop` → `main`:** reutilizar PR abierto con `base=main` y `head=develop` si existe; si no, `gh pr create --base main --head develop`. Si GitHub rechaza porque `head` no es `develop`, **no** continuar (check `only-develop`).
+5. **Merge:** esperar checks; `gh pr merge <n>` con método permitido (**no** `--admin`; **no** borrar `develop`). Conflicto o reviews pendientes → informar y no bypassear.
+6. **Verificar Production** sobre `main` / target production / sitio `{proyecto}paqsystems`. SHA = merge commit en `origin/main`.
+7. **Jira:** comentario con URL del PR a `main` y resultado Vercel/Forge. **No** aplicar de nuevo el algoritmo Desplegado de **N** (ese es al abrir PR a `develop`). MCP fail → no abortar el informe de deploy.
+8. **Respuesta final** con la plantilla de veredicto.
+
+### Verificación post-merge (Vercel + Forge)
+
+Tras el merge, **poll** (no un único wait largo). Tope orientativo **10–15 min**. Si al tope sigue `BUILDING`/`QUEUED`/`deploying`: veredicto **EN CURSO** (no afirmar OK).
+
+1. **GitHub:** PR `MERGED`; SHA en la rama destino (`origin/develop` o `origin/main`).
+2. **Vercel:** localizar el proyecto del `{proyecto}`; `list_deployments` filtrando `branch` + `sha` (o el más reciente de ese `target`). Éxito = `READY` en el `target` correcto (`preview` vs `production`). `ERROR`/`CANCELED`/`BLOCKED` = fallo: leer eventos/errores de runtime **sin** volcar secretos. Comprobar que la URL canónica del SoT corresponde a ese deploy.
+3. **Forge:** localizar el sitio por nomenclatura (`{proyecto}paqsystems-dev` o `{proyecto}paqsystems`). Si push-to-deploy no dispara un deploy nuevo en ~2 min, **una** vez `create-deployment` y volver a poll. Éxito = deploy finished/successful del SHA (o del latest coherente) + health check Forge apuntando a `/api/v1/health` o `GET` HTTP 2xx de ese endpoint.
+4. **Cruce de ambiente:** Preview no debe haber desplegado el sitio de producción, ni Production el de `-dev`.
+5. Si MCP Vercel o Forge no está autenticado: intentarlo por CLI documentado; si no, declarar esa capa **no verificada** y el veredicto no puede ser OK global.
+
+### Plantilla de respuesta (MUST)
+
+```text
+# Resultado de la actualización
+
+- Modo: Preview (develop) | Productiva (main)
+- Repo / rama origen → destino / PR URL / SHA
+
+| Capa | Recurso | Estado | Evidencia |
+|------|---------|--------|-----------|
+| GitHub | PR #… mergeado | OK / ERROR / BLOQUEADO | URL |
+| Vercel | proyecto / target / URL | READY / ERROR / EN CURSO / NO APLICA / NO VERIFICADO | SHA + estado |
+| Forge | sitio / URL API | OK / ERROR / EN CURSO / NO APLICA / NO VERIFICADO | deploy + health |
+
+Veredicto: OK | OK con observaciones | EN CURSO | ERROR
+```
+
+- **OK:** merge hecho y Vercel + Forge (aplicables) en éxito.
+- **OK con observaciones:** deploy OK pero health lento, aviso regla 17 (migrate/seed pendiente en servidor), o una capa no aplica.
+- **EN CURSO:** merge OK, builders aún no terminaron al tope de espera.
+- **ERROR:** no se mergeó, o Vercel/Forge falló, o el ambiente cruzado está mal.
+
+Incluir el aviso de **regla 17** si hay migrate/seed/`.env` que Forge **no** aplica solo con el deploy.
+
+### Anti-patrones
+
+| Anti-patrón | Efecto |
+|-------------|--------|
+| Push directo a `develop`/`main` | Viola regla **18** |
+| PR feature → `main` en modo productiva | El check `only-develop` debe fallar; no es el flujo |
+| Merge `--admin` o local + push | Saltea protección |
+| Afirmar OK con un screenshot o un `READY` de otra rama | Falso positivo |
+| Disparar `create-deployment` en el sitio de prod durante Preview | Cruce de ambiente |
+| Commitear la feature en el modo productiva | Producción recibiría trabajo no promovido vía `develop` |
+
+### Cierre Jira (MUST)
+
+- **Preview:** al abrir el PR a `develop`, algoritmo **Parte N** (Finalizado → Desplegado). Tras verificar: comentario con veredicto Vercel/Forge.
+- **Productiva:** comentario en los issues del alcance (URL PR `develop` → `main` + veredicto). Sin nueva transición de columna salvo pedido explícito.
+- MCP fail → no abortar la actualización ni el informe.
 
 ---
 
 ## Reglas generales (aplican a todos los comandos)
 - No inventar prompts fuera de los definidos.
+- **Control de Calidad — Jira (MUST, todos los hosts):** registrar un hito (agente o a mano) = **solo markdown**. Crear/transicionar Jira **solo** en **PARTE G** (A0 embebido si falta `Jira:`). Prohibido A0 al «generá un hito en CC».
 - No modificar HU ni TR sin dejar trazabilidad.
 - El reemplazo de placeholders debe ser textual y completo.
 - Si el archivo indicado no existe o no es accesible,
@@ -788,18 +1266,18 @@ El asistente debe:
 ## Beneficio
 Esta regla define el flujo **Open-Spec completo** como **predeterminado**: **A** (`openspec-01`) → **A1** → **B** (`openspec-02`) → **B1** → **C** (`openspec-03`) → **D1** → **D** (`openspec-04-Ejecucion-de-una-TR`) → **E** → **F1** → **F** (`openspec-05`). La **Parte J** encadena **A+B** desde `docs/02-producto/`; la **Parte K** es **excepción** con deuda explícita hacia **A**.
 
-Correcciones: **G** (**§0** cuando cambia el alcance; **L** si solo SPEC-update; **G** incluye **cierre** del bloque CC → **Especificado** en *Referencia del control*) → **D** → **E** → **F** → **I** (punto **11** antes de HU/TR cuando exista SPEC-update). **H** opcional si solo hace falta **Especificado** sin volcado **G**. Atajo **M** si solo se unifica SPEC.
+Correcciones: registro CC (markdown, **sin** Jira) → **G** (**A0 embebido** si falta `Jira:`; **§0** cuando cambia el alcance; **L** si solo SPEC-update; **G** incluye **cierre** del bloque CC → **Especificado** en *Referencia del control* y Epic → **Control calidad**) → **D** → **E** → **F** → **I** (punto **11** antes de HU/TR cuando exista SPEC-update). **H** opcional si solo hace falta **Especificado** sin volcado **G**. Atajo **M** si solo se unifica SPEC.
 
 Referencias: **`.cursor/rules/00-arquitectura/08-open-spec-gobernanza.md`**, **`docs/_base/_OPEN-SPEC-METODOLOGIA.md`**.
 
-Además: Git (**N**), entorno (**O**), i18n (**P**), manual (**Q**), modelo de datos vía **Parte J**.
+Además: Git (**N**, incluido **PR a develop** con precondición SDK **deploy** en hosts), entorno (**O**), i18n (**P**), manual (**Q**), despliegue estándar (**R**), cableado SDK host (**S**), actualizar versión Preview/Productiva con merge + Vercel/Forge (**T**), modelo de datos vía **Parte J**.
 
 Permite usar comandos cortos, claros y sin copy/paste,
 reduciendo errores humanos y mejorando la productividad.
 
 ### Invocaciones combinadas
 
-Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá el entorno de desarrollo** y **ejecutá los tests**), el asistente debe aplicar primero la PARTE **O** (abrir terminales con backend y frontend en ejecución e informar URLs de frontend, backend y OpenAPI según el punto 4 de esa parte) y luego la PARTE **E** (abrir las tres terminales de tests: backend, unitarios, E2E). Las invocaciones son acumulables en el orden **O → E**.
+Si el usuario escribe en un mismo mensaje ambas frases (por ejemplo: **Iniciá el entorno de desarrollo** y **ejecutá los tests**), el asistente debe aplicar primero la PARTE **O** (sync GEN-34 §O.4 salvo «sin tocar la BD»; luego terminales con backend y frontend en ejecución e informar URLs según §O.5) y luego la PARTE **E** (abrir las tres terminales de tests: backend, unitarios, E2E). Las invocaciones son acumulables en el orden **O → E**.
 
 ### Funciones de las Skills
 
