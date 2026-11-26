@@ -4,7 +4,7 @@
 |-------|--------|
 | **ID** | HU-PQ-MOB-05 |
 | **TR** | [TR-PQ-MOB-05-envelope-errores-logout.md](./TR-PQ-MOB-05-envelope-errores-logout.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ## Criterios
 

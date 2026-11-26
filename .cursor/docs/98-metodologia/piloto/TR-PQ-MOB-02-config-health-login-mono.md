@@ -12,7 +12,7 @@
 | **Repositorio propietario** | PaqSuite-IA-FRAMEWORK (`apps/smoke-flutter/`) |
 | **Contrato API** | `GET /api/v1/health`, `POST /api/v1/auth/login`, envelope GEN-20 |
 | **Dependencias** | [TR-PQ-MOB-01](./TR-PQ-MOB-01-scaffold-smoke-flutter.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ---
 

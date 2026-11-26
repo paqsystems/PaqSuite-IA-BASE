@@ -12,7 +12,7 @@
 | **Repositorio propietario** | Framework: `apps/smoke-flutter/`, `apps/smoke-backend/` (demo); docs BASE piloto |
 | **Contrato API** | `GET /api/v1/demo/kardex-articulos?deposito=&lote=` (auth Sanctum) |
 | **Dependencias** | [TR-PQ-MOB-02](./TR-PQ-MOB-02-config-health-login-mono.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ---
 

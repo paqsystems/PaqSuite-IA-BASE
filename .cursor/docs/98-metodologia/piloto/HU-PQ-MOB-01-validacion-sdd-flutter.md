@@ -8,7 +8,7 @@
 | **Prioridad** | Must |
 | **Modalidad** | MONO (smoke; sin selector empresa en v0 piloto) |
 | **Superficies** | Común (metodología BASE) + `MOBILE_NATIVE` (smoke) |
-| **Estado** | **Especificado** |
+| **Estado** | **Finalizado** |
 | **TR** | [TR-PQ-MOB-01-scaffold-smoke-flutter.md](./TR-PQ-MOB-01-scaffold-smoke-flutter.md) |
 
 ## Narrativa

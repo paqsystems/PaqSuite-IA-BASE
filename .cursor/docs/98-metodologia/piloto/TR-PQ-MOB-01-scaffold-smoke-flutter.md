@@ -14,7 +14,7 @@
 | **Dependencias** | Ninguna TR previa; plan PQ-MOBILE documental |
 | **Clasificación** | HU SIMPLE |
 | **Prioridad** | MUST-HAVE |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 | **Épica** | PQ-MOBILE / SPEC-001-33 slice 0 |
 
 **Origen:** [HU-PQ-MOB-01](./HU-PQ-MOB-01-validacion-sdd-flutter.md)  

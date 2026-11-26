@@ -17,6 +17,8 @@ Primer circuito **SPEC → HU → TR** con metadatos `TR-MOB` / superficie `MOBI
 | Taxonomía | [../tipos-tr-y-superficies.md](../tipos-tr-y-superficies.md) |
 | Implementación | `PaqSuite-IA-FRAMEWORK/apps/smoke-flutter/` |
 | Instalación Flutter | [../../01-mobile/07-instalacion-flutter-sdk-windows.md](../../01-mobile/07-instalacion-flutter-sdk-windows.md) |
-| SPEC | `PaqSuite-IA-FRAMEWORK/docs/05-open-spec/001-Generalidades/SPEC-001-33-sdk-flutter.md` |
+| SPEC (borrador, sin cierre) | `PaqSuite-IA-FRAMEWORK/docs/05-open-spec/001-Generalidades/SPEC-001-33-sdk-flutter.md` |
+| F1 | [F1-PQ-MOBILE-verificacion.md](./F1-PQ-MOBILE-verificacion.md) |
+| Cierre F | [F-PQ-MOBILE-cierre-formal.md](./F-PQ-MOBILE-cierre-formal.md) |
 
-**F1 piloto:** **M-07** y **M-08 OK** (2026-11-26) — ver [matriz](../../01-mobile/native/templates/matriz-verificacion-mobile.md), [TR-07](TR-PQ-MOB-07-runbook-instalacion-flutter.md). Evidencia M-08: `apps/smoke-flutter/docs/evidence-m08-emulator-*.png`. Pendiente: **M-09** iOS, cierre formal F1 (parte F), commit evidencia/código pendiente, PR `PQ-MOBILE` → `develop`.
+**Estado piloto (2026-11-26):** HU/TR **01–07 Finalizado** · F1 **Aprobado con observaciones** · matriz **M-01…M-08 OK**, **M-09 N/A** — [matriz](../../01-mobile/native/templates/matriz-verificacion-mobile.md). Evidencia M-08: `apps/smoke-flutter/docs/evidence-m08-emulator-*.png`. Backend piloto: **smoke-backend :8089** (`DEMO` / `admin` / `Paqsystems`). Integración: PR `PQ-MOBILE` → `develop` (BASE + Framework).
