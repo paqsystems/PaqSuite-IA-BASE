@@ -7,7 +7,7 @@
 | **Depende de** | [HU-PQ-MOB-02](./HU-PQ-MOB-02-config-health-login-mono.md) |
 | **Modalidad** | MONO |
 | **Superficie** | `MOBILE_NATIVE` |
-| **Estado** | **Pendiente de Revisión** (D; F1 con `flutter test`) |
+| **Estado** | **Finalizado** |
 | **TR** | [TR-PQ-MOB-03-kardex-demo-api-mono.md](./TR-PQ-MOB-03-kardex-demo-api-mono.md) |
 
 ## Narrativa

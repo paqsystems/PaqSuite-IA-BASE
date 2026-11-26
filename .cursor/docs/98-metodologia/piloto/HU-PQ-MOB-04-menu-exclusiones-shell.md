@@ -4,7 +4,7 @@
 |-------|--------|
 | **ID** | HU-PQ-MOB-04 |
 | **Depende de** | [HU-PQ-MOB-03](./HU-PQ-MOB-03-kardex-demo-api-mono.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 | **TR** | [TR-PQ-MOB-04-menu-exclusiones-shell.md](./TR-PQ-MOB-04-menu-exclusiones-shell.md) |
 
 ## Narrativa

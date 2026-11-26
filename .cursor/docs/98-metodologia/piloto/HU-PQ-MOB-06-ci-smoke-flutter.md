@@ -4,7 +4,7 @@
 |-------|--------|
 | **ID** | HU-PQ-MOB-06 |
 | **TR** | [TR-PQ-MOB-06-ci-smoke-flutter.md](./TR-PQ-MOB-06-ci-smoke-flutter.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ## Criterios
 

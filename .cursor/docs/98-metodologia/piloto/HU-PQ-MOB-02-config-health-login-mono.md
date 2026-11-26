@@ -7,7 +7,7 @@
 | **Depende de** | [HU-PQ-MOB-01](./HU-PQ-MOB-01-validacion-sdd-flutter.md) |
 | **Modalidad** | MONO |
 | **Superficie** | `MOBILE_NATIVE` |
-| **Estado** | **Pendiente de Revisión** (D cerrado; F1 pendiente `flutter test`) |
+| **Estado** | **Finalizado** |
 | **TR** | [TR-PQ-MOB-02-config-health-login-mono.md](./TR-PQ-MOB-02-config-health-login-mono.md) |
 
 ## Narrativa

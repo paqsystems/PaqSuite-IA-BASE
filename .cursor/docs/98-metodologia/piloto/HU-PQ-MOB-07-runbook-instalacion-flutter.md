@@ -4,7 +4,7 @@
 |-------|--------|
 | **ID** | HU-PQ-MOB-07 |
 | **TR** | [TR-PQ-MOB-07-runbook-instalacion-flutter.md](./TR-PQ-MOB-07-runbook-instalacion-flutter.md) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ## Criterios
 

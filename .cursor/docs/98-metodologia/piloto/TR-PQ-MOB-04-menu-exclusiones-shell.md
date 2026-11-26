@@ -6,7 +6,7 @@
 | **Tipo TR** | `TR-MOB`, `TR-QA` |
 | **Contrato API** | `GET /api/v1/user/menu` |
 | **Dependencias** | TR-PQ-MOB-03 |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ## Criterios
 

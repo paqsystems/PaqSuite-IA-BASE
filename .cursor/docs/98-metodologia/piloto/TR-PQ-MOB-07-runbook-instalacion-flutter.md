@@ -4,7 +4,7 @@
 |-------|--------|
 | **ID** | TR-PQ-MOB-07 |
 | **Tipo TR** | `TR-MOB`, `TR-DEVOPS` (docs) |
-| **Estado** | **Pendiente de Revisión** |
+| **Estado** | **Finalizado** |
 
 ## Entregables
 
