@@ -666,7 +666,7 @@ Antes de comenzar la etapa de contenido se deberá:
 - [x] Framework cuenta con una SPEC propia para SDK Flutter (borrador SPEC-001-33).
 - [x] Los componentes específicos de Tango no ingresan al core del Framework (documentado en 33).
 - [x] Se define una estrategia de versionado y distribución Dart (`distribucion-sdk-dart.md`).
-- [x] Existe una aplicación smoke Flutter (piloto `Framework/apps/smoke-flutter/` + TR-PQ-MOB-01; tests pendientes sin SDK en PATH).
+- [x] Existe una aplicación smoke Flutter (piloto `TR-PQ-MOB-01` … `07`; F1 `flutter test` tras instalar SDK — HU-07).
 - [x] Android e iOS tienen evidencia de verificación definida (matriz + CI doc).
 - [ ] Los proyectos piloto validan mobile-only y web+Flutter (Etapa 5).
 
