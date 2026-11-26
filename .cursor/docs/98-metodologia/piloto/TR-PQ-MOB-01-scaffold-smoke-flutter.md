@@ -48,7 +48,7 @@ Crear app **`apps/smoke-flutter`** en Framework como evidencia del flujo SDD mob
 | T2 | Framework | TR-MOB | Scaffold `apps/smoke-flutter` | `lib/`, `pubspec.yaml` |
 | T3 | Framework | TR-QA | `envelope_test.dart` + integration skeleton | Tests pasan local |
 | T4 | Framework | Docs | README smoke; SPEC-001-33 enlaza HU/TR | Metadatos SPEC |
-| T5 | BASE | TR-QA | Completar matriz F1 piloto (M-07) tras `flutter test` | F1 parcial OK |
+| T5 | BASE | TR-QA | Completar matriz F1 piloto (M-07) tras `flutter test` | **M-07 OK** 2026-11-26 (`verify.ps1`, 2 PCs) |
 
 ---
 
@@ -71,7 +71,7 @@ Crear app **`apps/smoke-flutter`** en Framework como evidencia del flujo SDD mob
 - **Integration:** `integration_test/smoke_app_test.dart` — arranque app (smoke manual/CI posterior).
 - **Prohibido:** Playwright/Vitest en esta TR.
 
-Matriz: [`../../01-mobile/native/templates/matriz-verificacion-mobile.md`](../../01-mobile/native/templates/matriz-verificacion-mobile.md) — completar M-07 al ejecutar tests.
+Matriz: [`../../01-mobile/native/templates/matriz-verificacion-mobile.md`](../../01-mobile/native/templates/matriz-verificacion-mobile.md) — **M-07 completado** 2026-11-26; resto de filas según smoke manual/CI.
 
 ---
 
